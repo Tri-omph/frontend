@@ -3,6 +3,12 @@
 # dependencies
 node_modules/
 
+# tests
+components/__tests__/*
+
+# env
+.env*
+
 # Expo
 .expo/
 dist/
