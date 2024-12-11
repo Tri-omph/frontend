@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/components/useColorScheme";
+import { SessionProvider } from "@/context/AuthContext";
 
 // Import des "scree"
 
@@ -48,7 +49,12 @@ export default function RootLayout() {
     return null;
   }
 
-  return <RootLayoutNav />;
+  /* SESSION PROVIDER, on garantit le contexte d'authentification à l'ensemble de l'application */
+  return (
+    <SessionProvider>
+      <RootLayoutNav />
+    </SessionProvider>
+  );
 }
 
 function RootLayoutNav() {
@@ -60,6 +66,10 @@ function RootLayoutNav() {
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="screens/user-sign-up"
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="screens/user-settings-menu"
           options={{ presentation: "modal" }}
