@@ -2,10 +2,13 @@ import React from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Link, Tabs } from "expo-router";
 import { Pressable } from "react-native";
+import { Text } from "react-native";
+import { Redirect } from "expo-router";
 
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
+import { useAuthContext } from "@/hooks/useAuthContext";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -19,6 +22,16 @@ export default function TabLayout() {
   // Utilisation, on commnece toujours par les appels aux hooks
   const isHeaderShown = useClientOnlyValue(false, true);
   const colorScheme = useColorScheme();
+  const { session, isLoading } = useAuthContext();
+
+  // Afficher un écran de chargement pendant la vérification de l'authentification
+  if (isLoading) {
+    return <Text>Vérification des droits d'accès...</Text>;
+  }
+
+  if (!session) {
+    return <Redirect href="/screens/user-sign-in" />;
+  }
 
   return (
     <Tabs
