@@ -32,8 +32,6 @@ class ApiClient {
       return { status: response.status, data: response.data };
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.error("Erreur Axios détectée:"); // Détail de l'erreur: error.response
-
         return {
           status: error.response?.status || 500,
           data: {
@@ -43,8 +41,6 @@ class ApiClient {
           } as ErrorResponse,
         };
       } else {
-        console.error("Erreur inconnue:", error);
-
         return {
           status: 500,
           data: {

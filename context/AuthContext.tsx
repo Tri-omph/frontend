@@ -3,7 +3,7 @@ import { AuthContextType } from "@/types/auth";
 import { useStorageState } from "@/hooks/useStorageState";
 
 const AuthContext = createContext<AuthContextType>({
-  signIn: () => null,
+  signIn: (userToken: string) => null,
   signOut: () => null,
   session: null,
   isLoading: false,

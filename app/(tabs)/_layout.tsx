@@ -29,8 +29,10 @@ export default function TabLayout() {
     return <Text>Vérification des droits d'accès...</Text>;
   }
 
+  console.log("Voici le token de la session actuelle: " + session);
+
   if (!session) {
-    return <Redirect href="/screens/user-sign-in" />;
+    return <Redirect href="/screens/user-sign-up" />;
   }
 
   return (
