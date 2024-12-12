@@ -92,14 +92,16 @@ Voici une représentation simplifiée de la structure du frontend de notre proje
 
 1. **Analyse et Identification à partir de Figma**  
     - Examinez la maquette [Figma](https://www.figma.com/design/ubqXnJji9YN4SbcfynERxk/tri'omph-project?node-id=0-1&node-type=canvas&t=iB9U2BsWW1mxEehF-0).  
-    - Identifiez les **tabs** et **screens** principaux de l'application. (`NB` Les tabs ont été mis en place en même temps que la structure de base, mais vous devez ajouter vos propres screens).
+    - Identifiez les **tabs** et **screens** principaux de l'application. (`NB` Les tabs ont été mis en place en même temps que la structure de base, mais vous devez ajouter vos propres screens dans le dossier `app/screens`).
 
 2. **Définition des Composants Réutilisables**
     - Repérez les **formats ou structures récurrents**, communs à plusieurs tabs/screens. 
-   - Créez des **composants dédiés** pour chaque structure récurrente.  
+   - Créez des **composants dédiés** pour chaque structure récurrente dans le dossier `components`.
    - Assurez-vous que ces composants encapsulent uniquement la **logique visuelle** et qu'ils soient réutilisables.
 
 3. **Implémentation de la Logique Métier dans des Hooks**  
-   - Centralisez la logique métier dans des **hooks personnalisés**
+   - Centralisez la logique métier dans des **hooks personnalisés**, à ajouter dans le dossier `hooks`
    - Les composants visuels appellent ces hooks pour accéder aux données ou exécuter des actions.  
    - Les hooks peuvent être utilisés dans plusieurs composants ou screens.
+
+`NB`: Vous êtes invités à définir des sous-hiérarchies de dossiers pour une meilleure lisibilité et collaboration. Exemple: `components/user/...`

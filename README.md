@@ -71,7 +71,11 @@ Vous avez deux façons de tester l'application pendant le développement:
 npm run start
 ```
 
-5. Le QR code apparaîtra dans votre terminal, Scannez-le avec Expo Go !
+5. Le QR code apparaîtra dans votre terminal:
+- **Sous android**, scannez-le avec Expo Go !
+- **Sous IOS**, scannez-le avec votre application "camera".
+
+`NB`: Si vous travaillez sur Windows, les QR codes **générés ne fonctionneront pas pour iOS**. Ils sont valables uniquement pour Android.
 
 ### Sur un émulateur
 
