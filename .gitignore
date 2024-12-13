@@ -3,11 +3,6 @@
 # dependencies
 node_modules/
 
-# tests
-components/__tests__/*
-!components/__tests__/*.js
-!components/__tests__/*.ts
-
 # env
 .env*
 
