@@ -37,7 +37,7 @@ Nous recommandons d'utiliser VSCode avec les extensions suivantes :
 - Vous pouvez trouver plus d'informations sur les demandes de fusion ici :
     - [GitHub](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request)
 
-`NB`: Vous ne pourrez pas push dans la branche `main` du code ne passant pas les tests !
+`NB`: Si vous poussez du code dans la branche `main` et qu'il ne passe pas les tests, le workflow GitHub sera dans un état de **failure**.
 
 ```bash
 npm run test
@@ -70,9 +70,17 @@ Si vous constatez un problème avec le projet, vérifiez si une [issue existe d�
 Parcourez les issues existantes pour en trouver une qui vous intéresse. En règle générale, **nous n'assignons pas les issues**. Si vous trouvez une issue à résoudre, vous êtes libre d'ouvrir une `Merge request` avec une solution.
 
 ### Notation des issues
-Afin de retrouver facilement les issues et d'identifier leur niveau de priorité, nous utilisons des labels pour les catégoriser. Voici quelques exemples de labels que vous pouvez rencontrer :
+Afin de retrouver facilement les issues et d'identifier leur niveau de priorité, nous utilisons des labels pour les catégoriser. Voici quelques exemples de labels que vous pouvez rencontrer **(non exhaustif)** :
 - **bug** : Pour les problèmes ou les erreurs à résoudre.
 - **enhancement** : Pour les améliorations ou les nouvelles fonctionnalités proposées.
+
+#### Priorités
+Nous attribuons également des labels de priorité pour mieux gérer l'ordre des tâches.
+
+- **Bloquant** : Pour les problèmes qui empêchent toute progression.
+- **Haut** : Pour les problèmes importants à résoudre rapidement.
+- **Moyen** : Pour les problèmes moins urgents, mais qui nécessitent une attention.
+- **Faible** : Pour les problèmes mineurs qui peuvent être traités plus tard.
 
 Utilisez les labels de manière cohérente pour faciliter la recherche et la gestion des issues.
 
@@ -96,7 +104,7 @@ Voici une représentation simplifiée de la structure du frontend de notre proje
 
 2. **Définition des Composants Réutilisables**
     - Repérez les **formats ou structures récurrents**, communs à plusieurs tabs/screens. 
-   - Créez des **composants dédiés** pour chaque structure récurrente dans le dossier `components`.
+   - Créez des **composants dédiés** pour chaque structure récurrente dans le dossier `components`. Vous êtes invités à écrire les tests de vos composants dans `components/__tests__`. Ce n'est pas obligatoire, mais fortement conseillé.
    - Assurez-vous que ces composants encapsulent uniquement la **logique visuelle** et qu'ils soient réutilisables.
 
 3. **Implémentation de la Logique Métier dans des Hooks**  
