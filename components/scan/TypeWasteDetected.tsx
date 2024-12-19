@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import Description from "@/components/scan/TitleAndSubtitle";
+import TitleAndSubtitle from "@/components/scan/TitleAndSubtitle";
 import DetectionMethodUsed from "@/components/scan/DetectionMethodUsed";
 
 type TypeWasteDetectedProps = {
@@ -8,6 +8,7 @@ type TypeWasteDetectedProps = {
   subtitle: string; // Titre secondaire
   activeMethod: string; // Méthode active (par ex. "IA")
   askUserFeedback?: boolean;
+  onThumbUp?: () => void; // Ajout de la fonction callback pour pouce du haut
 };
 
 const TypeWasteDetected: React.FC<TypeWasteDetectedProps> = ({
@@ -15,6 +16,7 @@ const TypeWasteDetected: React.FC<TypeWasteDetectedProps> = ({
   subtitle,
   activeMethod,
   askUserFeedback = false,
+  onThumbUp,
 }) => {
   const methods = ["Code barre", "IA", "Avancée"];
 
@@ -27,12 +29,12 @@ const TypeWasteDetected: React.FC<TypeWasteDetectedProps> = ({
 
       {/* Ligne avec description et boutons */}
       <View style={styles.rowContainer}>
-        <Description title={title} subtitle={subtitle} />
+        <TitleAndSubtitle title={title} subtitle={subtitle} />
 
         {/* Dans le cas où le feedback user est attendu: boutons d'approbation et de rejet */}
         {askUserFeedback && (
           <View style={styles.feedbackContainer}>
-            <TouchableOpacity style={styles.feedbackButton}>
+            <TouchableOpacity style={styles.feedbackButton} onPress={onThumbUp}>
               <Text style={styles.feedbackText}>👍</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.feedbackButton}>
