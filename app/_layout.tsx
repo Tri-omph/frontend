@@ -74,6 +74,10 @@ function RootLayoutNav() {
           name="screens/user-settings-menu"
           options={{ presentation: "modal" }}
         />
+        <Stack.Screen
+          name="screens/user-sign-in"
+          options={{ headerShown: false }}
+        />
       </Stack>
     </ThemeProvider>
   );
