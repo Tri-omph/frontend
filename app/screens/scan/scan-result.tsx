@@ -1,11 +1,22 @@
 import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, ImageSourcePropType } from "react-native";
 import resources from "@/constants/Resources";
 import TypeWasteDetected from "@/components/scan/TypeWasteDetected";
 import ImageWasteDetected from "@/components/scan/ImageWasteDetected";
 import SortingTrashCan from "@/components/scan/SortingTrashCan";
 
-const ScanResultScreen = () => {
+type ScanResultScreenProps = {
+  material: string; // Le matériau du produit (ex : "aluminium")
+  detectionMethod: string; // La méthode de détection (ex : "Code barre")
+  imageOfWaste: ImageSourcePropType;
+  //imageOfSort;
+};
+
+const ScanResultScreen: React.FC<ScanResultScreenProps> = ({
+  material,
+  detectionMethod,
+  imageOfWaste,
+}) => {
   const [showAdditionalComponents, setShowAdditionalComponents] =
     useState(false);
 
@@ -17,9 +28,9 @@ const ScanResultScreen = () => {
     <View style={styles.container}>
       <View style={styles.popup}>
         <TypeWasteDetected
-          title="C’est de l’aluminium"
+          title={`C’est du ${material}`}
           subtitle="Méthode de détection"
-          activeMethod="IA"
+          activeMethod={detectionMethod}
           askUserFeedback={true}
           onThumbUp={handleThumbUp}
         />
@@ -30,7 +41,7 @@ const ScanResultScreen = () => {
             <ImageWasteDetected
               title="Votre photo"
               subtitle="prise le {date téléphone}"
-              image={resources.canetteCoca}
+              image={imageOfWaste}
             />
 
             <View style={styles.separator} />

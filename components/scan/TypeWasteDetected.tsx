@@ -29,7 +29,9 @@ const TypeWasteDetected: React.FC<TypeWasteDetectedProps> = ({
 
       {/* Ligne avec description et boutons */}
       <View style={styles.rowContainer}>
-        <TitleAndSubtitle title={title} subtitle={subtitle} />
+        <View style={styles.titleAndSubtitleContainer}>
+          <TitleAndSubtitle title={title} subtitle={subtitle} />
+        </View>
 
         {/* Dans le cas où le feedback user est attendu: boutons d'approbation et de rejet */}
         {askUserFeedback && (
@@ -79,7 +81,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
+  titleAndSubtitleContainer: {
+    flex: 7, // 70% of the space
+  },
   feedbackContainer: {
+    flex: 3, // 30% of the space
     flexDirection: "row",
   },
   feedbackButton: {
