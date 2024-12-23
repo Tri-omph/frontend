@@ -1,12 +1,10 @@
 import { useAuthContext } from "@/hooks/useAuthContext";
 import UserManager from "@/services/managers/userManager";
-import { useNavigation } from "@react-navigation/native";
 
 export function useSession() {
   // Ce hook gère les connexion et déconnexion et surtout, il cache la complexité liée à la gestion du token !
   // Se pose tout de meme la question de où l'on catch l'erreur, ici ou dans le composants ...
   const { signIn, signOut } = useAuthContext();
-  const navigation = useNavigation();
 
   const createNewUser = async (body: {
     username: string;
@@ -23,8 +21,6 @@ export function useSession() {
       signIn(res.token);
       */
       signIn("tokenDuBack");
-      // @ts-expect-error Argument of type '[string, { screen: string; }]' is not assignable to parameter of type 'never'.
-      navigation.navigate("(tabs)", { screen: "index" });
       return res;
     } catch (error) {
       throw error;

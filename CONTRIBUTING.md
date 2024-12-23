@@ -10,6 +10,7 @@ Dans ce guide, vous trouverez un descriptif expliquant comment contribuer. Veuil
   - [Contribution au code source](#contribution-au-code-source)
       - [Structure du frontend](#structure-du-frontend)
       - [Étapes de Développement](#étapes-de-développement)
+      - [Routeur d'expo](#routeur-dexpo)
 
 # Prérequis
 
@@ -100,7 +101,7 @@ Voici une représentation simplifiée de la structure du frontend de notre proje
 
 1. **Analyse et Identification à partir de Figma**  
     - Examinez la maquette [Figma](https://www.figma.com/design/ubqXnJji9YN4SbcfynERxk/tri'omph-project?node-id=0-1&node-type=canvas&t=iB9U2BsWW1mxEehF-0).  
-    - Identifiez les **tabs** et **screens** principaux de l'application. (`NB` Les tabs ont été mis en place en même temps que la structure de base, mais vous devez ajouter vos propres screens dans le dossier `app/screens`).
+    - Identifiez les **tabs** et **screens** principaux de l'application. (`NB` Les tabs ont été mis en place en même temps que la structure de base, mais vous devez ajouter vos propres screens dans le dossier `app/(screens)/...`).
 
 2. **Définition des Composants Réutilisables**
     - Repérez les **formats ou structures récurrents**, communs à plusieurs tabs/screens. 
@@ -112,4 +113,76 @@ Voici une représentation simplifiée de la structure du frontend de notre proje
    - Les composants visuels appellent ces hooks pour accéder aux données ou exécuter des actions.  
    - Les hooks peuvent être utilisés dans plusieurs composants ou screens.
 
+4. **Communciation avec l'API**
+
+    Toute la logique de communication avec l'API est encapsulée dans le fichier **ApiClient.ts**. Ce fichier fournit les méthodes suivantes : **POST**, **GET**, **PATCH**, **DELETE**
+
+    1. **Définir les endpoints**  
+      Les endpoints doivent être définis dans le dossier `endpoints` et sont fournis par la [partie backend du projet](https://github.com/Tri-omph/backend/blob/main/ENDPOINTS.md): 
+
+      ```typescript
+      // userEndpoints.ts
+      export const ENDPOINTS = {
+        CREATE_USER: () => "/users",
+      }
+      ```
+
+    2. **Créer un manager**
+
+    Les managers regroupent les appels API associés à une `entité spécifique`.
+
+      ```typescript
+      // userManager.ts
+      import { ENDPOINTS } from "@/services/endpoints/userEndpoints";
+
+      class UserManager {
+        static CREATE_USER = (body: {
+          username: string;
+          password: string;
+          email: string;
+        }) => {
+          return ApiClient.post(ENDPOINTS.CREATE_USER(), "", body);
+        };
+      }
+      ```
+
 `NB`: Vous êtes invités à définir des sous-hiérarchies de dossiers pour une meilleure lisibilité et collaboration. Exemple: `components/user/...`
+
+## Routeur d'expo
+
+### Donner l'accès au routeur
+
+`ATTENTION`: Pour que le routeur d'Expo puisse accéder aux `tabs/screens` de l'application, tous les sous-dossiers de app doivent être entourés de parenthèses
+
+```bash
+src/
+├── app/                        
+│   ├── (tabs)            
+│   │   └── index.tsx
+│   ├── (screens)            
+│   │   ├── (user)/          
+│   │   │   ├── user-sign-in.tsx
+│   │   │   ├── user-sign-up.tsx
+```
+
+### Changer de page
+
+Pour éviter les appels en dur `(par exemple, href="/my-screen")`, vous devez définir vos routes vers vos screens dans le dossier routes et dans le fichier correspondant. 
+
+`NB` : Comme vous avez déjà donné l'accès au routeur, il les trouvera simplement avec leurs noms de fichiers !
+
+```typescript
+type UserRoutesKeys = "SIGN_UP";
+
+export const USER_ROUTES: Record<UserRoutesKeys, Routes> = {
+  SIGN_IN: createRoute("user-sign-up"), // Car le screen est user-sign-up.tsx
+}
+```
+
+Vous pouvez désormais faire
+
+```HTML
+<Link href={routes.USER.SIGN_UP.getHref()} >
+```
+
+Si vous devez attendre la résolution d'une méthode `async` avant de changer de page, utiliser `router.replace()` après votre `await`.
