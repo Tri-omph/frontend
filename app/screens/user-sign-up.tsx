@@ -55,6 +55,7 @@ export default function SignIn() {
             placeholder="Votre adresse email"
             keyboardType="email-address"
             autoCapitalize="none"
+            placeholderTextColor="#6D6D6D"
           />
         </View>
         <View style={styles.inputContainer}>
