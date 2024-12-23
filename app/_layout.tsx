@@ -60,20 +60,10 @@ export default function RootLayout() {
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
-  // C'est ici que l'on peut ajouter de nouveaux écran
-
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="screens/user-sign-up"
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="screens/user-settings-menu"
-          options={{ presentation: "modal" }}
-        />
       </Stack>
     </ThemeProvider>
   );

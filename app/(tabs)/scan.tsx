@@ -6,7 +6,7 @@ import {
   useCameraPermissions,
   BarcodeScanningResult,
 } from "expo-camera";
-import ScanResultScreen from "@/app/screens/scan/scan-result";
+import ScanResultScreen from "@/app/(screens)/(scan)/scan-result";
 
 // Fonction pour récupérer les informations du produit via Open Food Facts
 const getProductInfo = async (barcode: string) => {
