@@ -63,6 +63,7 @@ export default function SignIn() {
             style={styles.input}
             placeholder="Votre mot de passe"
             secureTextEntry={true}
+            placeholderTextColor="#6D6D6D"
           />
         </View>
 
