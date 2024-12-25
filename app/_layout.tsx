@@ -1,3 +1,4 @@
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import {
   DarkTheme,
@@ -50,10 +51,13 @@ export default function RootLayout() {
   }
 
   /* SESSION PROVIDER, on garantit le contexte d'authentification à l'ensemble de l'application */
+  /* GestureHandlerRootView, nous permet d'utiliser le bottom sheet (utile pour la partie scan) ! */
   return (
-    <SessionProvider>
-      <RootLayoutNav />
-    </SessionProvider>
+    <GestureHandlerRootView>
+      <SessionProvider>
+        <RootLayoutNav />
+      </SessionProvider>
+    </GestureHandlerRootView>
   );
 }
 

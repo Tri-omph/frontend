@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
+import { Alert, Button, StyleSheet, Text, View } from "react-native";
 import {
   CameraView,
   CameraType,
@@ -43,6 +43,36 @@ export default function App() {
   const [scanned, setScanned] = useState(false);
   const [productMaterial, setProductMaterial] = useState<string | null>(null); // Stocke le matériau du produit
 
+  // TODO: Prochain séance de code: Centraliser la plotiuqe de changement d'états
+  /**
+    const [scanState, setScanState] = useState({
+    scanned: false,
+    typeDetected: null as string | null,
+    imageOfWasteDetected: null as string | null,
+  });
+
+  const allowNewScan = () => {
+    setScanState({
+      scanned: false,
+      typeDetected: null,
+      imageOfWasteDetected: null,
+    });
+  };
+
+  const waitForScannedWasteType = () => {
+    setScanState({
+      scanned: true,
+      typeDetected: null,
+      imageOfWasteDetected: null,
+    });
+  };
+   */
+
+  const allowNewScan = () => {
+    setScanned(false);
+    setProductMaterial(null);
+  };
+
   const handleBarcodeScanned = async ({
     type,
     data,
@@ -53,7 +83,14 @@ export default function App() {
 
     // Récupérer les informations sur l'emballage du produit
     const packagingInfo = await getProductInfo(data);
-    setProductMaterial(packagingInfo);
+    if (packagingInfo) {
+      setProductMaterial(packagingInfo);
+    } else {
+      Alert.alert(
+        "L'application n'a pas su récupérer le matériau composant l'objet!",
+      );
+      setScanned(false);
+    }
   };
 
   if (!permission) {
@@ -104,11 +141,11 @@ export default function App() {
         </View>
       </CameraView>
 
-      {/* Afficher ScanResultScreen si le matériau du produit est défini */}
       {productMaterial && (
         <ScanResultScreen
           material={productMaterial}
-          detectionMethod="Code barre" // Méthode de détection
+          detectionMethod="Code barre"
+          onDismiss={allowNewScan}
         />
       )}
     </View>
