@@ -1,151 +1,83 @@
-import React, { useState } from "react";
-import { Alert, Button, StyleSheet, Text, View } from "react-native";
-import {
-  CameraView,
-  CameraType,
-  useCameraPermissions,
-  BarcodeScanningResult,
-} from "expo-camera";
+import React from "react";
+import { Button, StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { CameraView, useCameraPermissions } from "expo-camera";
 import ScanResultScreen from "@/app/(screens)/(scan)/scan-result";
-
-// Fonction pour récupérer les informations du produit via Open Food Facts
-const getProductInfo = async (barcode: string) => {
-  try {
-    // Effectuer une requête GET à Open Food Facts avec le code-barres
-    const response = await fetch(
-      `https://world.openfoodfacts.org/api/v0/product/${barcode}.json`,
-    );
-    const data = await response.json();
-    console.log(data);
-
-    if (data.status === 1) {
-      // Extraire les informations d'emballage
-      const product = data.product;
-
-      // Matériaux d'emballage
-      const packagingMaterials = product.packaging_materials_tags || [
-        "Informations sur les matériaux non disponibles",
-      ];
-
-      return packagingMaterials[0]; // On prend seulement le premier matériau pour l'exemple
-    } else {
-      return "Produit non trouvé dans la base de données.";
-    }
-  } catch (error) {
-    console.error("Erreur lors de la récupération des informations :", error);
-    return "Erreur lors de la récupération des informations.";
-  }
-};
+import { useScan } from "@/hooks/useScan";
+import { useCamera } from "@/hooks/useCamera";
+import { detectionMethod } from "@/types/detectionMethods";
+import { barcodeTypes } from "@/types/barcodeTypes";
+import CameraPreview from "@/components/camera/CameraPreview";
 
 export default function App() {
-  const [facing] = useState<CameraType>("back");
   const [permission, requestPermission] = useCameraPermissions();
-  const [scanned, setScanned] = useState(false);
-  const [productMaterial, setProductMaterial] = useState<string | null>(null); // Stocke le matériau du produit
+  // Camera (prendre une photo et l'analyser avec l'IA)
+  const {
+    previewVisible,
+    capturedImage,
+    cameraRef,
+    takePicture,
+    retakePicture,
+  } = useCamera();
+  // Scan (detecter le code-barre et chercher les informations correspondantes), priorité à la caméra, le scan doit s'adapter !
+  const {
+    scanned,
+    scannedImage,
+    scannedMaterialByBarcode,
+    handleBarcodeScanned,
+    resetScan,
+  } = useScan(cameraRef);
 
-  // TODO: Prochain séance de code: Centraliser la plotiuqe de changement d'états
-  /**
-    const [scanState, setScanState] = useState({
-    scanned: false,
-    typeDetected: null as string | null,
-    imageOfWasteDetected: null as string | null,
-  });
-
-  const allowNewScan = () => {
-    setScanState({
-      scanned: false,
-      typeDetected: null,
-      imageOfWasteDetected: null,
-    });
-  };
-
-  const waitForScannedWasteType = () => {
-    setScanState({
-      scanned: true,
-      typeDetected: null,
-      imageOfWasteDetected: null,
-    });
-  };
-   */
-
-  const allowNewScan = () => {
-    setScanned(false);
-    setProductMaterial(null);
-  };
-
-  const handleBarcodeScanned = async ({
-    type,
-    data,
-    cornerPoints,
-    bounds,
-  }: BarcodeScanningResult) => {
-    setScanned(true);
-
-    // Récupérer les informations sur l'emballage du produit
-    const packagingInfo = await getProductInfo(data);
-    if (packagingInfo) {
-      setProductMaterial(packagingInfo);
-    } else {
-      Alert.alert(
-        "L'application n'a pas su récupérer le matériau composant l'objet!",
-      );
-      setScanned(false);
-    }
-  };
+  // ********************************* Vue SCAN
 
   if (!permission) {
-    // Camera permissions are still loading.
+    // Chargement des permissions concernant l'accèes à la caméra
     return <View />;
   }
 
   if (!permission.granted) {
-    // Camera permissions are not granted yet.
+    // Demande explicite d'accès à la caméra
     return (
       <View style={styles.container}>
         <Text style={styles.message}>
-          We need your permission to show the camera
+          Vous devez accorder l'accès à la caméra à l'application
         </Text>
-        <Button onPress={requestPermission} title="Grant Permission" />
+        <Button
+          onPress={requestPermission}
+          title="Donner l'accèes à la caméra"
+        />
       </View>
     );
   }
 
-  return (
+  return previewVisible && capturedImage ? (
+    <CameraPreview photo={capturedImage} retakePicture={retakePicture} />
+  ) : (
     <View style={styles.container}>
       <CameraView
+        ref={cameraRef}
         style={StyleSheet.absoluteFillObject}
-        facing={facing}
-        onBarcodeScanned={scanned ? undefined : handleBarcodeScanned}
+        onBarcodeScanned={capturedImage ? undefined : handleBarcodeScanned}
         barcodeScannerSettings={{
-          barcodeTypes: [
-            "aztec",
-            "ean13",
-            "ean8",
-            "qr",
-            "pdf417",
-            "upc_e",
-            "datamatrix",
-            "code39",
-            "code93",
-            "itf14",
-            "codabar",
-            "code128",
-            "upc_a",
-          ],
+          barcodeTypes: barcodeTypes,
         }}
       >
-        <View style={styles.overlay}>
-          <View style={styles.scanArea}>
-            <Text style={styles.scanText}>Place QR Code Here</Text>
-          </View>
+        <View style={styles.scanArea} />
+
+        {/* Boutton pour déclencher la photo */}
+        <View style={styles.captureButtonContainer}>
+          <TouchableOpacity
+            onPress={takePicture}
+            style={styles.captureButton}
+          />
         </View>
       </CameraView>
 
-      {productMaterial && (
+      {scanned && scannedImage && scannedMaterialByBarcode && (
         <ScanResultScreen
-          material={productMaterial}
-          detectionMethod="Code barre"
-          onDismiss={allowNewScan}
+          material={scannedMaterialByBarcode}
+          imageOfWaste={scannedImage}
+          detectionMethod={detectionMethod.Barcode}
+          onDismiss={resetScan}
         />
       )}
     </View>
@@ -164,16 +96,6 @@ const styles = StyleSheet.create({
   camera: {
     flex: 1,
   },
-  overlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Slight dark overlay
-  },
   scanArea: {
     width: 250,
     height: 250,
@@ -181,11 +103,25 @@ const styles = StyleSheet.create({
     borderColor: "white",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "transparent",
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: [{ translateX: -125 }, { translateY: -125 }],
   },
   scanText: {
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  captureButtonContainer: {
+    position: "absolute",
+    bottom: 40,
+    alignSelf: "center",
+  },
+  captureButton: {
+    width: 70,
+    height: 70,
+    borderRadius: 50,
+    backgroundColor: "#fff",
   },
 });
