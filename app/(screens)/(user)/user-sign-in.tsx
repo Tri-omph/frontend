@@ -3,18 +3,21 @@ import {
   View,
   Image,
   Text,
-  Alert,
   TextInput,
   Pressable,
 } from "react-native";
 import { useSession } from "@/hooks/useSession";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-//import { useNavigation } from "@react-navigation/native";
+
+import { Link, router } from "expo-router";
+import { routes } from "@/routes/routes";
 
 export default function SignIn() {
   const { createNewUser } = useSession();
-  //const navigation = useNavigation();
 
+  // /!\ ATTENTION, effectivement, on est sur la page sign in, mais on réalise un sign up,  c'est parce que à l'époque
+  // où j'ai mis en place la base du projet, seul cet endpoints était pseudo-focntionnel. Dis moi, lorsque tu souhaites
+  // revenir dessus, je te montrerai une fois la coonexion avec le back et tu verras que c'est toujours la meme chose !
   const handleSignUp = async () => {
     const defaultUser = {
       username: "defaultUser",
@@ -24,16 +27,11 @@ export default function SignIn() {
 
     try {
       const res = await createNewUser(defaultUser);
-      Alert.alert("Succès", "Compte créé avec succès !", [{ text: "OK" }]);
       console.log("Nouvel utilisateur créé :", res);
+      router.replace("/(tabs)"); // Si on doit attendre la résolution d'une fonction, on se doit d'utiliser router.replace après un "await" => ici, retour à "home"
     } catch (error) {
-      Alert.alert("Erreur", "Impossible de créer le compte.", [{ text: "OK" }]);
       console.error("Erreur lors de la création du compte :", error);
     }
-  };
-
-  const handleNavigateSignUp = () => {
-    //navigation.navigate("UserSignIn");
   };
 
   return (
@@ -47,7 +45,6 @@ export default function SignIn() {
       <View style={styles.content}>
         <Text style={styles.title}>Bienvenue</Text>
         <Text style={styles.subtitle}>Content de vous revoir !</Text>
-
         <View style={styles.inputContainer}>
           <FontAwesome name="user" size={20} color="#888" style={styles.icon} />
           <TextInput
@@ -74,9 +71,9 @@ export default function SignIn() {
 
         <View style={styles.footer}>
           <Text style={styles.footerText}>Vous n'avez pas de compte?</Text>
-          <Text style={styles.linkText} onPress={handleNavigateSignUp}>
+          <Link href={routes.USER.SIGN_UP.getHref()} style={styles.linkText}>
             Créer un compte
-          </Text>
+          </Link>
         </View>
       </View>
     </View>

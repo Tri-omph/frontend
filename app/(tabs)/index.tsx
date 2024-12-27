@@ -6,8 +6,15 @@ import {
   Pressable,
   Text,
 } from "react-native";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import Colors from "@/constants/Colors";
+import { useColorScheme } from "@/components/useColorScheme";
+import { Link } from "expo-router";
+import { routes } from "@/routes/routes";
 
 export default function TabOneScreen() {
+  const colorScheme = useColorScheme();
+
   return (
     <ImageBackground
       source={require("@/assets/images/background_index.png")}
@@ -23,15 +30,33 @@ export default function TabOneScreen() {
           style={styles.logo}
         />
       </View>
+
+      <View style={styles.iconContainer}>
+        <Link href={routes.USER.SETTINGS.getHref()} asChild>
+          <Pressable>
+            {({ pressed }) => (
+              <FontAwesome
+                name="user-o"
+                size={25}
+                color={Colors[colorScheme ?? "light"].text}
+                style={{ opacity: pressed ? 0.5 : 1 }}
+              />
+            )}
+          </Pressable>
+        </Link>
+      </View>
+
       <View style={styles.monsterContainer}>
         <Image
           source={require("@/assets/images/monstre_v1.png")}
           style={styles.monster}
         />
       </View>
-      <Pressable style={styles.button}>
-        <Text style={styles.buttonText}>Scanne-moi !</Text>
-      </Pressable>
+      <Link href={routes.TABS.SCAN.getHref()} asChild>
+        <Pressable style={styles.button}>
+          <Text style={styles.buttonText}>Scanne-moi !</Text>
+        </Pressable>
+      </Link>
     </ImageBackground>
   );
 }
@@ -65,6 +90,11 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     resizeMode: "contain",
+  },
+  iconContainer: {
+    position: "absolute",
+    top: 20,
+    right: 20,
   },
   monsterContainer: {
     position: "absolute",
