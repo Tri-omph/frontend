@@ -28,7 +28,7 @@ export default function Snow({
   fullScreen?: boolean;
 }) {
   const [scene, setScene] = useState<ScaledSize | null>(null);
-  const [showEyesOpen, setShowEyesOpen] = useState(true); // Début avec les yeux ouverts
+  const [showEyesOpen, setShowEyesOpen] = useState(true);
   const colorScheme = useColorScheme();
   const dimensionsStyle = fullScreen
     ? fullDimensions

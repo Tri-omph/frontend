@@ -6,6 +6,28 @@ export function useSession() {
   // Se pose tout de meme la question de où l'on catch l'erreur, ici ou dans le composants ...
   const { signIn, signOut } = useAuthContext();
 
+  /*
+  const createNewUser = async (body: {
+    username: string;
+    password: string;
+    email: string;
+  }) => {
+    try {
+      const res = await UserManager.CREATE_USER(body);
+      console.log(res);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      if (!res.token) {
+        throw new Error("Le token est absent !");
+      }
+      signIn(res.token);
+
+      return res;
+    } catch (error) {
+      throw error;
+    }
+  };*/
+
   const createNewUser = async (body: {
     username: string;
     password: string;

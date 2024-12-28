@@ -6,11 +6,30 @@ import {
   TextInput,
   Pressable,
 } from "react-native";
+//import { useSession } from "@/hooks/useSession";
+//import { router } from "expo-router";
 
 export default function UserSignUpScreen() {
   const handleSignUp = () => {
     console.log("Inscription");
   };
+  /*
+  const { createNewUser } = useSession();
+  const handleSignUp = async () => {
+    const defaultUser = {
+      username: "defaultUser",
+      password: "defaultPassword",
+      email: "default@example.com",
+    };
+
+    try {
+      const res = await createNewUser(defaultUser);
+      console.log("Nouvel utilisateur créé :", res);
+      router.replace("/(tabs)"); // Si on doit attendre la résolution d'une fonction, on se doit d'utiliser router.replace après un "await" => ici, retour à "home"
+    } catch (error) {
+      console.error("Erreur lors de la création du compte :", error);
+    }
+  };*/
 
   return (
     <View style={styles.container}>
@@ -41,16 +60,6 @@ export default function UserSignUpScreen() {
             style={styles.input}
             placeholder="Votre email"
             keyboardType="email-address"
-            placeholderTextColor="#6D6D6D"
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Date de naissance</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Votre date de naissance"
-            keyboardType="numeric"
             placeholderTextColor="#6D6D6D"
           />
         </View>
