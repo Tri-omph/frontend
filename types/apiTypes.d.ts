@@ -5,9 +5,10 @@ export interface ApiHeaders {
   "App-Key"?: string; // TODO: à définir avec le back !
 }
 
+// Format de réponse du back en cas d'erreur !
 export interface ErrorResponse {
+  error: boolean;
   message: string;
-  details?: string;
 }
 
 export interface ApiResponse<T> {
