@@ -1,10 +1,16 @@
+import React from "react";
 import { StatusBar } from "expo-status-bar";
-import { Platform, StyleSheet, Button } from "react-native";
-
-import EditScreenInfo from "@/components/EditScreenInfo";
-import { Text, View } from "@/components/Themed";
+import {
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import { useSession } from "@/hooks/useSession";
 import { router } from "expo-router";
+import { Feather, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 
 export default function UserSettingsMenuScreen() {
   const { disconnectUser } = useSession();
@@ -12,32 +18,106 @@ export default function UserSettingsMenuScreen() {
   const handleSignOut = async () => {
     try {
       await disconnectUser();
-      router.back(); // Pas besoin d'aller sur SIGN_IN, dès que l'utilisateur n'a plus son token, l'application le renvoie vers la page de connexion !
+      router.back(); // Redirection automatique en cas de déconnexion.
     } catch (error) {
       console.error("Erreur lors de la déconnexion :", error);
       alert("Une erreur s'est produite lors de la déconnexion.");
     }
   };
 
-  // PARTIE FRONT PUR
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Paramètres utilisateur</Text>
-      <View
-        style={styles.separator}
-        lightColor="#eee"
-        darkColor="rgba(255,255,255,0.1)"
-      />
-      <EditScreenInfo path="app/screens/user-settings-menu.tsx" />
-      <View style={styles.button}>
-        <Button
-          title="Se déconnecter"
-          onPress={handleSignOut}
-          color="#FF3B30"
+      <View style={styles.header}>
+        <Image
+          source={require("@/assets/images/monstre_v2.png")}
+          style={styles.monster}
         />
+        <TouchableOpacity style={styles.logoutButton} onPress={handleSignOut}>
+          <Text style={styles.logoutText}>Déconnexion</Text>
+          <FontAwesome
+            name="sign-out"
+            size={18}
+            color="#FFF"
+            style={styles.logoutIcon}
+          />
+        </TouchableOpacity>
       </View>
 
-      {/* Use a light status bar on iOS to account for the black space above the modal */}
+      <View style={styles.options}>
+        <TouchableOpacity
+          style={styles.optionItem}
+          onPress={() => router.push("/(tabs)")}
+        >
+          <View style={styles.iconContainer}>
+            <FontAwesome name="user" size={24} color="#6AA84F" />
+          </View>
+          <View style={styles.textContainer}>
+            <Text style={styles.optionTitle}>Vos informations</Text>
+            <Text style={styles.optionSubtitle}>
+              Modifier vos informations personnelles
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.optionItem}
+          onPress={() => router.push("/(tabs)")}
+        >
+          <View style={styles.iconContainer}>
+            <MaterialIcons name="photo-library" size={24} color="#6AA84F" />
+          </View>
+          <View style={styles.textContainer}>
+            <Text style={styles.optionTitle}>Image de fond</Text>
+            <Text style={styles.optionSubtitle}>
+              Choisir l'image de fond qui vous convient !
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.optionItem}
+          onPress={() => router.push("/(tabs)")}
+        >
+          <View style={styles.iconContainer}>
+            <Feather name="target" size={24} color="#6AA84F" />
+          </View>
+          <View style={styles.textContainer}>
+            <Text style={styles.optionTitle}>Tutoriel</Text>
+            <Text style={styles.optionSubtitle}>
+              Un petit rappel du fonctionnement de l’application
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.optionItem}
+          onPress={() => router.push("/(tabs)")}
+        >
+          <View style={styles.iconContainer}>
+            <FontAwesome name="info-circle" size={24} color="#6AA84F" />
+          </View>
+          <View style={styles.textContainer}>
+            <Text style={styles.optionTitle}>À propos</Text>
+            <Text style={styles.optionSubtitle}>
+              Quelques informations sur la mission et l’équipe...
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+
+      <TouchableOpacity
+        style={styles.adminButton}
+        onPress={() => router.push("/(tabs)")}
+      >
+        <Text style={styles.adminButtonText}>Mode admin</Text>
+        <FontAwesome
+          name="cube"
+          size={18}
+          color="#FFF"
+          style={styles.adminIcon}
+        />
+      </TouchableOpacity>
+
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
     </View>
   );
@@ -46,19 +126,90 @@ export default function UserSettingsMenuScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: "#F5F5F5",
   },
-  title: {
-    fontSize: 20,
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 20,
+    backgroundColor: "#E8F4E1",
+  },
+  monster: {
+    width: 80,
+    height: 80,
+    resizeMode: "contain",
+  },
+  logoutButton: {
+    backgroundColor: "#000",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    left: "-4%",
+    alignItems: "center",
+  },
+  logoutText: {
+    color: "#FFF",
     fontWeight: "bold",
   },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: "80%",
+  options: {
+    marginTop: 20,
+    paddingHorizontal: 20,
   },
-  button: {
-    width: "80%",
+  optionItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FFF",
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  iconContainer: {
+    width: 40,
+    height: 40,
+    backgroundColor: "#E8F5E9",
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 15,
+  },
+  textContainer: {
+    flex: 1,
+  },
+  optionTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  optionSubtitle: {
+    fontSize: 14,
+    color: "#777",
+    marginTop: 5,
+  },
+  adminButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#6AA84F",
+    borderRadius: 10,
+    padding: 15,
+    marginHorizontal: 20,
+    marginTop: 20,
+  },
+  adminIcon: {
+    marginLeft: 10,
+  },
+  adminButtonText: {
+    fontSize: 16,
+    color: "#FFF",
+    fontWeight: "bold",
+  },
+  logoutIcon: {
+    marginLeft: 10,
   },
 });

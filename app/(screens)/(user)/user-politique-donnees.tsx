@@ -106,7 +106,7 @@ const Politique = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "#E8F4E1",
     padding: 20,
   },
   header: {
