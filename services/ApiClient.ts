@@ -35,17 +35,17 @@ class ApiClient {
         return {
           status: error.response?.status || 500,
           data: {
+            error: true,
             message:
               error.response?.data.message || "Une erreur s'est produite.",
-            details: error.response?.data.details || "",
           } as ErrorResponse,
         };
       } else {
         return {
           status: 500,
           data: {
-            message: "Erreur interne du serveur.",
-            details: "",
+            error: true,
+            message: "Erreur interne",
           } as ErrorResponse,
         };
       }

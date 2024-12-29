@@ -1,3 +1,4 @@
+import { useSession } from "@/hooks/useSession";
 import {
   StyleSheet,
   View,
@@ -6,30 +7,16 @@ import {
   TextInput,
   Pressable,
 } from "react-native";
-//import { useSession } from "@/hooks/useSession";
-//import { router } from "expo-router";
+import Toast from "react-native-toast-message";
 
 export default function UserSignUpScreen() {
-  const handleSignUp = () => {
-    console.log("Inscription");
-  };
-  /*
-  const { createNewUser } = useSession();
-  const handleSignUp = async () => {
-    const defaultUser = {
-      username: "defaultUser",
-      password: "defaultPassword",
-      email: "default@example.com",
-    };
-
-    try {
-      const res = await createNewUser(defaultUser);
-      console.log("Nouvel utilisateur créé :", res);
-      router.replace("/(tabs)"); // Si on doit attendre la résolution d'une fonction, on se doit d'utiliser router.replace après un "await" => ici, retour à "home"
-    } catch (error) {
-      console.error("Erreur lors de la création du compte :", error);
-    }
-  };*/
+  const {
+    setUsername,
+    setEmail,
+    setPassword,
+    setConfirmPassword,
+    handleSignUp,
+  } = useSession();
 
   return (
     <View style={styles.container}>
@@ -51,6 +38,7 @@ export default function UserSignUpScreen() {
             style={styles.input}
             placeholder="Votre nom d'utilisateur"
             placeholderTextColor="#6D6D6D"
+            onChangeText={setUsername}
           />
         </View>
 
@@ -61,6 +49,7 @@ export default function UserSignUpScreen() {
             placeholder="Votre email"
             keyboardType="email-address"
             placeholderTextColor="#6D6D6D"
+            onChangeText={setEmail}
           />
         </View>
 
@@ -71,6 +60,7 @@ export default function UserSignUpScreen() {
             placeholder="Mot de passe"
             secureTextEntry={true}
             placeholderTextColor="#6D6D6D"
+            onChangeText={setPassword}
           />
         </View>
 
@@ -81,6 +71,7 @@ export default function UserSignUpScreen() {
             placeholder="Confirmer le mot de passe"
             secureTextEntry={true}
             placeholderTextColor="#6D6D6D"
+            onChangeText={setConfirmPassword}
           />
         </View>
 
@@ -88,6 +79,7 @@ export default function UserSignUpScreen() {
           <Text style={styles.buttonText}>Je m'inscris</Text>
         </Pressable>
       </View>
+      <Toast />
     </View>
   );
 }

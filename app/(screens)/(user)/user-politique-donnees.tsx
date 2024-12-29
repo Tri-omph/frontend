@@ -1,3 +1,6 @@
+import { showNotification } from "@/constants/notification";
+import { routes } from "@/routes/routes";
+import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   View,
@@ -8,15 +11,30 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
+import Toast from "react-native-toast-message";
 
 const Politique = () => {
   const [isSavePhotosEnabled, setIsSavePhotosEnabled] = useState(false);
   const [isAIModeEnabled, setIsAIModeEnabled] = useState(false);
   const [isLocationEnabled, setIsLocationEnabled] = useState(false);
+  const [isTermsAccepted, setIsTermsAccepted] = useState(false);
 
   const toggleSavePhotos = () => setIsSavePhotosEnabled((prev) => !prev);
   const toggleAIMode = () => setIsAIModeEnabled((prev) => !prev);
   const toggleLocation = () => setIsLocationEnabled((prev) => !prev);
+
+  const handleGoToAccountCreation = () => {
+    if (!isTermsAccepted) {
+      showNotification(
+        "error",
+        "Accord manquant",
+        "Vous devez accepter les Conditions Générales et la Politique de Confidentialité.",
+      );
+      return;
+    }
+    // On utilise "push" pour que l'utilisateur puisse revenir en arrière si nécessaire !
+    router.push(routes.USER.SIGN_UP.getHref());
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -86,19 +104,31 @@ const Politique = () => {
         </View>
 
         <View style={styles.footer}>
-          <TouchableOpacity style={styles.checkboxContainer}>
-            <View style={styles.checkbox} />
+          <TouchableOpacity
+            style={styles.checkboxContainer}
+            onPress={() => setIsTermsAccepted((prev) => !prev)}
+          >
+            <View
+              style={[
+                styles.checkbox,
+                { backgroundColor: isTermsAccepted ? "#6AA84F" : "#FFF" },
+              ]}
+            />
             <Text style={styles.checkboxText}>
               J’ai lu et j’accepte les{" "}
               <Text style={styles.link}>conditions générales</Text> et la{" "}
               <Text style={styles.link}>politique de confidentialité</Text>.
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.createAccountButton}>
+          <TouchableOpacity
+            style={styles.createAccountButton}
+            onPress={handleGoToAccountCreation}
+          >
             <Text style={styles.createAccountText}>Créer votre compte</Text>
           </TouchableOpacity>
         </View>
       </View>
+      <Toast />
     </ScrollView>
   );
 };

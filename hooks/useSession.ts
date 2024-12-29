@@ -1,77 +1,97 @@
+import { useState } from "react";
+import { router } from "expo-router";
+
 import { useAuthContext } from "@/hooks/useAuthContext";
+import { showNotification } from "@/constants/notification";
 import UserManager from "@/services/managers/userManager";
 
-export function useSession() {
+const goToHomePage = () => {
+  router.replace("/(tabs)");
+};
+
+export const useSession = () => {
   // Ce hook gère les connexion et déconnexion et surtout, il cache la complexité liée à la gestion du token !
   // Se pose tout de meme la question de où l'on catch l'erreur, ici ou dans le composants ...
   const { signIn, signOut } = useAuthContext();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [email, setEmail] = useState("");
 
-  /*
-  const createNewUser = async (body: {
-    username: string;
-    password: string;
-    email: string;
-  }) => {
-    try {
-      const res = await UserManager.CREATE_USER(body);
-      console.log(res);
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      if (!res.token) {
-        throw new Error("Le token est absent !");
-      }
-      signIn(res.token);
+  // ************* Appels des méthodes de connexion/déconnexion et gestion des erreurs !
 
-      return res;
-    } catch (error) {
-      throw error;
+  const handleSignUp = async () => {
+    const userDataBody = {
+      username,
+      password,
+      email,
+    };
+
+    if (password !== confirmPassword) {
+      showNotification(
+        "error",
+        "Formulaire invalide",
+        "Les mots de passe ne correspondent pas.",
+      );
+      return;
     }
-  };*/
 
-  const createNewUser = async (body: {
-    username: string;
-    password: string;
-    email: string;
-  }) => {
     try {
-      const res = await UserManager.CREATE_USER(body);
-      // TODO: A l'avenir le résultat de la requete doit renvoyer un token, voir avec la team backend ! => Editer le code suivant:
-      /*
-      if (!res.token) {
-        throw new Error("Le token est absent !");
+      const res = await UserManager.CREATE_USER(userDataBody);
+
+      if ("token" in res.data) {
+        signIn(res.data.token);
+        goToHomePage();
+      } else {
+        // alors c'est un ErrorResponse et on récupère le message d'erreur !
+        throw new Error(res.data.message);
       }
-      signIn(res.token);
-      */
-      signIn("tokenDuBack");
-      return res;
     } catch (error) {
-      throw error;
+      showNotification("error", "Erreur lors de la connexion", error.message);
     }
   };
 
-  const authenticateUser = async (body: {
-    username: string;
-    password: string;
-  }) => {
+  const handleSignIn = async () => {
+    const userDataBody = {
+      username,
+      password,
+    };
+
     try {
-      const res = await UserManager.AUTH_USER(body);
-      // TODO: A l'avenir le résultat de la requete doit renvoyer un token, voir avec la team backend ! => Editer le code suivant:
-      /*
-      if (!res.token) {
-        throw new Error("Le token est absent !");
+      const res = await UserManager.AUTH_USER(userDataBody);
+
+      if ("token" in res.data) {
+        signIn(res.data.token);
+        goToHomePage();
+      } else {
+        // alors c'est un ErrorResponse et on récupère le message d'erreur !
+        throw new Error(res.data.message);
       }
-      signIn(res.token);
-      */
-      signIn("tokenDuBack");
-      return res;
     } catch (error) {
-      throw error; // Propagation de l'erreur pour gestion au niveau du composant
+      showNotification("error", "Erreur de connexion", error.message);
     }
   };
 
-  const disconnectUser = async () => {
-    signOut();
+  const handleSignOut = async () => {
+    try {
+      signOut();
+      router.back(); // Pas besoin d'aller sur SIGN_IN, dès que l'utilisateur n'a plus son token, l'application le renvoie vers la page de connexion !
+    } catch (error) {
+      showNotification("error", "Erreur lors de la déconnexion", error.message);
+    }
   };
 
-  return { createNewUser, authenticateUser, disconnectUser };
-}
+  return {
+    username,
+    password,
+    confirmPassword,
+    email,
+    setUsername,
+    setPassword,
+    setConfirmPassword,
+    setEmail,
+    handleSignUp,
+    handleSignIn,
+    handleSignOut,
+  };
+};
