@@ -4,7 +4,7 @@
 export const ENDPOINTS = {
   // ******************* POST
   CREATE_USER: () => `/users`,
-  AUTH_USER: () => `/auth`,
+  AUTH_USER: () => `/users/auth`,
 
   // ******************* GET
   GET_INFO_USER: () => `/users/me`,

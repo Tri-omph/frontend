@@ -6,33 +6,15 @@ import {
   TextInput,
   Pressable,
 } from "react-native";
-import { useSession } from "@/hooks/useSession";
+import { Link } from "expo-router";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
-import { Link, router } from "expo-router";
 import { routes } from "@/routes/routes";
+import Toast from "react-native-toast-message";
+import { useSession } from "@/hooks/useSession";
 
 export default function SignIn() {
-  const { createNewUser } = useSession();
-
-  // /!\ ATTENTION, effectivement, on est sur la page sign in, mais on réalise un sign up,  c'est parce que à l'époque
-  // où j'ai mis en place la base du projet, seul cet endpoints était pseudo-focntionnel. Dis moi, lorsque tu souhaites
-  // revenir dessus, je te montrerai une fois la coonexion avec le back et tu verras que c'est toujours la meme chose !
-  const handleSignUp = async () => {
-    const defaultUser = {
-      username: "defaultUser",
-      password: "defaultPassword",
-      email: "default@example.com",
-    };
-
-    try {
-      const res = await createNewUser(defaultUser);
-      console.log("Nouvel utilisateur créé :", res);
-      router.replace("/(tabs)"); // Si on doit attendre la résolution d'une fonction, on se doit d'utiliser router.replace après un "await" => ici, retour à "home"
-    } catch (error) {
-      console.error("Erreur lors de la création du compte :", error);
-    }
-  };
+  const { setUsername, setPassword, handleSignIn } = useSession();
 
   return (
     <View style={styles.container}>
@@ -49,9 +31,10 @@ export default function SignIn() {
           <FontAwesome name="user" size={20} color="#888" style={styles.icon} />
           <TextInput
             style={styles.input}
-            placeholder="Votre adresse email"
-            keyboardType="email-address"
+            placeholder="Votre nom d'utilisateur"
             autoCapitalize="none"
+            placeholderTextColor="#6D6D6D"
+            onChangeText={setUsername}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -60,10 +43,12 @@ export default function SignIn() {
             style={styles.input}
             placeholder="Votre mot de passe"
             secureTextEntry={true}
+            placeholderTextColor="#6D6D6D"
+            onChangeText={setPassword}
           />
         </View>
 
-        <Pressable style={styles.button} onPress={handleSignUp}>
+        <Pressable style={styles.button} onPress={handleSignIn}>
           <Text style={styles.buttonText}>Se connecter</Text>
         </Pressable>
 
@@ -74,6 +59,7 @@ export default function SignIn() {
           </Link>
         </View>
       </View>
+      <Toast />
     </View>
   );
 }

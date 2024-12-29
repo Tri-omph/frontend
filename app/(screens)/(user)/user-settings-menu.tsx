@@ -4,20 +4,10 @@ import { Platform, StyleSheet, Button } from "react-native";
 import EditScreenInfo from "@/components/EditScreenInfo";
 import { Text, View } from "@/components/Themed";
 import { useSession } from "@/hooks/useSession";
-import { router } from "expo-router";
+import Toast from "react-native-toast-message";
 
 export default function UserSettingsMenuScreen() {
-  const { disconnectUser } = useSession();
-
-  const handleSignOut = async () => {
-    try {
-      await disconnectUser();
-      router.back(); // Pas besoin d'aller sur SIGN_IN, dès que l'utilisateur n'a plus son token, l'application le renvoie vers la page de connexion !
-    } catch (error) {
-      console.error("Erreur lors de la déconnexion :", error);
-      alert("Une erreur s'est produite lors de la déconnexion.");
-    }
-  };
+  const { handleSignOut } = useSession();
 
   // PARTIE FRONT PUR
   return (
@@ -39,6 +29,7 @@ export default function UserSettingsMenuScreen() {
 
       {/* Use a light status bar on iOS to account for the black space above the modal */}
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
+      <Toast />
     </View>
   );
 }

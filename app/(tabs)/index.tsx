@@ -5,19 +5,65 @@ import {
   Image,
   Pressable,
   Text,
+  Dimensions,
+  ScaledSize,
 } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
 import { Link } from "expo-router";
 import { routes } from "@/routes/routes";
+import Snowflake from "../../components/snowflake";
+import { useState, useEffect } from "react";
 
-export default function TabOneScreen() {
+const fullDimensions = Dimensions.get("window");
+
+export default function Snow({
+  snowflakesCount = 100,
+  fallSpeed = "medium",
+  fullScreen = false,
+}: {
+  snowflakesCount?: number;
+  fallSpeed?: "slow" | "medium" | "fast";
+  fullScreen?: boolean;
+}) {
+  const [scene, setScene] = useState<ScaledSize | null>(null);
+  const [showEyesOpen, setShowEyesOpen] = useState(true); // Début avec les yeux ouverts
   const colorScheme = useColorScheme();
+  const dimensionsStyle = fullScreen
+    ? fullDimensions
+    : styles.stretchDimensions;
+
+  useEffect(() => {
+    const intervalEyesOpen = setInterval(() => {
+      setShowEyesOpen(true);
+    }, 1000);
+
+    const intervalEyesClosed = setInterval(() => {
+      setShowEyesOpen(false);
+    }, 2500);
+
+    return () => {
+      clearInterval(intervalEyesOpen);
+      clearInterval(intervalEyesClosed);
+    };
+  }, []);
+
+  const onLayout = ({
+    nativeEvent: {
+      layout: { width, height },
+    },
+  }: {
+    nativeEvent: { layout: { width: number; height: number } };
+  }) => {
+    if (!fullScreen) {
+      setScene({ width, height, scale: 1, fontScale: 1 });
+    }
+  };
 
   return (
     <ImageBackground
-      source={require("@/assets/images/background_index.png")}
+      source={require("@/assets/images/fond_neige.png")}
       style={styles.container}
     >
       <View style={styles.header}>
@@ -27,7 +73,7 @@ export default function TabOneScreen() {
         />
         <Image
           source={require("@/assets/images/logo_triomph.png")}
-          style={styles.logo}
+          style={[styles.logo, { left: -50 }]}
         />
       </View>
 
@@ -48,15 +94,29 @@ export default function TabOneScreen() {
 
       <View style={styles.monsterContainer}>
         <Image
-          source={require("@/assets/images/monstre_v1.png")}
+          source={
+            showEyesOpen
+              ? require("@/assets/images/monster_noel.png")
+              : require("@/assets/images/monster_noel_eyes_closed.png")
+          }
           style={styles.monster}
         />
       </View>
+
       <Link href={routes.TABS.SCAN.getHref()} asChild>
         <Pressable style={styles.button}>
           <Text style={styles.buttonText}>Scanne-moi !</Text>
         </Pressable>
       </Link>
+
+      <View style={[styles.container, dimensionsStyle]} onLayout={onLayout}>
+        {!!scene &&
+          new Array(snowflakesCount)
+            .fill(true)
+            .map((_, i) => (
+              <Snowflake key={i} scene={scene} fallSpeed={fallSpeed} />
+            ))}
+      </View>
     </ImageBackground>
   );
 }
@@ -66,6 +126,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+  },
+  stretchDimensions: {
+    width: "100%",
+    height: "100%",
   },
   title: {
     fontSize: 20,
@@ -98,8 +162,8 @@ const styles = StyleSheet.create({
   },
   monsterContainer: {
     position: "absolute",
-    top: "70%",
-    left: "50%",
+    top: "75%",
+    left: "52.5%",
     transform: [{ translateX: -150 }, { translateY: -200 }],
   },
   monster: {
@@ -109,7 +173,8 @@ const styles = StyleSheet.create({
   },
   button: {
     position: "absolute",
-    bottom: "10%",
+    bottom: "5%",
+    left: "28%",
     backgroundColor: "#1E90FF",
     paddingVertical: 15,
     paddingHorizontal: 30,

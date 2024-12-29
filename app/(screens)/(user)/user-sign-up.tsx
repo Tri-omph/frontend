@@ -1,3 +1,4 @@
+import { useSession } from "@/hooks/useSession";
 import {
   StyleSheet,
   View,
@@ -6,11 +7,16 @@ import {
   TextInput,
   Pressable,
 } from "react-native";
+import Toast from "react-native-toast-message";
 
 export default function UserSignUpScreen() {
-  const handleSignUp = () => {
-    console.log("Inscription");
-  };
+  const {
+    setUsername,
+    setEmail,
+    setPassword,
+    setConfirmPassword,
+    handleSignUp,
+  } = useSession();
 
   return (
     <View style={styles.container}>
@@ -32,6 +38,7 @@ export default function UserSignUpScreen() {
             style={styles.input}
             placeholder="Votre nom d'utilisateur"
             placeholderTextColor="#6D6D6D"
+            onChangeText={setUsername}
           />
         </View>
 
@@ -42,16 +49,7 @@ export default function UserSignUpScreen() {
             placeholder="Votre email"
             keyboardType="email-address"
             placeholderTextColor="#6D6D6D"
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Date de naissance</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Votre date de naissance"
-            keyboardType="numeric"
-            placeholderTextColor="#6D6D6D"
+            onChangeText={setEmail}
           />
         </View>
 
@@ -62,6 +60,7 @@ export default function UserSignUpScreen() {
             placeholder="Mot de passe"
             secureTextEntry={true}
             placeholderTextColor="#6D6D6D"
+            onChangeText={setPassword}
           />
         </View>
 
@@ -72,6 +71,7 @@ export default function UserSignUpScreen() {
             placeholder="Confirmer le mot de passe"
             secureTextEntry={true}
             placeholderTextColor="#6D6D6D"
+            onChangeText={setConfirmPassword}
           />
         </View>
 
@@ -79,6 +79,7 @@ export default function UserSignUpScreen() {
           <Text style={styles.buttonText}>Je m'inscris</Text>
         </Pressable>
       </View>
+      <Toast />
     </View>
   );
 }
