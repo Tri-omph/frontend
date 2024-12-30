@@ -12,8 +12,9 @@ import "react-native-reanimated";
 
 import { useColorScheme } from "@/components/useColorScheme";
 import { SessionProvider } from "@/context/AuthContext";
+import { BackgroundProvider } from "@/context/BackgroundContext";
 
-// Import des "scree"
+// Import des "screens"
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -28,7 +29,11 @@ export const unstable_settings = {
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [loaded, error] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     ...FontAwesome.font,
@@ -52,7 +57,9 @@ export default function RootLayout() {
   /* SESSION PROVIDER, on garantit le contexte d'authentification à l'ensemble de l'application */
   return (
     <SessionProvider>
-      <RootLayoutNav />
+      <BackgroundProvider>
+        <RootLayoutNav />
+      </BackgroundProvider>
     </SessionProvider>
   );
 }

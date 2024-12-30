@@ -61,7 +61,7 @@ export default function UserSettingsMenuScreen() {
 
         <TouchableOpacity
           style={styles.optionItem}
-          onPress={() => router.push("/(tabs)")}
+          onPress={() => router.push("/user-image-fond")}
         >
           <View style={styles.iconContainer}>
             <MaterialIcons name="photo-library" size={24} color="#6AA84F" />

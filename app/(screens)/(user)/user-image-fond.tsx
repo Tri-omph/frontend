@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,37 +7,64 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
+import { useBackgroundContext } from "@/context/BackgroundContext";
+import { useRouter } from "expo-router";
 
 export default function UserImageFondScreen() {
+  const { setSelectedBackground } = useBackgroundContext();
+  const [selectedFond, setSelectedFond] = useState<unknown>(null);
+  const router = useRouter();
+
+  const fonds = [
+    {
+      id: "Jour de neige",
+      image: require("@/assets/images/fond_neige.png"),
+    },
+    {
+      id: "Nuit sous la neige",
+      image: require("@/assets/images/fond_nuit.png"),
+    },
+    {
+      id: "Coucher de soleil enneigé",
+      image: require("@/assets/images/fond_coucher.png"),
+    },
+  ];
+
+  const handleValidate = () => {
+    if (selectedFond) {
+      setSelectedBackground(selectedFond);
+      router.replace("/(tabs)");
+    }
+  };
+
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
+        <Image
+          source={require("@/assets/images/monstre_v1.png")}
+          style={styles.monster}
+        />
+      </View>
+
       <ScrollView contentContainerStyle={styles.body}>
-        <View style={styles.fondItem}>
-          <Image
-            source={require("@/assets/images/fond_neige.png")}
-            style={styles.fondImage}
-          />
-          <Text style={styles.fondText}>Fond 1</Text>
-        </View>
+        {fonds.map((fond) => (
+          <TouchableOpacity
+            key={fond.id}
+            style={[
+              styles.fondItem,
+              selectedFond === fond.image && styles.selectedFond,
+            ]}
+            onPress={() => setSelectedFond(fond.image)}
+          >
+            <Image source={fond.image} style={styles.fondImage} />
+            <Text style={styles.fondText}>{fond.id}</Text>
+          </TouchableOpacity>
+        ))}
 
-        <View style={styles.fondItem}>
-          <Image
-            source={require("@/assets/images/fond_neige.png")}
-            style={styles.fondImage}
-          />
-          <Text style={styles.fondText}>Fond 2</Text>
-        </View>
-
-        <View style={styles.fondItem}>
-          <Image
-            source={require("@/assets/images/fond_neige.png")}
-            style={styles.fondImage}
-          />
-          <Text style={styles.fondText}>Fond 3</Text>
-        </View>
-
-        {/* Bouton valider */}
-        <TouchableOpacity style={styles.validateButton}>
+        <TouchableOpacity
+          style={styles.validateButton}
+          onPress={handleValidate}
+        >
           <Text style={styles.validateButtonText}>Valider votre choix</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -72,6 +99,10 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     width: "90%",
     padding: 15,
+  },
+  selectedFond: {
+    borderWidth: 2,
+    borderColor: "green",
   },
   fondImage: {
     width: "100%",

@@ -15,6 +15,7 @@ import { Link } from "expo-router";
 import { routes } from "@/routes/routes";
 import Snowflake from "../../components/snowflake";
 import { useState, useEffect } from "react";
+import { useBackgroundContext } from "@/context/BackgroundContext";
 
 const fullDimensions = Dimensions.get("window");
 
@@ -27,6 +28,7 @@ export default function Snow({
   fallSpeed?: "slow" | "medium" | "fast";
   fullScreen?: boolean;
 }) {
+  const { selectedBackground } = useBackgroundContext();
   const [scene, setScene] = useState<ScaledSize | null>(null);
   const [showEyesOpen, setShowEyesOpen] = useState(true);
   const colorScheme = useColorScheme();
@@ -62,10 +64,7 @@ export default function Snow({
   };
 
   return (
-    <ImageBackground
-      source={require("@/assets/images/fond_neige.png")}
-      style={styles.container}
-    >
+    <ImageBackground source={selectedBackground} style={styles.container}>
       <View style={styles.header}>
         <Image
           source={require("@/assets/images/logo_viveris.png")}
