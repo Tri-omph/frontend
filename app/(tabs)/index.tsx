@@ -9,8 +9,6 @@ import {
   ScaledSize,
 } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import Colors from "@/constants/Colors";
-import { useColorScheme } from "@/components/useColorScheme";
 import { Link } from "expo-router";
 import { routes } from "@/routes/routes";
 import Snowflake from "../../components/snowflake";
@@ -31,7 +29,6 @@ export default function Snow({
   const { selectedBackground } = useBackgroundContext();
   const [scene, setScene] = useState<ScaledSize | null>(null);
   const [showEyesOpen, setShowEyesOpen] = useState(true);
-  const colorScheme = useColorScheme();
   const dimensionsStyle = fullScreen
     ? fullDimensions
     : styles.stretchDimensions;
@@ -83,7 +80,7 @@ export default function Snow({
               <FontAwesome
                 name="user-o"
                 size={25}
-                color={Colors[colorScheme ?? "light"].text}
+                color="#FFF"
                 style={{ opacity: pressed ? 0.5 : 1 }}
               />
             )}

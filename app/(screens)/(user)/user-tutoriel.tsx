@@ -1,70 +1,88 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+} from "react-native";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import { router } from "expo-router";
 
 const UserTutorial = () => {
   const handleFinishTutorial = () => {
-    router.replace("/user-sign-in");
+    router.replace("/(tabs)");
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>Bienvenue dans le tutoriel</Text>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.header}>
+          <Image
+            source={require("@/assets/images/monstre_v1.png")}
+            style={styles.monster}
+          />
+        </View>
+        <Text style={styles.headerText}>Bienvenue dans le tutoriel</Text>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>
-          Bonjour et bienvenue sur l'application Triomph !
-        </Text>
-        <Text style={styles.cardText}>
-          Triomph est votre assistant pour un recyclage simplifié. Ensemble,
-          sensibilisons le marché français au recyclage !
-        </Text>
-        <FontAwesome5
-          name="crown"
-          size={24}
-          color="#6AA84F"
-          style={styles.icon}
-        />
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>
+            Bienvenue sur l'application Triomph !
+          </Text>
+          <Text style={styles.cardText}>
+            Triomph est votre assistant pour un recyclage simplifié. Ensemble,
+            sensibilisons les français aux pratiques du recyclage !
+          </Text>
+          <FontAwesome5
+            name="crown"
+            size={20}
+            color="#6AA84F"
+            style={styles.icon}
+          />
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Nourrissez votre monstre</Text>
+          <Text style={styles.cardText}>
+            Plus vous recyclez, plus votre monstre grandit ! Scannez et triez
+            vos déchets dans les poubelles adéquates pour le nourrir.
+          </Text>
+          <Text style={styles.cardText}>
+            Faites-en le champion numéro un du tri !
+          </Text>
+          <FontAwesome5
+            name="carrot"
+            size={24}
+            color="#6AA84F"
+            style={styles.icon}
+          />
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>
+            Trois méthodes pour trier les déchets
+          </Text>
+          <Text style={styles.cardText}>
+            1. Scannez le code-barre pour identifier rapidement l’emballage du
+            déchet choisi.{"\n"}2. Utilisez la reconnaissance visuelle pour
+            détecter n’importe quel type de déchet.{"\n"}3. Utilisez directement
+            la recherche avancée pour vous renseigner sur un déchet.
+          </Text>
+          <MaterialIcons
+            name="recycling"
+            size={28}
+            color="#6AA84F"
+            style={styles.icon}
+          />
+        </View>
+      </ScrollView>
+
+      <View style={styles.footer}>
+        <TouchableOpacity style={styles.button} onPress={handleFinishTutorial}>
+          <Text style={styles.buttonText}>J'ai compris !</Text>
+        </TouchableOpacity>
       </View>
-
-      {/* Section 2 */}
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Principe : Nourrissez le monstre !</Text>
-        <Text style={styles.cardText}>
-          Plus vous recyclez, plus votre monstre grandit ! Scannez et triez vos
-          déchets dans les poubelles adéquates pour le nourrir.
-        </Text>
-        <Text style={styles.cardText}>Faites-en un champion du tri ! </Text>
-        <FontAwesome5
-          name="carrot"
-          size={24}
-          color="#6AA84F"
-          style={styles.icon}
-        />
-      </View>
-
-      {/* Section 3 */}
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>
-          Deux méthodes pour trier les déchets
-        </Text>
-        <Text style={styles.cardText}>
-          - Scannez le code-barre pour identifier rapidement l’emballage du
-          déchet choisi.{"\n"}- Utilisez la reconnaissance visuelle pour
-          détecter n’importe quel type de déchet.
-        </Text>
-        <MaterialIcons
-          name="camera-alt"
-          size={24}
-          color="#6AA84F"
-          style={styles.icon}
-        />
-      </View>
-
-      <TouchableOpacity style={styles.button} onPress={handleFinishTutorial}>
-        <Text style={styles.buttonText}>J'ai compris !</Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -73,14 +91,29 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#E8F4E1",
-    alignItems: "center",
+  },
+  scrollContent: {
     padding: 20,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 5,
+    backgroundColor: "#E8F4E1",
+    width: "100%",
+  },
+  monster: {
+    width: 80,
+    height: 80,
+    resizeMode: "contain",
   },
   headerText: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 20,
     color: "#333",
+    textAlign: "center",
   },
   card: {
     backgroundColor: "#FFFFFF",
@@ -109,12 +142,18 @@ const styles = StyleSheet.create({
     marginTop: 10,
     alignSelf: "flex-end",
   },
+  footer: {
+    backgroundColor: "#E8F4E1",
+    padding: 10,
+    borderTopWidth: 0,
+    borderTopColor: "#DDD",
+    alignItems: "center",
+  },
   button: {
     backgroundColor: "#6AA84F",
     borderRadius: 5,
     paddingVertical: 10,
     paddingHorizontal: 40,
-    marginTop: 20,
   },
   buttonText: {
     fontSize: 16,

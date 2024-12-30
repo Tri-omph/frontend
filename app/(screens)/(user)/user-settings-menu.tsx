@@ -24,6 +24,9 @@ export default function UserSettingsMenuScreen() {
       alert("Une erreur s'est produite lors de la déconnexion.");
     }
   };
+  const handleAdminSignIn = async () => {
+    router.replace("/user-admin-menu");
+  };
 
   return (
     <View style={styles.container}>
@@ -46,7 +49,7 @@ export default function UserSettingsMenuScreen() {
       <View style={styles.options}>
         <TouchableOpacity
           style={styles.optionItem}
-          onPress={() => router.push("/(tabs)")}
+          onPress={() => router.push("/user-modification-donnees")}
         >
           <View style={styles.iconContainer}>
             <FontAwesome name="user" size={24} color="#6AA84F" />
@@ -91,13 +94,13 @@ export default function UserSettingsMenuScreen() {
 
         <TouchableOpacity
           style={styles.optionItem}
-          onPress={() => router.push("/(tabs)")}
+          onPress={() => router.push("/user-about-us")}
         >
           <View style={styles.iconContainer}>
             <FontAwesome name="info-circle" size={24} color="#6AA84F" />
           </View>
           <View style={styles.textContainer}>
-            <Text style={styles.optionTitle}>À propos</Text>
+            <Text style={styles.optionTitle}>Qui sommes nous ?</Text>
             <Text style={styles.optionSubtitle}>
               Quelques informations sur la mission et l’équipe...
             </Text>
@@ -105,10 +108,7 @@ export default function UserSettingsMenuScreen() {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity
-        style={styles.adminButton}
-        onPress={() => router.push("/(tabs)")}
-      >
+      <TouchableOpacity style={styles.adminButton} onPress={handleAdminSignIn}>
         <Text style={styles.adminButtonText}>Mode admin</Text>
         <FontAwesome
           name="cube"

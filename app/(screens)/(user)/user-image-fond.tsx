@@ -60,14 +60,15 @@ export default function UserImageFondScreen() {
             <Text style={styles.fondText}>{fond.id}</Text>
           </TouchableOpacity>
         ))}
-
+      </ScrollView>
+      <View style={styles.footer}>
         <TouchableOpacity
           style={styles.validateButton}
           onPress={handleValidate}
         >
           <Text style={styles.validateButtonText}>Valider votre choix</Text>
         </TouchableOpacity>
-      </ScrollView>
+      </View>
     </View>
   );
 }
@@ -75,12 +76,12 @@ export default function UserImageFondScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#1C1C1E",
+    backgroundColor: "#F0F8F4",
   },
   header: {
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#333",
+    backgroundColor: "#E8F4E1",
   },
   monster: {
     width: 80,
@@ -94,7 +95,7 @@ const styles = StyleSheet.create({
   },
   fondItem: {
     alignItems: "center",
-    backgroundColor: "#000",
+    backgroundColor: "#d6ecd2",
     borderRadius: 10,
     marginVertical: 10,
     width: "90%",
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   fondText: {
-    color: "#FFF",
+    color: "#3d4653",
     fontSize: 16,
     fontWeight: "bold",
     marginTop: 10,
@@ -122,11 +123,19 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 40,
     borderRadius: 10,
-    marginTop: 30,
+    marginTop: 10,
+    marginBottom: 10,
   },
   validateButtonText: {
     color: "#FFF",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  footer: {
+    backgroundColor: "#FFF",
+    padding: 5,
+    borderTopWidth: 0,
+    borderTopColor: "#DDD",
+    alignItems: "center",
   },
 });
