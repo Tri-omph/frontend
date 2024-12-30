@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   View,
@@ -7,6 +8,7 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  Pressable,
 } from "react-native";
 
 const Politique = () => {
@@ -17,6 +19,11 @@ const Politique = () => {
   const toggleSavePhotos = () => setIsSavePhotosEnabled((prev) => !prev);
   const toggleAIMode = () => setIsAIModeEnabled((prev) => !prev);
   const toggleLocation = () => setIsLocationEnabled((prev) => !prev);
+
+  const handleSignUp = () => {
+    console.log("Inscription");
+    router.replace("/user-tutoriel");
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -50,7 +57,6 @@ const Politique = () => {
           </Text>
         </View>
 
-        {/* AI Training Switch */}
         <View style={styles.option}>
           <Switch
             value={isAIModeEnabled}
@@ -94,9 +100,9 @@ const Politique = () => {
               <Text style={styles.link}>politique de confidentialité</Text>.
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.createAccountButton}>
+          <Pressable style={styles.createAccountButton} onPress={handleSignUp}>
             <Text style={styles.createAccountText}>Créer votre compte</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
     </ScrollView>
@@ -127,6 +133,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    alignItems: "center",
   },
   title: {
     fontSize: 20,

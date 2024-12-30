@@ -71,7 +71,7 @@ export default function SignIn() {
 
         <View style={styles.footer}>
           <Text style={styles.footerText}>Vous n'avez pas de compte?</Text>
-          <Link href={routes.USER.POLITIQUE.getHref()} style={styles.linkText}>
+          <Link href={routes.USER.SIGN_UP.getHref()} style={styles.linkText}>
             Créer un compte
           </Link>
         </View>

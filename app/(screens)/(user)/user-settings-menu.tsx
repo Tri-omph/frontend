@@ -76,7 +76,7 @@ export default function UserSettingsMenuScreen() {
 
         <TouchableOpacity
           style={styles.optionItem}
-          onPress={() => router.push("/(tabs)")}
+          onPress={() => router.push("/user-tutoriel")}
         >
           <View style={styles.iconContainer}>
             <Feather name="target" size={24} color="#6AA84F" />

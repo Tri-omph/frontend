@@ -7,11 +7,12 @@ import {
   Pressable,
 } from "react-native";
 //import { useSession } from "@/hooks/useSession";
-//import { router } from "expo-router";
+import { router } from "expo-router";
 
 export default function UserSignUpScreen() {
   const handleSignUp = () => {
     console.log("Inscription");
+    router.replace("/user-politique-donnees");
   };
   /*
   const { createNewUser } = useSession();
@@ -106,7 +107,7 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#E8F4E1",
     width: "100%",
-    height: "20%",
+    height: "15%",
   },
   monster: {
     width: 100,
@@ -115,9 +116,9 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    width: "80%",
+    width: "85%",
     justifyContent: "center",
-    padding: 20,
+    padding: 15,
   },
   title: {
     fontSize: 28,
@@ -126,10 +127,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   subtitle: {
-    fontSize: 18,
+    fontSize: 12,
     color: "#000",
     textAlign: "center",
-    marginVertical: 10,
+    marginVertical: 5,
   },
   inputContainer: {
     marginVertical: 10,
