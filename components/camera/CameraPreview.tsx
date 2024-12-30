@@ -7,11 +7,12 @@ import {
   StyleSheet,
 } from "react-native";
 import { CameraCapturedPicture } from "expo-camera";
+import Toast from "react-native-toast-message";
 
 type CameraPreviewProps = {
   photo: CameraCapturedPicture;
-  retakePicture: () => void;
-  keepPicture: () => void;
+  retakePicture: (() => void) | undefined;
+  keepPicture: (() => void) | undefined;
 };
 
 const CameraPreview: React.FC<CameraPreviewProps> = ({
@@ -34,6 +35,7 @@ const CameraPreview: React.FC<CameraPreviewProps> = ({
           </TouchableOpacity>
         </View>
       </ImageBackground>
+      <Toast />
     </View>
   );
 };
