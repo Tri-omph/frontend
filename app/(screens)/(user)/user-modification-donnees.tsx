@@ -1,4 +1,3 @@
-import { useSession } from "@/hooks/useSession";
 import {
   StyleSheet,
   View,
@@ -7,16 +6,13 @@ import {
   TextInput,
   Pressable,
 } from "react-native";
-import Toast from "react-native-toast-message";
+import { router } from "expo-router";
 
 export default function UserSignUpScreen() {
-  const {
-    setUsername,
-    setEmail,
-    setPassword,
-    setConfirmPassword,
-    handleSignUp,
-  } = useSession();
+  const handleSignUp = () => {
+    console.log("Modifications");
+    router.replace("/(tabs)");
+  };
 
   return (
     <View style={styles.container}>
@@ -27,9 +23,9 @@ export default function UserSignUpScreen() {
         />
       </View>
       <View style={styles.content}>
-        <Text style={styles.title}>Inscription</Text>
+        <Text style={styles.title}>Votre compte actuel</Text>
         <Text style={styles.subtitle}>
-          Créer votre compte pour utiliser l'application
+          Modifier mes informations personnelles
         </Text>
 
         <View style={styles.inputContainer}>
@@ -38,7 +34,6 @@ export default function UserSignUpScreen() {
             style={styles.input}
             placeholder="Votre nom d'utilisateur"
             placeholderTextColor="#6D6D6D"
-            onChangeText={setUsername}
           />
         </View>
 
@@ -49,7 +44,6 @@ export default function UserSignUpScreen() {
             placeholder="Votre email"
             keyboardType="email-address"
             placeholderTextColor="#6D6D6D"
-            onChangeText={setEmail}
           />
         </View>
 
@@ -60,7 +54,6 @@ export default function UserSignUpScreen() {
             placeholder="Mot de passe"
             secureTextEntry={true}
             placeholderTextColor="#6D6D6D"
-            onChangeText={setPassword}
           />
         </View>
 
@@ -71,15 +64,13 @@ export default function UserSignUpScreen() {
             placeholder="Confirmer le mot de passe"
             secureTextEntry={true}
             placeholderTextColor="#6D6D6D"
-            onChangeText={setConfirmPassword}
           />
         </View>
 
         <Pressable style={styles.button} onPress={handleSignUp}>
-          <Text style={styles.buttonText}>Je m'inscris</Text>
+          <Text style={styles.buttonText}>Modifier</Text>
         </Pressable>
       </View>
-      <Toast />
     </View>
   );
 }

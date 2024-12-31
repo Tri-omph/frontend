@@ -9,12 +9,11 @@ import {
   ScaledSize,
 } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import Colors from "@/constants/Colors";
-import { useColorScheme } from "@/components/useColorScheme";
 import { Link } from "expo-router";
 import { routes } from "@/routes/routes";
 import Snowflake from "../../components/snowflake";
 import { useState, useEffect } from "react";
+import { useBackgroundContext } from "@/context/BackgroundContext";
 
 const fullDimensions = Dimensions.get("window");
 
@@ -27,9 +26,9 @@ export default function Snow({
   fallSpeed?: "slow" | "medium" | "fast";
   fullScreen?: boolean;
 }) {
+  const { selectedBackground } = useBackgroundContext();
   const [scene, setScene] = useState<ScaledSize | null>(null);
   const [showEyesOpen, setShowEyesOpen] = useState(true);
-  const colorScheme = useColorScheme();
   const dimensionsStyle = fullScreen
     ? fullDimensions
     : styles.stretchDimensions;
@@ -62,10 +61,7 @@ export default function Snow({
   };
 
   return (
-    <ImageBackground
-      source={require("@/assets/images/fond_neige.png")}
-      style={styles.container}
-    >
+    <ImageBackground source={selectedBackground} style={styles.container}>
       <View style={styles.header}>
         <Image
           source={require("@/assets/images/logo_viveris.png")}
@@ -84,7 +80,7 @@ export default function Snow({
               <FontAwesome
                 name="user-o"
                 size={25}
-                color={Colors[colorScheme ?? "light"].text}
+                color="#FFF"
                 style={{ opacity: pressed ? 0.5 : 1 }}
               />
             )}

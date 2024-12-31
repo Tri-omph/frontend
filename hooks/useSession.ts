@@ -9,6 +9,10 @@ const goToHomePage = () => {
   router.replace("/(tabs)");
 };
 
+const goToTutoriel = () => {
+  router.replace("/user-tutoriel");
+};
+
 export const useSession = () => {
   // Ce hook gère les connexion et déconnexion et surtout, il cache la complexité liée à la gestion du token !
   // Se pose tout de meme la question de où l'on catch l'erreur, ici ou dans le composants ...
@@ -41,7 +45,7 @@ export const useSession = () => {
 
       if ("token" in res.data) {
         signIn(res.data.token);
-        goToHomePage();
+        goToTutoriel();
       } else {
         // alors c'est un ErrorResponse et on récupère le message d'erreur !
         throw new Error(res.data.message);

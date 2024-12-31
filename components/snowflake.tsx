@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const START_Y_POSITION = -340;
+const START_Y_POSITION = -350;
 const FALL_SPEEDS = ["slow", "medium", "fast"] as const;
 function getFallSpeed(speed: (typeof FALL_SPEEDS)[number]) {
   if (FALL_SPEEDS.includes(speed)) {

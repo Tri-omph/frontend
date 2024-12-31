@@ -9,22 +9,27 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useSession } from "@/hooks/useSession";
-import Toast from "react-native-toast-message";
 import { router } from "expo-router";
 import { Feather, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 
 export default function UserSettingsMenuScreen() {
-  const { handleSignOut } = useSession();
+  const { disconnectUser } = useSession();
 
-  const handleAdminSignIn = async () => {
-    router.replace("/user-admin-menu");
+  const handleSignOut = async () => {
+    try {
+      await disconnectUser();
+      router.back(); // Redirection automatique en cas de déconnexion.
+    } catch (error) {
+      console.error("Erreur lors de la déconnexion :", error);
+      alert("Une erreur s'est produite lors de la déconnexion.");
+    }
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Image
-          source={require("@/assets/images/monstre_v2.png")}
+          source={require("@/assets/images/monstre_v3.png")}
           style={styles.monster}
         />
         <TouchableOpacity style={styles.logoutButton} onPress={handleSignOut}>
@@ -36,6 +41,12 @@ export default function UserSettingsMenuScreen() {
             style={styles.logoutIcon}
           />
         </TouchableOpacity>
+      </View>
+
+      <View style={styles.adminModeBanner}>
+        <Text style={styles.adminModeText}>
+          Vous êtes en mode administrateur
+        </Text>
       </View>
 
       <View style={styles.options}>
@@ -98,12 +109,29 @@ export default function UserSettingsMenuScreen() {
             </Text>
           </View>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.optionItem}
+          onPress={() => router.push("/user-admin-role")}
+        >
+          <View style={styles.iconContainer}>
+            <Feather name="archive" size={24} color="#6AA84F" />
+          </View>
+          <View style={styles.textContainer}>
+            <Text style={styles.optionTitle}>Mode administrateur</Text>
+            <Text style={styles.optionSubtitle}>
+              Rechercher un joueur et le sanctionner si besoin.
+            </Text>
+          </View>
+        </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.adminButton} onPress={handleAdminSignIn}>
-        <Text style={styles.adminButtonText}>Mode admin</Text>
+      <TouchableOpacity
+        style={styles.adminButton}
+        onPress={() => router.push("/(tabs)")}
+      >
+        <Text style={styles.adminButtonText}>Quitter le mode admin</Text>
         <FontAwesome
-          name="cube"
+          name="codepen"
           size={18}
           color="#FFF"
           style={styles.adminIcon}
@@ -111,7 +139,6 @@ export default function UserSettingsMenuScreen() {
       </TouchableOpacity>
 
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
-      <Toast />
     </View>
   );
 }
@@ -188,7 +215,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#6AA84F",
+    backgroundColor: "#000",
     borderRadius: 10,
     padding: 15,
     marginHorizontal: 20,
@@ -204,5 +231,18 @@ const styles = StyleSheet.create({
   },
   logoutIcon: {
     marginLeft: 10,
+  },
+  adminModeBanner: {
+    backgroundColor: "#FFE4E1", // Fond rosé
+    padding: 10,
+    marginHorizontal: 20,
+    borderRadius: 10,
+    alignItems: "center",
+    marginTop: 15,
+  },
+  adminModeText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#D9534F", // Texte rouge pâle
   },
 });

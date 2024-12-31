@@ -68,7 +68,6 @@ const Politique = () => {
           </Text>
         </View>
 
-        {/* AI Training Switch */}
         <View style={styles.option}>
           <Switch
             value={isAIModeEnabled}
@@ -136,7 +135,7 @@ const Politique = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "#E8F4E1",
     padding: 20,
   },
   header: {
@@ -157,6 +156,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    alignItems: "center",
   },
   title: {
     fontSize: 20,
