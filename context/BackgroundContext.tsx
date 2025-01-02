@@ -1,6 +1,8 @@
 import { createContext, useContext, useState } from "react";
 import { ImageSourcePropType } from "react-native";
 
+import resources from "@/constants/Resources";
+
 type BackgroundContextType = {
   selectedBackground: ImageSourcePropType;
   setSelectedBackground: (background: ImageSourcePropType) => void;
@@ -17,7 +19,7 @@ export const BackgroundProvider = ({
 }) => {
   const [selectedBackground, setSelectedBackground] =
     useState<ImageSourcePropType>(
-      require("@/assets/images/fond_neige.png"), // Fond par défaut
+      resources.background_jour_de_neige, // Fond par défaut
     );
 
   return (

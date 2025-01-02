@@ -1,17 +1,20 @@
-import { showNotification } from "@/constants/notification";
-import { routes } from "@/routes/routes";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
-  Switch,
   Image,
   ScrollView,
   TouchableOpacity,
 } from "react-native";
 import Toast from "react-native-toast-message";
+
+import SettingsOption from "@/components/user/SettingsOption";
+import { showNotification } from "@/constants/notification";
+import { routes } from "@/routes/routes";
+import { dataPolicy } from "@/constants/DataPolicy";
+import resources from "@/constants/Resources";
 
 const Politique = () => {
   const [isSavePhotosEnabled, setIsSavePhotosEnabled] = useState(false);
@@ -22,6 +25,13 @@ const Politique = () => {
   const toggleSavePhotos = () => setIsSavePhotosEnabled((prev) => !prev);
   const toggleAIMode = () => setIsAIModeEnabled((prev) => !prev);
   const toggleLocation = () => setIsLocationEnabled((prev) => !prev);
+
+  // Les deux fonctions suivantes
+  const toggleGettersAndSetters: [boolean, () => void][] = [
+    [isSavePhotosEnabled, toggleSavePhotos],
+    [isAIModeEnabled, toggleAIMode],
+    [isLocationEnabled, toggleLocation],
+  ];
 
   const handleGoToAccountCreation = () => {
     if (!isTermsAccepted) {
@@ -39,10 +49,7 @@ const Politique = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
-        <Image
-          source={require("@/assets/images/monstre_v1.png")}
-          style={styles.monster}
-        />
+        <Image source={resources.monster_v1} style={styles.monster} />
       </View>
 
       <View style={styles.content}>
@@ -52,55 +59,15 @@ const Politique = () => {
           données personnelles par l’application
         </Text>
 
-        <View style={styles.option}>
-          <Switch
-            value={isSavePhotosEnabled}
-            onValueChange={toggleSavePhotos}
-            trackColor={{ false: "#ccc", true: "#6AA84F" }}
-            thumbColor={isSavePhotosEnabled ? "#FFFFFF" : "#f4f3f4"}
+        {dataPolicy.map((item) => (
+          <SettingsOption
+            key={item.id}
+            value={toggleGettersAndSetters[item.id - 1][0]}
+            onValueChange={toggleGettersAndSetters[item.id - 1][1]}
+            title={item.title}
+            description={item.description}
           />
-          <Text style={styles.optionText}>
-            Permettre à l’application de conserver vos photos{"\n"}
-            <Text style={styles.optionSubtext}>
-              Vos photos apparaîtront dans votre historique de scans. Elles
-              seront visibles par vous et par l’administrateur.
-            </Text>
-          </Text>
-        </View>
-
-        <View style={styles.option}>
-          <Switch
-            value={isAIModeEnabled}
-            onValueChange={toggleAIMode}
-            trackColor={{ false: "#ccc", true: "#6AA84F" }}
-            thumbColor={isAIModeEnabled ? "#FFFFFF" : "#f4f3f4"}
-          />
-          <Text style={styles.optionText}>
-            Permettre à l’IA de s’entraîner grâce à vos retours{"\n"}
-            <Text style={styles.optionSubtext}>
-              Si vous êtes en mode “recherche avancée” alors l’IA n’a pas su
-              répondre à vos attentes, nous pourrons l’améliorer grâce à vos
-              retours.
-            </Text>
-          </Text>
-        </View>
-
-        <View style={styles.option}>
-          <Switch
-            value={isLocationEnabled}
-            onValueChange={toggleLocation}
-            trackColor={{ false: "#ccc", true: "#6AA84F" }}
-            thumbColor={isLocationEnabled ? "#FFFFFF" : "#f4f3f4"}
-          />
-          <Text style={styles.optionText}>
-            Permettre à l’application de vous localiser{"\n"}
-            <Text style={styles.optionSubtext}>
-              Votre localisation permet à l’application de déterminer les zones
-              de tri et les poubelles disponibles autour de vous ! L’application
-              ne stocke pas votre localisation !
-            </Text>
-          </Text>
-        </View>
+        ))}
 
         <View style={styles.footer}>
           <TouchableOpacity

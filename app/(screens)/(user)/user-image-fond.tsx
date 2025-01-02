@@ -7,28 +7,17 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import { useBackgroundContext } from "@/context/BackgroundContext";
 import { useRouter } from "expo-router";
+
+import { useBackgroundContext } from "@/context/BackgroundContext";
+import UserBackground from "@/components/user/UserBackground";
+import { backgrounds } from "@/constants/Background";
+import resources from "@/constants/Resources";
 
 export default function UserImageFondScreen() {
   const { setSelectedBackground } = useBackgroundContext();
   const [selectedFond, setSelectedFond] = useState<unknown>(null);
   const router = useRouter();
-
-  const fonds = [
-    {
-      id: "Jour de neige",
-      image: require("@/assets/images/fond_neige.png"),
-    },
-    {
-      id: "Nuit sous la neige",
-      image: require("@/assets/images/fond_nuit.png"),
-    },
-    {
-      id: "Coucher de soleil enneigé",
-      image: require("@/assets/images/fond_coucher.png"),
-    },
-  ];
 
   const handleValidate = () => {
     if (selectedFond) {
@@ -40,27 +29,21 @@ export default function UserImageFondScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Image
-          source={require("@/assets/images/monstre_v1.png")}
-          style={styles.monster}
-        />
+        <Image source={resources.monster_v1} style={styles.monster} />
       </View>
 
       <ScrollView contentContainerStyle={styles.body}>
-        {fonds.map((fond) => (
-          <TouchableOpacity
-            key={fond.id}
-            style={[
-              styles.fondItem,
-              selectedFond === fond.image && styles.selectedFond,
-            ]}
+        {backgrounds.map((fond, index) => (
+          <UserBackground
+            key={index}
+            id={fond.id}
+            image={fond.image}
+            isSelected={selectedFond === fond.image}
             onPress={() => setSelectedFond(fond.image)}
-          >
-            <Image source={fond.image} style={styles.fondImage} />
-            <Text style={styles.fondText}>{fond.id}</Text>
-          </TouchableOpacity>
+          />
         ))}
       </ScrollView>
+
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.validateButton}
@@ -92,31 +75,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     alignItems: "center",
     paddingVertical: 20,
-  },
-  fondItem: {
-    alignItems: "center",
-    backgroundColor: "#d6ecd2",
-    borderRadius: 10,
-    marginVertical: 10,
-    width: "90%",
-    padding: 15,
-  },
-  selectedFond: {
-    borderWidth: 2,
-    borderColor: "green",
-  },
-  fondImage: {
-    width: "100%",
-    height: 120,
-    borderRadius: 10,
-    resizeMode: "cover",
-  },
-  fondText: {
-    color: "#3d4653",
-    fontSize: 16,
-    fontWeight: "bold",
-    marginTop: 10,
-    textAlign: "center",
   },
   validateButton: {
     backgroundColor: "#6AA84F",

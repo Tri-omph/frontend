@@ -5,25 +5,31 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
-  Image,
 } from "react-native";
+import HistoricCard from "@/components/search/HistoricCard";
 
 export default function TabOneScreen() {
   const data = [
     {
       type: "PLASTIQUE",
       date: "le 19/11/2024",
-      poubelle: "Poubelle (jaune) grâce à {méthode}",
+      poubelle: "jaune",
+      method: "IA",
+      image: require("@/assets/images/canette-coca.jpg"),
     },
     {
       type: "PAPIER",
       date: "le 20/11/2024",
-      poubelle: "Poubelle (bleu) grâce à {méthode}",
+      poubelle: "bleu",
+      method: "Barcode",
+      image: require("@/assets/images/canette-coca.jpg"),
     },
     {
       type: "ALUMINIUM",
       date: "le 23/11/2024",
-      poubelle: "Poubelle jaune grâce à {méthode}",
+      poubelle: "jaune",
+      method: "Avancée",
+      image: require("@/assets/images/canette-coca.jpg"),
     },
   ];
 
@@ -33,19 +39,14 @@ export default function TabOneScreen() {
 
       <ScrollView contentContainerStyle={styles.historyList}>
         {data.map((item, index) => (
-          <View key={index} style={styles.historyItem}>
-            <View style={styles.imagePlaceholder}>
-              <Image
-                source={require("@/assets/images/canette-coca.jpg")}
-                style={styles.image}
-              />
-            </View>
-            <View style={styles.historyDetails}>
-              <Text style={styles.itemType}>{item.type}</Text>
-              <Text style={styles.itemDate}>{item.date}</Text>
-              <Text style={styles.itemDescription}>{item.poubelle}</Text>
-            </View>
-          </View>
+          <HistoricCard
+            key={index}
+            wasteImage={item.image}
+            wasteType={item.type}
+            date={item.date}
+            wasteIdentificationMethod={item.method}
+            targertedBin={item.poubelle}
+          />
         ))}
       </ScrollView>
 

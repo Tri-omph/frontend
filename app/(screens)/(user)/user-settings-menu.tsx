@@ -11,7 +11,11 @@ import {
 import { useSession } from "@/hooks/useSession";
 import Toast from "react-native-toast-message";
 import { router } from "expo-router";
-import { Feather, FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
+
+import MenuOption from "@/components/user/MenuOption";
+import userMenuOptions from "@/constants/UserMenuOptions";
+import resources from "@/constants/Resources";
 
 export default function UserSettingsMenuScreen() {
   const { handleSignOut } = useSession();
@@ -23,10 +27,7 @@ export default function UserSettingsMenuScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Image
-          source={require("@/assets/images/monstre_v2.png")}
-          style={styles.monster}
-        />
+        <Image source={resources.monster_v2} style={styles.monster} />
         <TouchableOpacity style={styles.logoutButton} onPress={handleSignOut}>
           <Text style={styles.logoutText}>Déconnexion</Text>
           <FontAwesome
@@ -39,65 +40,15 @@ export default function UserSettingsMenuScreen() {
       </View>
 
       <View style={styles.options}>
-        <TouchableOpacity
-          style={styles.optionItem}
-          onPress={() => router.push("/user-modification-donnees")}
-        >
-          <View style={styles.iconContainer}>
-            <FontAwesome name="user" size={24} color="#6AA84F" />
-          </View>
-          <View style={styles.textContainer}>
-            <Text style={styles.optionTitle}>Vos informations</Text>
-            <Text style={styles.optionSubtitle}>
-              Modifier vos informations personnelles
-            </Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.optionItem}
-          onPress={() => router.push("/user-image-fond")}
-        >
-          <View style={styles.iconContainer}>
-            <MaterialIcons name="photo-library" size={24} color="#6AA84F" />
-          </View>
-          <View style={styles.textContainer}>
-            <Text style={styles.optionTitle}>Image de fond</Text>
-            <Text style={styles.optionSubtitle}>
-              Choisir l'image de fond qui vous convient !
-            </Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.optionItem}
-          onPress={() => router.push("/user-tutoriel")}
-        >
-          <View style={styles.iconContainer}>
-            <Feather name="target" size={24} color="#6AA84F" />
-          </View>
-          <View style={styles.textContainer}>
-            <Text style={styles.optionTitle}>Tutoriel</Text>
-            <Text style={styles.optionSubtitle}>
-              Un petit rappel du fonctionnement de l’application
-            </Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.optionItem}
-          onPress={() => router.push("/user-about-us")}
-        >
-          <View style={styles.iconContainer}>
-            <FontAwesome name="info-circle" size={24} color="#6AA84F" />
-          </View>
-          <View style={styles.textContainer}>
-            <Text style={styles.optionTitle}>Qui sommes nous ?</Text>
-            <Text style={styles.optionSubtitle}>
-              Quelques informations sur la mission et l’équipe...
-            </Text>
-          </View>
-        </TouchableOpacity>
+        {userMenuOptions.map((menu, index) => (
+          <MenuOption
+            key={index}
+            icon={menu.icon}
+            title={menu.title}
+            subtitle={menu.subtitle}
+            onPress={() => router.push(menu.goToPage)}
+          />
+        ))}
       </View>
 
       <TouchableOpacity style={styles.adminButton} onPress={handleAdminSignIn}>
@@ -148,41 +99,6 @@ const styles = StyleSheet.create({
   options: {
     marginTop: 20,
     paddingHorizontal: 20,
-  },
-  optionItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#FFF",
-    borderRadius: 10,
-    padding: 15,
-    marginBottom: 15,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  iconContainer: {
-    width: 40,
-    height: 40,
-    backgroundColor: "#E8F5E9",
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 15,
-  },
-  textContainer: {
-    flex: 1,
-  },
-  optionTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  optionSubtitle: {
-    fontSize: 14,
-    color: "#777",
-    marginTop: 5,
   },
   adminButton: {
     flexDirection: "row",
