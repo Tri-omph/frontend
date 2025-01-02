@@ -9,7 +9,6 @@ import { barcodeTypes } from "@/types/barcodeTypes";
 import CameraPreview from "@/components/camera/CameraPreview";
 
 import Toast from "react-native-toast-message";
-import useAI from "@/hooks/useAI";
 
 export default function App() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -21,13 +20,9 @@ export default function App() {
     takePicture,
     retakePicture,
   } = useCamera();
-  // IA
-  const {
-    aiIsProcessing,
-    wasteTypePredictionResult,
-    processWasteTypePrediction,
-    makeAIAvailable,
-  } = useAI(capturedImage, retakePicture);
+
+  // IA n'est utilisable que si et seulement si l'utilisateur déjà pris une photo
+  // **** Elle est donc utilisé au sein de CameraPreView, le composant permettant de voir une image prise par l'utilisateur ******
 
   // Scan (detecter le code-barre et chercher les informations correspondantes), priorité à la caméra, le scan doit s'adapter !
   const {
@@ -61,11 +56,7 @@ export default function App() {
   }
 
   return previewVisible && capturedImage ? (
-    <CameraPreview
-      photo={capturedImage}
-      retakePicture={aiIsProcessing ? undefined : retakePicture}
-      keepPicture={processWasteTypePrediction}
-    />
+    <CameraPreview photo={capturedImage} retakePicture={retakePicture} />
   ) : (
     <View style={styles.container}>
       <CameraView
@@ -93,15 +84,6 @@ export default function App() {
           imageOfWaste={scannedImage}
           detectionMethod={detectionMethod.Barcode}
           onDismiss={resetScan}
-        />
-      )}
-
-      {!aiIsProcessing && wasteTypePredictionResult && capturedImage && (
-        <ScanResultScreen
-          material={wasteTypePredictionResult.toLowerCase()}
-          imageOfWaste={capturedImage}
-          detectionMethod={detectionMethod.AI}
-          onDismiss={makeAIAvailable}
         />
       )}
       <Toast />

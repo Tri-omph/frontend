@@ -9,10 +9,14 @@ import {
 import { CameraCapturedPicture } from "expo-camera";
 import Toast from "react-native-toast-message";
 
+import ScanResultScreen from "@/app/(screens)/(scan)/scan-result";
+import useAI from "@/hooks/useAI";
+import { detectionMethod } from "@/types/detectionMethods";
+
 type CameraPreviewProps = {
   photo: CameraCapturedPicture;
-  retakePicture: (() => void) | undefined;
-  keepPicture: (() => void) | undefined;
+  retakePicture: () => void;
+  keepPicture?: (() => void) | undefined;
 };
 
 const CameraPreview: React.FC<CameraPreviewProps> = ({
@@ -20,6 +24,13 @@ const CameraPreview: React.FC<CameraPreviewProps> = ({
   retakePicture,
   keepPicture,
 }) => {
+  const {
+    aiIsProcessing,
+    wasteTypePredictionResult,
+    processWasteTypePrediction,
+    makeAIAvailable,
+  } = useAI(photo, retakePicture);
+
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -27,14 +38,33 @@ const CameraPreview: React.FC<CameraPreviewProps> = ({
         style={styles.imageBackground}
       >
         <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={retakePicture} style={styles.button}>
+          <TouchableOpacity
+            onPress={aiIsProcessing ? undefined : retakePicture}
+            style={styles.button}
+          >
             <Text style={styles.buttonText}>Reprendre</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={keepPicture} style={styles.button}>
-            <Text style={styles.buttonText}>Garder</Text>
+          <TouchableOpacity
+            onPress={
+              keepPicture !== undefined
+                ? keepPicture
+                : processWasteTypePrediction
+            }
+            style={styles.button}
+          >
+            <Text style={styles.buttonText}>Analyser</Text>
           </TouchableOpacity>
         </View>
       </ImageBackground>
+
+      {!aiIsProcessing && wasteTypePredictionResult && photo && (
+        <ScanResultScreen
+          material={wasteTypePredictionResult.toLowerCase()}
+          imageOfWaste={photo}
+          detectionMethod={detectionMethod.AI}
+          onDismiss={makeAIAvailable}
+        />
+      )}
       <Toast />
     </View>
   );

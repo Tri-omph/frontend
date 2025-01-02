@@ -49,29 +49,28 @@ const preprocessImageToTensor = async (uri: string) => {
 
     // Convertir l'image en tensor
     let imgTensor = decodeJpeg(raw);
-    imgTensor = tf.image.resizeNearestNeighbor(imgTensor, [224, 224]);
+    imgTensor = tf.image.resizeBilinear(imgTensor, [224, 224]).toFloat();
 
     // Normaliser l'image
     const mean = tf.tensor1d([0.485, 0.456, 0.406]);
     const std = tf.tensor1d([0.229, 0.224, 0.225]);
-    imgTensor = imgTensor.div(255.0).sub(mean).div(std);
-
-    // Transposer l'image pour passer de NHWC à NCHW
-    imgTensor = imgTensor.transpose([2, 0, 1]);
+    imgTensor = imgTensor.div(tf.scalar(255.0)).sub(mean).div(std);
 
     // Ajouter la dimension batch
     const imgWithBatch = imgTensor.expandDims(0);
-
-    // Libérer les tensors temporaires
-    mean.dispose();
-    std.dispose();
-    imgTensor.dispose();
-
     return imgWithBatch;
   } catch (error) {
     console.error("Error transforming image to tensor: ", error);
     return null;
   }
+};
+
+const makePredictions = async (
+  model: tf.GraphModel,
+  img: tf.Tensor<tf.Rank>,
+) => {
+  const predictions = await model.executeAsync(img);
+  return (predictions as tf.Tensor).dataSync();
 };
 
 const useAI = (
@@ -81,8 +80,9 @@ const useAI = (
   const [model, setModel] = useState<tf.GraphModel | null>(null);
   const [loading, setLoading] = useState(true);
   const [aiIsProcessing, setAiIsProcessing] = useState(false);
-  const [wasteTypePredictionResult, setWasteTypePredictionResult] =
-    useState("");
+  const [wasteTypePredictionResult, setWasteTypePredictionResult] = useState<
+    string | null
+  >(null);
 
   useEffect(() => {
     if (model) return; // Évite de recharger le modèle s'il est déjà disponible
@@ -96,7 +96,6 @@ const useAI = (
           bundleResourceIO(modelJson, modelWeights),
         );
         setModel(loadedModel);
-        setLoading(false);
       } catch (err) {
         console.log(
           "Une erreur est survenue lors du chargement du modèle d'IA. Veuillez réessayer plus tard. Détails : " +
@@ -108,7 +107,8 @@ const useAI = (
           "Une erreur est survenue lors du chargement du modèle d'IA. Veuillez réessayer plus tard. Détails : " +
             err,
         );
-        setLoading(false);
+      } finally {
+        setLoading(false); // S'assure que loading est mis à jour, même en cas d'erreur
       }
     };
 
@@ -130,12 +130,11 @@ const useAI = (
     image: CameraCapturedPicture,
     classes: string[] = RESULT_MAPPING,
   ) => {
-    if (!model) {
-      return null;
-    }
-
     try {
+      if (!model) return;
+
       const imgTensor = await preprocessImageToTensor(image.uri);
+
       if (!imgTensor || imgTensor.size === 0) {
         console.log(
           "L'image que vous avez fournie semble invalide. Veuillez essayer avec une autre photo.",
@@ -148,9 +147,10 @@ const useAI = (
         return null;
       }
 
-      const output = (await model.executeAsync(imgTensor)) as tf.Tensor;
+      const output = await makePredictions(model, imgTensor);
+      console.log(output);
 
-      if (output.size === 0) {
+      if (output === undefined) {
         console.log("l'IA n'a rien renvoyé. Veuillez réessayer.");
         showNotification(
           "error",
@@ -160,10 +160,8 @@ const useAI = (
         return null;
       }
 
-      const predictions = output.dataSync();
-      output.dispose();
+      const predictedClassIdx = output.indexOf(Math.max(...output));
 
-      const predictedClassIdx = predictions.indexOf(Math.max(...predictions));
       return classes[predictedClassIdx];
     } catch (error) {
       console.log(
@@ -182,6 +180,8 @@ const useAI = (
   const processWasteTypePrediction = async () => {
     if (aiIsProcessing) return; // Déjà en cours de traitement ...
 
+    console.log("Votre image est en cours d'analyse");
+
     setAiIsProcessing(true);
 
     if (model && capturedImage) {
@@ -191,15 +191,20 @@ const useAI = (
         "Le modèle a été chargé, l'analyse prendra quelques secondes...",
       );
       const prediction = await startPrediction(capturedImage);
+
       if (prediction) {
-        const highestPrediction = RESULT_MAPPING.indexOf(prediction);
-        setWasteTypePredictionResult(RESULT_MAPPING[highestPrediction]);
+        setWasteTypePredictionResult(prediction);
+        console.log(`C'est du ${prediction}`);
         showNotification(
           "success",
           "Résultat IA => SUPPP",
-          `C'est du ${RESULT_MAPPING[highestPrediction]}`,
+          `C'est du ${prediction}`,
         );
       }
+    } else {
+      console.log(
+        'Le model n\'est pas chargé. Relancer la requete en appuyant à noubeau sur "Analyser"',
+      );
     }
     setAiIsProcessing(false);
   };
@@ -207,6 +212,7 @@ const useAI = (
   const makeAIAvailable = () => {
     retakePicture();
     setAiIsProcessing(false);
+    setWasteTypePredictionResult(null);
   };
 
   return {
