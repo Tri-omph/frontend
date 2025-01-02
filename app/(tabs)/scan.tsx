@@ -8,6 +8,8 @@ import { detectionMethod } from "@/types/detectionMethods";
 import { barcodeTypes } from "@/types/barcodeTypes";
 import CameraPreview from "@/components/camera/CameraPreview";
 
+import Toast from "react-native-toast-message";
+
 export default function App() {
   const [permission, requestPermission] = useCameraPermissions();
   // Camera (prendre une photo et l'analyser avec l'IA)
@@ -18,6 +20,10 @@ export default function App() {
     takePicture,
     retakePicture,
   } = useCamera();
+
+  // IA n'est utilisable que si et seulement si l'utilisateur déjà pris une photo
+  // **** Elle est donc utilisé au sein de CameraPreView, le composant permettant de voir une image prise par l'utilisateur ******
+
   // Scan (detecter le code-barre et chercher les informations correspondantes), priorité à la caméra, le scan doit s'adapter !
   const {
     scanned,
@@ -80,6 +86,7 @@ export default function App() {
           onDismiss={resetScan}
         />
       )}
+      <Toast />
     </View>
   );
 }
