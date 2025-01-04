@@ -31,7 +31,7 @@ class UserManager {
    * @param body { username: string; password: string }
    * @returns { token: string; expiresIn: number }
    */
-  static AUTH_USER = (body: { username: string; password: string }) => {
+  static AUTH_USER = (body: { login: string; password: string }) => {
     return ApiClient.post<{ token: string }>(ENDPOINTS.AUTH_USER(), "", body);
   };
 

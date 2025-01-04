@@ -1,22 +1,36 @@
-import { useSession } from "@/hooks/useSession";
+import React from "react";
+import { useForm } from "react-hook-form";
 import {
   StyleSheet,
   View,
   Image,
   Text,
-  TextInput,
   Pressable,
+  ScrollView,
 } from "react-native";
 import Toast from "react-native-toast-message";
 
+import FormInput from "@/components/user/FormInput";
+import { useSession } from "@/hooks/useSession";
+import { signUpFormAndRules } from "@/constants/formRules";
+
 export default function UserSignUpScreen() {
   const {
-    setUsername,
-    setEmail,
-    setPassword,
-    setConfirmPassword,
-    handleSignUp,
-  } = useSession();
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const { handleSignUp } = useSession();
+
+  const onSubmit = (data: {
+    username: string;
+    password: string;
+    email: string;
+    confirmPassword: string;
+  }) => {
+    handleSignUp(data);
+  };
 
   return (
     <View style={styles.container}>
@@ -26,59 +40,38 @@ export default function UserSignUpScreen() {
           style={styles.monster}
         />
       </View>
-      <View style={styles.content}>
-        <Text style={styles.title}>Inscription</Text>
-        <Text style={styles.subtitle}>
-          Créer votre compte pour utiliser l'application
-        </Text>
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Nom d'utilisateur</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Votre nom d'utilisateur"
-            placeholderTextColor="#6D6D6D"
-            onChangeText={setUsername}
-          />
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.content}>
+          <Text style={styles.title}>Inscription</Text>
+          <Text style={styles.subtitle}>
+            Créer votre compte pour utiliser l'application
+          </Text>
+
+          {signUpFormAndRules.map((rule) => (
+            <FormInput
+              key={rule.name}
+              name={rule.name}
+              control={control}
+              errors={errors}
+              label={rule.label}
+              placeholder={rule.placeholder}
+              keyboardType={rule.keyboardType}
+              secureTextEntry={rule.secureTextEntry}
+              rules={rule.rules}
+            />
+          ))}
+
+          {/* Bouton de soumission */}
+          <Pressable style={styles.button} onPress={handleSubmit(onSubmit)}>
+            <Text style={styles.buttonText}>Je m'inscris</Text>
+          </Pressable>
         </View>
+      </ScrollView>
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Adresse mail</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Votre email"
-            keyboardType="email-address"
-            placeholderTextColor="#6D6D6D"
-            onChangeText={setEmail}
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Mot de passe</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Mot de passe"
-            secureTextEntry={true}
-            placeholderTextColor="#6D6D6D"
-            onChangeText={setPassword}
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Confirmer le mot de passe</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Confirmer le mot de passe"
-            secureTextEntry={true}
-            placeholderTextColor="#6D6D6D"
-            onChangeText={setConfirmPassword}
-          />
-        </View>
-
-        <Pressable style={styles.button} onPress={handleSignUp}>
-          <Text style={styles.buttonText}>Je m'inscris</Text>
-        </Pressable>
-      </View>
       <Toast />
     </View>
   );
@@ -104,6 +97,11 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     resizeMode: "contain",
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   content: {
     flex: 1,
@@ -139,6 +137,8 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     color: "#6D6D6D",
   },
+  inputError: { borderColor: "red" },
+  error: { color: "red", marginBottom: 10 },
   button: {
     backgroundColor: "#28A745",
     paddingVertical: 15,
