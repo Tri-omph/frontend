@@ -21,7 +21,7 @@ export default function UserSettingsMenuScreen() {
   const { handleSignOut } = useSession();
 
   const handleAdminSignIn = async () => {
-    router.replace("/user-admin-menu");
+    router.replace("/admin-search");
   };
 
   return (

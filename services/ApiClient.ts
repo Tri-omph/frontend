@@ -4,19 +4,27 @@ import { ApiHeaders, ApiResponse, ErrorResponse } from "@/types/apiTypes";
 
 const BASE_URL = process.env.EXPO_PUBLIC_BASE_URL;
 
-function getHeaders(token: string): ApiHeaders {
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-    //'App-Key': App_Key, TODO: à statuer avec le back
-  };
-}
-
 class ApiClient {
+  // **** Attributs
+  private static token: string | null = null;
+
+  // **** Setters
+  static setToken(token: string | null) {
+    this.token = token;
+  }
+
+  // **** Getters
+  private static getHeaders(): ApiHeaders {
+    return {
+      "Content-Type": "application/json",
+      Authorization: this.token ? `Bearer ${this.token}` : "",
+    };
+  }
+  // **** Méthodes statiques
+
   static async apiRequest<T>(
     method: string,
     url: string,
-    token: string,
     body: object = {},
   ): Promise<ApiResponse<T> | ApiResponse<ErrorResponse>> {
     const urlToUse = BASE_URL + url;
@@ -26,7 +34,7 @@ class ApiClient {
         method,
         url: urlToUse,
         data: body,
-        headers: getHeaders(token),
+        headers: this.getHeaders(),
       });
 
       return { status: response.status, data: response.data };
@@ -54,32 +62,28 @@ class ApiClient {
 
   static get<T>(
     url: string,
-    token: string,
   ): Promise<ApiResponse<T> | ApiResponse<ErrorResponse>> {
-    return this.apiRequest<T>("GET", url, token);
+    return this.apiRequest<T>("GET", url);
   }
 
   static post<T>(
     url: string,
-    token: string,
     data: object,
   ): Promise<ApiResponse<T> | ApiResponse<ErrorResponse>> {
-    return this.apiRequest<T>("POST", url, token, data);
+    return this.apiRequest<T>("POST", url, data);
   }
 
   static patch<T>(
     url: string,
-    token: string,
-    data: object,
+    data?: object,
   ): Promise<ApiResponse<T> | ApiResponse<ErrorResponse>> {
-    return this.apiRequest<T>("PATCH", url, token, data);
+    return this.apiRequest<T>("PATCH", url, data);
   }
 
   static delete<T>(
     url: string,
-    token: string,
   ): Promise<ApiResponse<T> | ApiResponse<ErrorResponse>> {
-    return this.apiRequest<T>("DELETE", url, token);
+    return this.apiRequest<T>("DELETE", url);
   }
 }
 
