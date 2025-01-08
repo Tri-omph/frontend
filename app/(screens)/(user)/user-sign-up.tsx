@@ -1,5 +1,4 @@
 import React from "react";
-import { useForm } from "react-hook-form";
 import {
   StyleSheet,
   View,
@@ -13,13 +12,10 @@ import Toast from "react-native-toast-message";
 import FormInput from "@/components/user/FormInput";
 import { useSession } from "@/hooks/useSession";
 import { signUpFormAndRules } from "@/constants/formRules";
+import { useUserActions } from "@/hooks/useUserActions";
 
 export default function UserSignUpScreen() {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+  const { control, handleSubmit, errors } = useUserActions();
 
   const { handleSignUp } = useSession();
 
