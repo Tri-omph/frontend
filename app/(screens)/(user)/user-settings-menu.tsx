@@ -1,33 +1,66 @@
+import React from "react";
 import { StatusBar } from "expo-status-bar";
-import { Platform, StyleSheet, Button } from "react-native";
-
-import EditScreenInfo from "@/components/EditScreenInfo";
-import { Text, View } from "@/components/Themed";
+import {
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import { useSession } from "@/hooks/useSession";
 import Toast from "react-native-toast-message";
+import { router } from "expo-router";
+import { FontAwesome } from "@expo/vector-icons";
+
+import MenuOption from "@/components/user/MenuOption";
+import userMenuOptions from "@/constants/UserMenuOptions";
+import resources from "@/constants/Resources";
 
 export default function UserSettingsMenuScreen() {
   const { handleSignOut } = useSession();
 
-  // PARTIE FRONT PUR
+  const handleAdminSignIn = async () => {
+    router.replace("/admin-search");
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Paramètres utilisateur</Text>
-      <View
-        style={styles.separator}
-        lightColor="#eee"
-        darkColor="rgba(255,255,255,0.1)"
-      />
-      <EditScreenInfo path="app/screens/user-settings-menu.tsx" />
-      <View style={styles.button}>
-        <Button
-          title="Se déconnecter"
-          onPress={handleSignOut}
-          color="#FF3B30"
-        />
+      <View style={styles.header}>
+        <Image source={resources.monster_v2} style={styles.monster} />
+        <TouchableOpacity style={styles.logoutButton} onPress={handleSignOut}>
+          <Text style={styles.logoutText}>Déconnexion</Text>
+          <FontAwesome
+            name="sign-out"
+            size={18}
+            color="#FFF"
+            style={styles.logoutIcon}
+          />
+        </TouchableOpacity>
       </View>
 
-      {/* Use a light status bar on iOS to account for the black space above the modal */}
+      <View style={styles.options}>
+        {userMenuOptions.map((menu, index) => (
+          <MenuOption
+            key={index}
+            icon={menu.icon}
+            title={menu.title}
+            subtitle={menu.subtitle}
+            onPress={() => router.push(menu.goToPage)}
+          />
+        ))}
+      </View>
+
+      <TouchableOpacity style={styles.adminButton} onPress={handleAdminSignIn}>
+        <Text style={styles.adminButtonText}>Mode admin</Text>
+        <FontAwesome
+          name="cube"
+          size={18}
+          color="#FFF"
+          style={styles.adminIcon}
+        />
+      </TouchableOpacity>
+
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
       <Toast />
     </View>
@@ -37,19 +70,55 @@ export default function UserSettingsMenuScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: "#F5F5F5",
   },
-  title: {
-    fontSize: 20,
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 20,
+    backgroundColor: "#E8F4E1",
+  },
+  monster: {
+    width: 80,
+    height: 80,
+    resizeMode: "contain",
+  },
+  logoutButton: {
+    backgroundColor: "#000",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    left: "-4%",
+    alignItems: "center",
+  },
+  logoutText: {
+    color: "#FFF",
     fontWeight: "bold",
   },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: "80%",
+  options: {
+    marginTop: 20,
+    paddingHorizontal: 20,
   },
-  button: {
-    width: "80%",
+  adminButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#6AA84F",
+    borderRadius: 10,
+    padding: 15,
+    marginHorizontal: 20,
+    marginTop: 20,
+  },
+  adminIcon: {
+    marginLeft: 10,
+  },
+  adminButtonText: {
+    fontSize: 16,
+    color: "#FFF",
+    fontWeight: "bold",
+  },
+  logoutIcon: {
+    marginLeft: 10,
   },
 });

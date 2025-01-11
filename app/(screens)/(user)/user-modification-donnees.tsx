@@ -1,23 +1,17 @@
-import React from "react";
-import {
-  StyleSheet,
-  View,
-  Image,
-  Text,
-  Pressable,
-  ScrollView,
-} from "react-native";
-import Toast from "react-native-toast-message";
-
-import FormInput from "@/components/user/FormInput";
-import { useSession } from "@/hooks/useSession";
+import { StyleSheet, View, Image, Text, Pressable } from "react-native";
 import { signUpFormAndRules } from "@/constants/formRules";
+import FormInput from "@/components/user/FormInput";
+import Toast from "react-native-toast-message";
 import { useUserActions } from "@/hooks/useUserActions";
 
-export default function UserSignUpScreen() {
-  const { control, handleSubmit, errors } = useUserActions();
-
-  const { handleSignUp } = useSession();
+export default function UserUpdateScreen() {
+  const {
+    control,
+    handleSubmit,
+    errors,
+    loading,
+    handleUpdateUserInformation,
+  } = useUserActions();
 
   const onSubmit = (data: {
     username: string;
@@ -25,7 +19,7 @@ export default function UserSignUpScreen() {
     email: string;
     confirmPassword: string;
   }) => {
-    handleSignUp(data);
+    handleUpdateUserInformation(data);
   };
 
   return (
@@ -37,36 +31,35 @@ export default function UserSignUpScreen() {
         />
       </View>
 
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.content}>
-          <Text style={styles.title}>Inscription</Text>
-          <Text style={styles.subtitle}>
-            Créer votre compte pour utiliser l'application
+      <View style={styles.content}>
+        <Text style={styles.title}>Données utilisateur</Text>
+        <Text style={styles.subtitle}>Modifier vos données </Text>
+
+        {signUpFormAndRules.map((rule) => (
+          <FormInput
+            key={rule.name}
+            name={rule.name}
+            control={control}
+            errors={errors}
+            label={rule.label}
+            placeholder={rule.placeholder}
+            keyboardType={rule.keyboardType}
+            secureTextEntry={rule.secureTextEntry}
+            rules={rule.rules}
+          />
+        ))}
+
+        <Pressable
+          style={styles.button}
+          onPress={handleSubmit(onSubmit)}
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>
+            {" "}
+            {loading ? "Modification en cours..." : "Modifier"}
           </Text>
-
-          {signUpFormAndRules.map((rule) => (
-            <FormInput
-              key={rule.name}
-              name={rule.name}
-              control={control}
-              errors={errors}
-              label={rule.label}
-              placeholder={rule.placeholder}
-              keyboardType={rule.keyboardType}
-              secureTextEntry={rule.secureTextEntry}
-              rules={rule.rules}
-            />
-          ))}
-
-          {/* Bouton de soumission */}
-          <Pressable style={styles.button} onPress={handleSubmit(onSubmit)}>
-            <Text style={styles.buttonText}>Je m'inscris</Text>
-          </Pressable>
-        </View>
-      </ScrollView>
+        </Pressable>
+      </View>
 
       <Toast />
     </View>
@@ -93,11 +86,6 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     resizeMode: "contain",
-  },
-  scrollContent: {
-    flexGrow: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
   content: {
     flex: 1,
@@ -133,8 +121,6 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     color: "#6D6D6D",
   },
-  inputError: { borderColor: "red" },
-  error: { color: "red", marginBottom: 10 },
   button: {
     backgroundColor: "#28A745",
     paddingVertical: 15,

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { router } from "expo-router";
 
 import { useAuthContext } from "@/hooks/useAuthContext";
@@ -9,25 +8,24 @@ const goToHomePage = () => {
   router.replace("/(tabs)");
 };
 
+const goToTutoriel = () => {
+  router.replace("/user-tutoriel");
+};
+
 export const useSession = () => {
   // Ce hook gère les connexion et déconnexion et surtout, il cache la complexité liée à la gestion du token !
   // Se pose tout de meme la question de où l'on catch l'erreur, ici ou dans le composants ...
   const { signIn, signOut } = useAuthContext();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [email, setEmail] = useState("");
 
   // ************* Appels des méthodes de connexion/déconnexion et gestion des erreurs !
 
-  const handleSignUp = async () => {
-    const userDataBody = {
-      username,
-      password,
-      email,
-    };
-
-    if (password !== confirmPassword) {
+  const handleSignUp = async (body: {
+    username: string;
+    password: string;
+    email: string;
+    confirmPassword: string;
+  }) => {
+    if (body.password !== body.confirmPassword) {
       showNotification(
         "error",
         "Formulaire invalide",
@@ -37,7 +35,23 @@ export const useSession = () => {
     }
 
     try {
-      const res = await UserManager.CREATE_USER(userDataBody);
+      const res = await UserManager.CREATE_USER(body);
+
+      if ("token" in res.data) {
+        signIn(res.data.token);
+        goToTutoriel();
+      } else {
+        // alors c'est un ErrorResponse et on récupère le message d'erreur !
+        throw new Error(res.data.message);
+      }
+    } catch (error) {
+      showNotification("error", "Erreur lors de l'inscription", error.message);
+    }
+  };
+
+  const handleSignIn = async (body: { login: string; password: string }) => {
+    try {
+      const res = await UserManager.AUTH_USER(body);
 
       if ("token" in res.data) {
         signIn(res.data.token);
@@ -51,27 +65,6 @@ export const useSession = () => {
     }
   };
 
-  const handleSignIn = async () => {
-    const userDataBody = {
-      username,
-      password,
-    };
-
-    try {
-      const res = await UserManager.AUTH_USER(userDataBody);
-
-      if ("token" in res.data) {
-        signIn(res.data.token);
-        goToHomePage();
-      } else {
-        // alors c'est un ErrorResponse et on récupère le message d'erreur !
-        throw new Error(res.data.message);
-      }
-    } catch (error) {
-      showNotification("error", "Erreur de connexion", error.message);
-    }
-  };
-
   const handleSignOut = async () => {
     try {
       signOut();
@@ -82,14 +75,6 @@ export const useSession = () => {
   };
 
   return {
-    username,
-    password,
-    confirmPassword,
-    email,
-    setUsername,
-    setPassword,
-    setConfirmPassword,
-    setEmail,
     handleSignUp,
     handleSignIn,
     handleSignOut,

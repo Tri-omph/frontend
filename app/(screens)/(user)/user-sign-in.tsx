@@ -1,20 +1,30 @@
-import {
-  StyleSheet,
-  View,
-  Image,
-  Text,
-  TextInput,
-  Pressable,
-} from "react-native";
+import { StyleSheet, View, Image, Text, Pressable } from "react-native";
 import { Link } from "expo-router";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useForm } from "react-hook-form";
 
+import FormInput from "@/components/user/FormInput";
 import { routes } from "@/routes/routes";
 import Toast from "react-native-toast-message";
 import { useSession } from "@/hooks/useSession";
+import { signInFormAndRules } from "@/constants/formRules";
 
 export default function SignIn() {
-  const { setUsername, setPassword, handleSignIn } = useSession();
+  const { handleSignIn } = useSession();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = (data: {
+    username: string;
+    password: string;
+    email: string;
+    confirmPassword: string;
+  }) => {
+    handleSignIn(data);
+  };
 
   return (
     <View style={styles.container}>
@@ -27,34 +37,34 @@ export default function SignIn() {
       <View style={styles.content}>
         <Text style={styles.title}>Bienvenue</Text>
         <Text style={styles.subtitle}>Content de vous revoir !</Text>
-        <View style={styles.inputContainer}>
-          <FontAwesome name="user" size={20} color="#888" style={styles.icon} />
-          <TextInput
-            style={styles.input}
-            placeholder="Votre nom d'utilisateur"
-            autoCapitalize="none"
-            placeholderTextColor="#6D6D6D"
-            onChangeText={setUsername}
-          />
-        </View>
-        <View style={styles.inputContainer}>
-          <FontAwesome name="lock" size={20} color="#888" style={styles.icon} />
-          <TextInput
-            style={styles.input}
-            placeholder="Votre mot de passe"
-            secureTextEntry={true}
-            placeholderTextColor="#6D6D6D"
-            onChangeText={setPassword}
-          />
-        </View>
 
-        <Pressable style={styles.button} onPress={handleSignIn}>
+        {signInFormAndRules.map((rule) => (
+          <View key={rule.name} style={styles.inputContainer}>
+            <FontAwesome
+              name={rule.name === "login" ? "user" : "lock"}
+              size={20}
+              color="#888"
+              style={styles.icon}
+            />
+            <FormInput
+              name={rule.name}
+              control={control}
+              errors={errors}
+              placeholder={rule.placeholder}
+              keyboardType={rule.keyboardType}
+              secureTextEntry={rule.secureTextEntry}
+              rules={rule.rules}
+            />
+          </View>
+        ))}
+
+        <Pressable style={styles.button} onPress={handleSubmit(onSubmit)}>
           <Text style={styles.buttonText}>Se connecter</Text>
         </Pressable>
 
         <View style={styles.footer}>
           <Text style={styles.footerText}>Vous n'avez pas de compte?</Text>
-          <Link href={routes.USER.SIGN_UP.getHref()} style={styles.linkText}>
+          <Link href={routes.USER.POLITIQUE.getHref()} style={styles.linkText}>
             Créer un compte
           </Link>
         </View>
