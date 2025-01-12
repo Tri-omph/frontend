@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useRef } from "react";
 import {
   View,
   StyleSheet,
   ImageSourcePropType,
   Text,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import ContentWithImage from "@/components/scan/ContentWithImage";
+import { Swipeable } from "react-native-gesture-handler";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 type SortingTrashCanProps = {
   title: string; // Titre principal
@@ -19,18 +22,48 @@ const SortingTrashCan: React.FC<SortingTrashCanProps> = ({
   subtitle,
   image,
 }) => {
+  const swipeableRef = useRef<Swipeable>(null);
+
+  const handleSwipeRight = () => {
+    // Action pour le swipe à droite, équivalent à "C'est trié"
+    Alert.alert("Trié", "Vous avez trié cet objet.");
+    swipeableRef.current?.close();
+  };
+
+  const handleSwipeLeft = () => {
+    // Action pour le swipe à gauche, équivalent à "Indisponible"
+    Alert.alert(
+      "Indisponible",
+      "Cet objet est désormais marqué comme indisponible.",
+    );
+    swipeableRef.current?.close();
+  };
+
   return (
     <View style={styles.container}>
       <ContentWithImage title={title} subtitle={subtitle} image={image}>
-        {/* Injection de deux boutons "C'est trié" et "Indisponible", occupe t-en chat */}
-        <View style={styles.buttonsContainer}>
-          <TouchableOpacity style={[styles.button, styles.greenButton]}>
-            <Text style={styles.buttonText}>C'est trié</Text>
+        <Swipeable
+          ref={swipeableRef}
+          renderRightActions={() => (
+            <View style={styles.rightAction}>
+              <Text style={styles.actionText}>C'est trié</Text>
+            </View>
+          )}
+          renderLeftActions={() => (
+            <View style={styles.leftAction}>
+              <Text style={styles.actionText}>Indisponible</Text>
+            </View>
+          )}
+          onSwipeableRightOpen={handleSwipeRight}
+          onSwipeableLeftOpen={handleSwipeLeft}
+          containerStyle={styles.swipeableContainer}
+        >
+          <TouchableOpacity style={styles.button}>
+            <FontAwesome name="arrow-left" size={20} color="#fff" />
+            <Text style={styles.buttonText}> Glisser </Text>
+            <FontAwesome name="arrow-right" size={20} color="#fff" />
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.button, styles.blackButton]}>
-            <Text style={styles.buttonText}>Indisponible</Text>
-          </TouchableOpacity>
-        </View>
+        </Swipeable>
       </ContentWithImage>
     </View>
   );
@@ -40,28 +73,43 @@ const styles = StyleSheet.create({
   container: {
     padding: 16,
   },
-  buttonsContainer: {
-    flexDirection: "row", // Disposer les boutons côte à côte
-    justifyContent: "space-between", // Espacement entre les boutons
-    marginTop: 10, // Espace au-dessus des boutons
+  leftAction: {
+    flex: 1,
+    backgroundColor: "#dd2150", // Fond noir pour "Indisponible"
+    borderRadius: 25, // Bords arrondis
+    justifyContent: "center",
+    alignItems: "flex-start",
+    padding: 20,
+  },
+  rightAction: {
+    flex: 1,
+    backgroundColor: "#4CAF50", // Fond vert pour "C'est trié"
+    borderRadius: 25, // Bords arrondis
+    justifyContent: "center",
+    alignItems: "flex-end",
+    padding: 20,
+  },
+  actionText: {
+    color: "#fff",
+    fontWeight: "600",
+  },
+  swipeableContainer: {
+    width: 220, // Limiter la largeur du Swipeable à 100 pixels
+    height: 55,
   },
   button: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    backgroundColor: "#4CAF50", // Couleur de fond pour "C'est trié"
-    borderRadius: 8,
-    alignItems: "center",
+    backgroundColor: "#000", // Fond noir
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 25, // Bords arrondis
     justifyContent: "center",
-  },
-  greenButton: {
-    backgroundColor: "#4CAF50", // Fond vert pour "C'est trié"
-  },
-  blackButton: {
-    backgroundColor: "#000", // Fond noir pour "Indisponible"
+    alignItems: "center",
+    flexDirection: "row", // Alignement horizontal
+    height: 55,
   },
   buttonText: {
-    color: "#fff", // Texte en blanc
-    fontSize: 16,
+    color: "#fff", // Texte blanc
+    fontWeight: "600",
   },
 });
 

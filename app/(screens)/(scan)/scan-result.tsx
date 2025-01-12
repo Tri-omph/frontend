@@ -1,10 +1,10 @@
 import React, { useState, useRef } from "react";
 import { View, StyleSheet, ImageSourcePropType } from "react-native";
 import BottomSheet from "@gorhom/bottom-sheet";
-import resources from "@/constants/Resources";
 import TypeWasteDetected from "@/components/scan/TypeWasteDetected";
 import ImageWasteDetected from "@/components/scan/ImageWasteDetected";
 import SortingTrashCan from "@/components/scan/SortingTrashCan";
+import getBinToThrowIn from "@/utils/bin/BinToThrowIn";
 
 type ScanResultScreenProps = {
   material: string; // Le matériau du produit (ex : "aluminium")
@@ -19,6 +19,8 @@ const ScanResultScreen: React.FC<ScanResultScreenProps> = ({
   imageOfWaste,
   onDismiss,
 }) => {
+  const { nameOfBin, imageOfBin } = getBinToThrowIn(material);
+
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [bottomSheetState, setBottomSheetState] = useState({
     snapPoints: ["30%"],
@@ -57,7 +59,7 @@ const ScanResultScreen: React.FC<ScanResultScreenProps> = ({
     >
       <View style={styles.contentContainer}>
         <TypeWasteDetected
-          title={`C’est du ${material}`}
+          title={`Emballage en ${material}`}
           subtitle="Méthode de détection"
           activeMethod={detectionMethod}
           askUserFeedback={true}
@@ -76,8 +78,8 @@ const ScanResultScreen: React.FC<ScanResultScreenProps> = ({
             <View style={styles.separator} />
             <SortingTrashCan
               title="Quelle poubelle ?"
-              subtitle="Poubelle {date téléphone}"
-              image={resources.canetteCoca}
+              subtitle={`À jeter dans la poubelle ${nameOfBin}`}
+              image={imageOfBin}
             />
           </>
         )}
