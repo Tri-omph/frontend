@@ -10,10 +10,20 @@ import {
 import Toast from "react-native-toast-message";
 import AdminUserCard from "@/components/admin/AdminUserCard";
 import { useAdminUserActions } from "@/hooks/useAdminActions";
+import SearchBar from "@/components/filters/SearchBar";
+import AdminFilterOnUsers from "@/components/admin/AdminFilterOnUsers";
 
-const UserListScreen = () => {
-  const { users, fetchUsers, loading } = useAdminUserActions();
+const AdminScreenSearch = () => {
+  const {
+    users,
+    filterUsers,
+    fetchUsers,
+    loading,
+    searchQuery,
+    handleSearchQuery,
+  } = useAdminUserActions();
   const [refreshing, setRefreshing] = useState(false);
+  const [isFilterVisible, setFilterVisible] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -23,6 +33,14 @@ const UserListScreen = () => {
     setRefreshing(true);
     await fetchUsers();
     setRefreshing(false);
+  };
+
+  const handleOpenFilter = () => {
+    setFilterVisible(true);
+  };
+
+  const handleCloseFilter = () => {
+    setFilterVisible(false);
   };
 
   if (loading) {
@@ -38,30 +56,49 @@ const UserListScreen = () => {
       {users.length === 0 ? (
         <Text style={styles.noUsersText}>Aucun utilisateur trouvé.</Text>
       ) : (
-        <FlatList
-          data={users}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <AdminUserCard
-              userId={item.id}
-              userPseudo={item.username}
-              userPoints={item.points}
-              restricted={item.restricted}
-              admin={item.admin}
-            />
-          )}
-          contentContainerStyle={styles.listContainer}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              colors={["#6AA84F"]}
-              progressBackgroundColor={"#F5F5F5"}
-            />
-          }
-        />
+        <View>
+          <SearchBar
+            placeholder="Indiquer le pseudo"
+            value={searchQuery}
+            onChangeText={(query: string) => handleSearchQuery(query)}
+            onClickOnFilterIcon={handleOpenFilter}
+          />
+          <FlatList
+            data={filterUsers}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item, index }) => (
+              <View>
+                <AdminUserCard
+                  userId={item.id}
+                  userPseudo={item.username}
+                  userPoints={item.points}
+                  restricted={item.restricted}
+                  admin={item.admin}
+                />
+                {index < filterUsers.length - 1 && (
+                  <View style={styles.separator} />
+                )}
+              </View>
+            )}
+            contentContainerStyle={styles.listContainer}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                colors={["#6AA84F"]}
+                progressBackgroundColor={"#F5F5F5"}
+              />
+            }
+          />
+        </View>
       )}
       <Toast />
+
+      {/* Filtre administrateurs, il apparait dans un bottom sheet */}
+      <AdminFilterOnUsers
+        isVisible={isFilterVisible}
+        onClose={handleCloseFilter}
+      />
     </View>
   );
 };
@@ -69,7 +106,7 @@ const UserListScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "#FFFFFF",
     padding: 20,
   },
   loadingContainer: {
@@ -86,6 +123,11 @@ const styles = StyleSheet.create({
   listContainer: {
     paddingBottom: 20,
   },
+  separator: {
+    height: 1,
+    backgroundColor: "#E0E0E0",
+    marginVertical: 10,
+  },
 });
 
-export default UserListScreen;
+export default AdminScreenSearch;
