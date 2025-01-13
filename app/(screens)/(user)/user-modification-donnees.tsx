@@ -1,17 +1,25 @@
-import {
-  StyleSheet,
-  View,
-  Image,
-  Text,
-  TextInput,
-  Pressable,
-} from "react-native";
-import { router } from "expo-router";
+import { StyleSheet, View, Image, Text, Pressable } from "react-native";
+import { signUpFormAndRules } from "@/constants/formRules";
+import FormInput from "@/components/user/FormInput";
+import Toast from "react-native-toast-message";
+import { useUserActions } from "@/hooks/useUserActions";
 
-export default function UserSignUpScreen() {
-  const handleSignUp = () => {
-    console.log("Modifications");
-    router.replace("/(tabs)");
+export default function UserUpdateScreen() {
+  const {
+    control,
+    handleSubmit,
+    errors,
+    loading,
+    handleUpdateUserInformation,
+  } = useUserActions();
+
+  const onSubmit = (data: {
+    username: string;
+    password: string;
+    email: string;
+    confirmPassword: string;
+  }) => {
+    handleUpdateUserInformation(data);
   };
 
   return (
@@ -22,55 +30,38 @@ export default function UserSignUpScreen() {
           style={styles.monster}
         />
       </View>
+
       <View style={styles.content}>
-        <Text style={styles.title}>Votre compte actuel</Text>
-        <Text style={styles.subtitle}>
-          Modifier mes informations personnelles
-        </Text>
+        <Text style={styles.title}>Données utilisateur</Text>
+        <Text style={styles.subtitle}>Modifier vos données </Text>
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Nom d'utilisateur</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Votre nom d'utilisateur"
-            placeholderTextColor="#6D6D6D"
+        {signUpFormAndRules.map((rule) => (
+          <FormInput
+            key={rule.name}
+            name={rule.name}
+            control={control}
+            errors={errors}
+            label={rule.label}
+            placeholder={rule.placeholder}
+            keyboardType={rule.keyboardType}
+            secureTextEntry={rule.secureTextEntry}
+            rules={rule.rules}
           />
-        </View>
+        ))}
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Adresse mail</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Votre email"
-            keyboardType="email-address"
-            placeholderTextColor="#6D6D6D"
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Mot de passe</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Mot de passe"
-            secureTextEntry={true}
-            placeholderTextColor="#6D6D6D"
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Confirmer le mot de passe</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Confirmer le mot de passe"
-            secureTextEntry={true}
-            placeholderTextColor="#6D6D6D"
-          />
-        </View>
-
-        <Pressable style={styles.button} onPress={handleSignUp}>
-          <Text style={styles.buttonText}>Modifier</Text>
+        <Pressable
+          style={styles.button}
+          onPress={handleSubmit(onSubmit)}
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>
+            {" "}
+            {loading ? "Modification en cours..." : "Modifier"}
+          </Text>
         </Pressable>
       </View>
+
+      <Toast />
     </View>
   );
 }

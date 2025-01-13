@@ -56,6 +56,7 @@ export default function RootLayout({
   }
 
   /* SESSION PROVIDER, on garantit le contexte d'authentification à l'ensemble de l'application */
+  /* GestureHandlerRootView, nous permet d'utiliser le bottom sheet (utile pour la partie scan) ! */
   return (
     <GestureHandlerRootView>
       <SessionProvider>

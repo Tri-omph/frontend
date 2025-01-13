@@ -10,6 +10,11 @@ const resources: Record<string, ImageSourcePropType> = {
   monster_v2: require("@/assets/images/monstre_v2.png"),
   // WASTE
   canetteCoca: require("@/assets/images/canette-coca.jpg"),
+  // BIN
+  blueBin: require("@/assets/images/bin/blue-bin.jpg"),
+  greenBin: require("@/assets/images/bin/green-bin.jpg"),
+  greyBin: require("@/assets/images/bin/grey-bin.jpg"),
+  yellowBin: require("@/assets/images/bin/yellow-bin.jpg"),
 };
 
 export default resources;

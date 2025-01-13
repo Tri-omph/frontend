@@ -1,0 +1,10 @@
+{
+    "aluminium": "yellowBin",
+    "cardboard": "yellowBin",
+    "metal": "yellowBin",
+    "ordures": "greyBin",
+    "paper": "blueBin",
+    "plastic": "yellowBin",
+    "textile": "greyBin",
+    "glass": "greenBin"
+}

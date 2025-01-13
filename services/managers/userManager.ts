@@ -67,8 +67,12 @@ class UserManager {
   };
 
   // ******************* PATCH
-  static UPDATE_INFO_USER = () => {
-    return ApiClient.get(ENDPOINTS.UPDATE_INFO_USER());
+  static UPDATE_INFO_USER = (body: {
+    username: string;
+    password: string;
+    email: string;
+  }) => {
+    return ApiClient.patch(ENDPOINTS.UPDATE_INFO_USER(), body);
   };
 }
 
