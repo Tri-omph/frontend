@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import TitleAndSubtitle from "@/components/scan/TitleAndSubtitle";
 import DetectionMethodUsed from "@/components/scan/DetectionMethodUsed";
+import { detectionMethod } from "@/types/detectionMethods";
 
 type TypeWasteDetectedProps = {
   title: string; // Titre principal
@@ -18,7 +19,16 @@ const TypeWasteDetected: React.FC<TypeWasteDetectedProps> = ({
   askUserFeedback = false,
   onThumbUp,
 }) => {
-  const methods = ["Code barre", "IA", "Avancée"];
+  const allDetectionMethods = Object.values(detectionMethod);
+  const [feedbackGiven, setFeedbackGiven] = useState(false); // État local pour gérer la visibilité des boutons => si le feedback a été donné, les boutons disparaissent !
+
+  const handleFeedback = (type: "thumbUp" | "thumbDown") => {
+    setFeedbackGiven(true);
+    if (type === "thumbUp" && onThumbUp) {
+      onThumbUp();
+    }
+    // TODO: définir la procédure en cas de non approbatin de l'utilisateur !
+  };
 
   return (
     <View style={styles.container}>
@@ -34,12 +44,18 @@ const TypeWasteDetected: React.FC<TypeWasteDetectedProps> = ({
         </View>
 
         {/* Dans le cas où le feedback user est attendu: boutons d'approbation et de rejet */}
-        {askUserFeedback && (
+        {askUserFeedback && !feedbackGiven && (
           <View style={styles.feedbackContainer}>
-            <TouchableOpacity style={styles.feedbackButton} onPress={onThumbUp}>
+            <TouchableOpacity
+              style={styles.feedbackButton}
+              onPress={() => handleFeedback("thumbUp")}
+            >
               <Text style={styles.feedbackText}>👍</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.feedbackButton}>
+            <TouchableOpacity
+              style={styles.feedbackButton}
+              onPress={() => handleFeedback("thumbDown")}
+            >
               <Text style={styles.feedbackText}>👎</Text>
             </TouchableOpacity>
           </View>
@@ -48,7 +64,7 @@ const TypeWasteDetected: React.FC<TypeWasteDetectedProps> = ({
 
       {/* Liste des méthodes de détection */}
       <View style={styles.methodContainer}>
-        {methods.map((method) => (
+        {allDetectionMethods.map((method) => (
           <DetectionMethodUsed
             key={method}
             label={method}
@@ -108,7 +124,7 @@ const styles = StyleSheet.create({
   methodContainer: {
     flexDirection: "row", // Les boutons sont alignés en ligne
     justifyContent: "space-between", // Ajoute un espace égal entre les boutons
-    marginVertical: 16,
+    marginVertical: 5,
   },
   methodItem: {
     flex: 1, // Les boutons occupent un espace égal

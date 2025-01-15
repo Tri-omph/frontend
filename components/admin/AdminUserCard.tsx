@@ -114,7 +114,7 @@ const AdminUserCard: React.FC<UserCardProps> = ({
   };
 
   return (
-    <View style={styles.listContainer}>
+    <View>
       <Swipeable
         ref={swipeableRef}
         renderRightActions={() => (
@@ -143,14 +143,13 @@ const AdminUserCard: React.FC<UserCardProps> = ({
 };
 
 const styles = StyleSheet.create({
-  listContainer: {
-    paddingBottom: 20,
-  },
   leftAction: {
     flex: 1,
     backgroundColor: "#dd2150",
     justifyContent: "center",
     padding: 20,
+    borderRadius: 10,
+    height: 100,
   },
   rightAction: {
     flex: 1,
@@ -158,6 +157,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "flex-end",
     padding: 20,
+    borderRadius: 10,
+    height: 100,
   },
   actionText: {
     color: "#fff",

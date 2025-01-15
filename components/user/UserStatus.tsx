@@ -1,16 +1,11 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { UserStatusEnum } from "@/types/userEnums";
 
 type UserStatusProps = {
   restricted: boolean;
   admin: boolean;
 };
-
-enum UserStatusEnum {
-  RESTREINT = "restreint",
-  SIMPLE = "simple",
-  ADMIN = "admin",
-}
 
 const getStatus = (restricted: boolean, admin: boolean) => {
   if (admin) return UserStatusEnum.ADMIN;

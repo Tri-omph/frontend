@@ -17,11 +17,11 @@ const TitleAndSubtitle: React.FC<DescriptionProps> = ({ title, subtitle }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 20,
+    marginBottom: 10,
     alignItems: "flex-start", // Aligne les éléments à gauche
   },
   title: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: "bold",
     color: "#333",
   },
