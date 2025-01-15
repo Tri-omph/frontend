@@ -6,6 +6,13 @@ import UserManager, { UserSearchResult } from "@/services/managers/userManager";
 import filter from "lodash.filter";
 import { UserFilter, UserStatusEnum } from "@/types/userEnums";
 
+export type adminFilteringType = {
+  status?: string[];
+  minPoints?: number | null;
+  maxPoints?: number | null;
+  order?: string | null;
+};
+
 export const useAdminUserActions = () => {
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState<UserSearchResult[]>([]);
@@ -162,20 +169,28 @@ export const useAdminUserActions = () => {
     minPoints,
     maxPoints,
     order,
-  }: {
-    status?: string[];
-    minPoints?: number | null;
-    maxPoints?: number | null;
-    order?: string | null;
-  }) => {
+  }: adminFilteringType) => {
     let filtered = [...users];
 
     // Filtrer par statut
     if (status && status.length > 0 && !status.includes(UserStatusEnum.TOUS)) {
-      //filtered = filtered.filter((user) => status.includes(user.status)); => TODO
+      filtered = filtered.filter((user) => {
+        if (status.includes(UserStatusEnum.RESTREINT) && user.restricted) {
+          return true;
+        }
+        if (status.includes(UserStatusEnum.ADMIN) && user.admin) {
+          return true;
+        }
+        if (
+          status.includes(UserStatusEnum.SIMPLE) &&
+          !user.admin &&
+          !user.restricted
+        ) {
+          return true;
+        }
+        return false;
+      });
     }
-
-    console.log(filtered);
 
     // Filtrer par points
     if (minPoints !== null && minPoints !== undefined) {
@@ -194,8 +209,12 @@ export const useAdminUserActions = () => {
           case UserFilter.POINTS:
             return b.points - a.points;
           case UserFilter.STATUS:
-            //return a.status.localeCompare(b.status); => TODO
-            return 0;
+            const getStatusRank = (user: UserSearchResult) => {
+              if (user.admin) return 3;
+              if (user.restricted) return 2;
+              return 1;
+            };
+            return getStatusRank(b) - getStatusRank(a);
           default:
             return 0;
         }

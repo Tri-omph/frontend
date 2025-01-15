@@ -10,21 +10,24 @@ import BottomSheet from "@gorhom/bottom-sheet";
 import FilterWithSingleOption from "@/components/filters/FilterWithSingleOption";
 import FilterWithMultipleOptions from "@/components/filters/FilterWithMultipleOptions";
 import { UserFilter, UserStatusEnum } from "@/types/userEnums";
-import { useAdminUserActions } from "@/hooks/useAdminActions";
+import { adminFilteringType } from "@/hooks/useAdminActions";
 
 interface FilterProps {
   isVisible: boolean;
   onClose: () => void;
+  applyFilter: (filters: adminFilteringType) => void;
 }
 
-const AdminFilterOnUsers: React.FC<FilterProps> = ({ isVisible, onClose }) => {
+const AdminFilterOnUsers: React.FC<FilterProps> = ({
+  isVisible,
+  onClose,
+  applyFilter,
+}) => {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [selected, setSelected] = useState<string[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<null | string>(null);
   const [borneMin, setBorneMin] = useState<null | string>(null);
   const [borneMax, setBorneMax] = useState<null | string>(null);
-
-  const { applyFilter } = useAdminUserActions();
 
   const data = Object.entries(UserStatusEnum).map(([key, value], index) => ({
     key: (index + 1).toString(),

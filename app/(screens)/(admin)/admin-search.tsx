@@ -21,6 +21,7 @@ const AdminScreenSearch = () => {
     loading,
     searchQuery,
     handleSearchQuery,
+    applyFilter,
   } = useAdminUserActions();
   const [refreshing, setRefreshing] = useState(false);
   const [isFilterVisible, setFilterVisible] = useState(false);
@@ -98,6 +99,7 @@ const AdminScreenSearch = () => {
       <AdminFilterOnUsers
         isVisible={isFilterVisible}
         onClose={handleCloseFilter}
+        applyFilter={applyFilter}
       />
     </View>
   );
