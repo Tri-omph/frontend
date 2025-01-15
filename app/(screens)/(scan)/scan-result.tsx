@@ -64,6 +64,7 @@ const ScanResultScreen: React.FC<ScanResultScreenProps> = ({
           activeMethod={detectionMethod}
           askUserFeedback={true}
           onThumbUp={handleThumbUp}
+          onThumbDown={() => bottomSheetRef.current?.close()}
         />
 
         {bottomSheetState.showAdditionalComponents && (

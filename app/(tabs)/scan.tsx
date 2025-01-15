@@ -7,6 +7,7 @@ import { useCamera } from "@/hooks/useCamera";
 import { detectionMethod } from "@/types/detectionMethods";
 import { barcodeTypes } from "@/types/barcodeTypes";
 import CameraPreview from "@/components/camera/CameraPreview";
+import { useLocalSearchParams } from "expo-router";
 
 import Toast from "react-native-toast-message";
 
@@ -32,6 +33,11 @@ export default function App() {
     handleBarcodeScanned,
     resetScan,
   } = useScan(cameraRef);
+
+  // L'utilisateur peut apporter une correction depuis le mode "recherche avancé"
+  const { wasteCorrectedByUser } = useLocalSearchParams();
+  // TODO: Revenir checker le problème de "quand tu passes en mode avancé, comment accéder à nouveau au scan, la condition sur une constante (cf ligne dessus), n'a pas de sens !!!"
+  // TODO: Résoudre le problème des photos !!
 
   // ********************************* Vue SCAN
 
@@ -62,7 +68,11 @@ export default function App() {
       <CameraView
         ref={cameraRef}
         style={StyleSheet.absoluteFillObject}
-        onBarcodeScanned={capturedImage ? undefined : handleBarcodeScanned}
+        onBarcodeScanned={
+          capturedImage || wasteCorrectedByUser
+            ? undefined
+            : handleBarcodeScanned
+        }
         barcodeScannerSettings={{
           barcodeTypes: barcodeTypes,
         }}
@@ -86,6 +96,15 @@ export default function App() {
           onDismiss={resetScan}
         />
       )}
+
+      {wasteCorrectedByUser && (
+        <ScanResultScreen
+          material={wasteCorrectedByUser.toString()}
+          detectionMethod={detectionMethod.Advanced}
+          onDismiss={resetScan}
+        />
+      )}
+
       <Toast />
     </View>
   );

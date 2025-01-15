@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { router } from "expo-router";
+
 import TitleAndSubtitle from "@/components/scan/TitleAndSubtitle";
 import DetectionMethodUsed from "@/components/scan/DetectionMethodUsed";
 import { detectionMethod } from "@/types/detectionMethods";
@@ -10,6 +12,7 @@ type TypeWasteDetectedProps = {
   activeMethod: string; // Méthode active (par ex. "IA")
   askUserFeedback?: boolean;
   onThumbUp?: () => void; // Ajout de la fonction callback pour pouce du haut
+  onThumbDown?: () => void; // Ajout de la fonction callback pour pouce du bas
 };
 
 const TypeWasteDetected: React.FC<TypeWasteDetectedProps> = ({
@@ -18,6 +21,7 @@ const TypeWasteDetected: React.FC<TypeWasteDetectedProps> = ({
   activeMethod,
   askUserFeedback = false,
   onThumbUp,
+  onThumbDown,
 }) => {
   const allDetectionMethods = Object.values(detectionMethod);
   const [feedbackGiven, setFeedbackGiven] = useState(false); // État local pour gérer la visibilité des boutons => si le feedback a été donné, les boutons disparaissent !
@@ -27,7 +31,10 @@ const TypeWasteDetected: React.FC<TypeWasteDetectedProps> = ({
     if (type === "thumbUp" && onThumbUp) {
       onThumbUp();
     }
-    // TODO: définir la procédure en cas de non approbatin de l'utilisateur !
+    if (type === "thumbDown" && onThumbDown) {
+      onThumbDown();
+      router.push("/advanced-research");
+    }
   };
 
   return (
