@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import ScanResultScreen from "@/app/(screens)/(scan)/scan-result";
@@ -35,7 +35,10 @@ export default function App() {
   } = useScan(cameraRef);
 
   // L'utilisateur peut apporter une correction depuis le mode "recherche avancé"
-  const { wasteCorrectedByUser } = useLocalSearchParams();
+  const { wasteCorrectedByUser, imageOfWasteToCorrect } =
+    useLocalSearchParams();
+  const [isCorrectionInUse, setIsCorrectionInUse] = useState(false); // Condition pour savoir si "CX" est ouvert
+
   // TODO: Revenir checker le problème de "quand tu passes en mode avancé, comment accéder à nouveau au scan, la condition sur une constante (cf ligne dessus), n'a pas de sens !!!"
   // TODO: Résoudre le problème des photos !!
 
@@ -69,9 +72,7 @@ export default function App() {
         ref={cameraRef}
         style={StyleSheet.absoluteFillObject}
         onBarcodeScanned={
-          capturedImage || wasteCorrectedByUser
-            ? undefined
-            : handleBarcodeScanned
+          capturedImage || isCorrectionInUse ? undefined : handleBarcodeScanned
         }
         barcodeScannerSettings={{
           barcodeTypes: barcodeTypes,
@@ -87,7 +88,6 @@ export default function App() {
           />
         </View>
       </CameraView>
-
       {scanned && scannedImage && scannedMaterialByBarcode && (
         <ScanResultScreen
           material={scannedMaterialByBarcode}
@@ -96,15 +96,17 @@ export default function App() {
           onDismiss={resetScan}
         />
       )}
-
       {wasteCorrectedByUser && (
         <ScanResultScreen
           material={wasteCorrectedByUser.toString()}
+          imageOfWaste={{ uri: imageOfWasteToCorrect.toString() }}
           detectionMethod={detectionMethod.Advanced}
-          onDismiss={resetScan}
+          onDismiss={() => {
+            resetScan();
+            setIsCorrectionInUse(false);
+          }}
         />
       )}
-
       <Toast />
     </View>
   );

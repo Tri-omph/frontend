@@ -5,7 +5,7 @@ import ContentWithImage from "@/components/scan/ContentWithImage";
 type ImageWasteDetectedProps = {
   title: string; // Titre principal
   subtitle: string; // Titre secondaire
-  image: ImageSourcePropType;
+  image: ImageSourcePropType | { uri: string };
 };
 
 const ImageWasteDetected: React.FC<ImageWasteDetectedProps> = ({

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { router } from "expo-router";
 
 import TitleAndSubtitle from "@/components/scan/TitleAndSubtitle";
 import DetectionMethodUsed from "@/components/scan/DetectionMethodUsed";
@@ -33,7 +32,6 @@ const TypeWasteDetected: React.FC<TypeWasteDetectedProps> = ({
     }
     if (type === "thumbDown" && onThumbDown) {
       onThumbDown();
-      router.push("/advanced-research");
     }
   };
 

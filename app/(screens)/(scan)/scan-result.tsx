@@ -1,15 +1,23 @@
 import React, { useState, useRef } from "react";
-import { View, StyleSheet, ImageSourcePropType } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ImageSourcePropType,
+  ImageURISource,
+} from "react-native";
+import { router } from "expo-router";
+
 import BottomSheet from "@gorhom/bottom-sheet";
 import TypeWasteDetected from "@/components/scan/TypeWasteDetected";
 import ImageWasteDetected from "@/components/scan/ImageWasteDetected";
 import SortingTrashCan from "@/components/scan/SortingTrashCan";
 import getBinToThrowIn from "@/utils/bin/BinToThrowIn";
+import useFileSystem from "@/hooks/useFileSystem";
 
 type ScanResultScreenProps = {
   material: string; // Le matériau du produit (ex : "aluminium")
   detectionMethod: string; // La méthode de détection (ex : "Code barre")
-  imageOfWaste: ImageSourcePropType;
+  imageOfWaste: ImageSourcePropType | { uri: string };
   onDismiss?: () => void;
 };
 
@@ -19,6 +27,7 @@ const ScanResultScreen: React.FC<ScanResultScreenProps> = ({
   imageOfWaste,
   onDismiss,
 }) => {
+  const { saveImageLocally } = useFileSystem();
   const { nameOfBin, imageOfBin } = getBinToThrowIn(material);
 
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -64,7 +73,21 @@ const ScanResultScreen: React.FC<ScanResultScreenProps> = ({
           activeMethod={detectionMethod}
           askUserFeedback={true}
           onThumbUp={handleThumbUp}
-          onThumbDown={() => bottomSheetRef.current?.close()}
+          onThumbDown={async () => {
+            if ((imageOfWaste as ImageURISource) !== undefined) {
+              console.log("it should work !");
+              const localUri = await saveImageLocally(
+                (imageOfWaste as ImageURISource).uri,
+              );
+              bottomSheetRef.current?.close();
+              router.replace({
+                pathname: "/advanced-research",
+                params: {
+                  imageOfWasteToCorrect: localUri,
+                },
+              });
+            }
+          }}
         />
 
         {bottomSheetState.showAdditionalComponents && (

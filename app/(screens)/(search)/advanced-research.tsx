@@ -8,9 +8,10 @@ import {
 } from "react-native";
 import AdviceCard from "@/components/search/AdviceCard";
 import { userAdvancedResearchAdvice } from "@/constants/UserAdvancedResearch";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 
 const AdvancedResearch: React.FC = () => {
+  const { imageOfWasteToCorrect } = useLocalSearchParams();
   const [selectedOptions, setSelectedOptions] = useState<string[]>(
     new Array(userAdvancedResearchAdvice.length).fill(null),
   );
@@ -27,6 +28,7 @@ const AdvancedResearch: React.FC = () => {
       pathname: "/scan",
       params: {
         wasteCorrectedByUser: selectedOptions[0],
+        imageOfWasteToCorrect: imageOfWasteToCorrect,
       },
     });
   };

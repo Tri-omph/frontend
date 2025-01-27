@@ -5,7 +5,7 @@ import TitleAndSubtitle from "@/components/scan/TitleAndSubtitle";
 type ContentWithImageProps = {
   title: string;
   subtitle: string;
-  image: ImageSourcePropType;
+  image: ImageSourcePropType | { uri: string };
   children?: React.ReactNode;
 };
 
