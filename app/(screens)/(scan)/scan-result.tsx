@@ -104,6 +104,7 @@ const ScanResultScreen: React.FC<ScanResultScreenProps> = ({
               title="Quelle poubelle ?"
               subtitle={`À jeter dans la poubelle ${nameOfBin}`}
               image={imageOfBin}
+              bottomSheetRef={bottomSheetRef}
             />
           </>
         )}
