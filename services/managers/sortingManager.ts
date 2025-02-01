@@ -16,6 +16,7 @@ class SortingManager {
     return ApiClient.patch<{
       message: string;
       points: number;
+      level: number;
     }>(SORTING_ENDPOINTS.SORT_AND_REWARD());
   };
 }

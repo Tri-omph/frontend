@@ -7,5 +7,5 @@ export const SORTING_ENDPOINTS = {
   // ******************* GET
 
   // ******************* PATCH
-  SORT_AND_REWARD: () => `/gamification/points`,
+  SORT_AND_REWARD: () => `/sort`,
 };

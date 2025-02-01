@@ -1,7 +1,10 @@
 import { showNotification } from "@/constants/notification";
 import SortingManager from "@/services/managers/sortingManager";
+import { useAsyncStorage } from "@/hooks/useAsyncStorage";
 
 export const useSorting = () => {
+  const { setUserLocalStorage } = useAsyncStorage();
+
   const sortAndReward = async () => {
     try {
       const res = await SortingManager.SORT_AND_REWARD();
@@ -9,6 +12,8 @@ export const useSorting = () => {
       if (res.status !== 200) {
         throw new Error(res.data.message);
       }
+
+      await setUserLocalStorage({ level: res.data.level });
 
       showNotification(
         "success",
