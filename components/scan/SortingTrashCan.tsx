@@ -10,23 +10,38 @@ import {
 import ContentWithImage from "@/components/scan/ContentWithImage";
 import { Swipeable } from "react-native-gesture-handler";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useHistory } from "@/hooks/useHistory";
+import { detectionMethod } from "@/types/detectionMethods";
 
 type SortingTrashCanProps = {
-  title: string; // Titre principal
-  subtitle: string; // Titre secondaire
+  title: string;
+  subtitle: string;
+  bin: string;
   image: ImageSourcePropType;
+  material: string;
+  methodUsed: detectionMethod;
+  wasteImage: string;
 };
 
 const SortingTrashCan: React.FC<SortingTrashCanProps> = ({
   title,
   subtitle,
+  bin,
   image,
+  material,
+  methodUsed,
+  wasteImage,
 }) => {
   const swipeableRef = useRef<Swipeable>(null);
+  const { addIntoHistory } = useHistory();
 
-  const handleSwipeRight = () => {
-    // Action pour le swipe à droite, équivalent à "C'est trié"
-    Alert.alert("Trié", "Vous avez trié cet objet.");
+  const handleSwipeRight = async () => {
+    await addIntoHistory({
+      method: methodUsed,
+      isValid: true,
+      poubelle: bin,
+      type: material,
+    });
     swipeableRef.current?.close();
   };
 

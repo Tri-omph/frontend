@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,47 +7,46 @@ import {
   TouchableOpacity,
 } from "react-native";
 import HistoricCard from "@/components/search/HistoricCard";
+import { useHistory } from "@/hooks/useHistory";
+import { RefreshControl } from "react-native-gesture-handler";
+import Toast from "react-native-toast-message";
 
-export default function TabOneScreen() {
-  const data = [
-    {
-      type: "PLASTIQUE",
-      date: "le 19/11/2024",
-      poubelle: "jaune",
-      method: "IA",
-      image: require("@/assets/images/canette-coca.jpg"),
-    },
-    {
-      type: "PAPIER",
-      date: "le 20/11/2024",
-      poubelle: "bleu",
-      method: "Barcode",
-      image: require("@/assets/images/canette-coca.jpg"),
-    },
-    {
-      type: "ALUMINIUM",
-      date: "le 23/11/2024",
-      poubelle: "jaune",
-      method: "Avancée",
-      image: require("@/assets/images/canette-coca.jpg"),
-    },
-  ];
+export default function TabHistoryScreen() {
+  const { history, fetchUserHistory, loading } = useHistory();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchUserHistory();
+    setRefreshing(false);
+  };
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Votre historique</Text>
 
-      <ScrollView contentContainerStyle={styles.historyList}>
-        {data.map((item, index) => (
-          <HistoricCard
-            key={index}
-            wasteImage={item.image}
-            wasteType={item.type}
-            date={item.date}
-            wasteIdentificationMethod={item.method}
-            targertedBin={item.poubelle}
-          />
-        ))}
+      <ScrollView
+        contentContainerStyle={styles.historyList}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
+      >
+        {loading ? (
+          <Text>Chargement...</Text>
+        ) : history && history.length > 0 ? (
+          history.map((item, index) => (
+            <HistoricCard
+              key={index}
+              wasteImage={{ uri: item.image }}
+              wasteType={item.type}
+              date={item.date}
+              wasteIdentificationMethod={item.method}
+              targertedBin={item.poubelle}
+            />
+          ))
+        ) : (
+          <Text>Aucun historique disponible.</Text>
+        )}
       </ScrollView>
 
       <View style={styles.advancedSearch}>
@@ -64,6 +63,7 @@ export default function TabOneScreen() {
           </Text>
         </TouchableOpacity>
       </View>
+      <Toast />
     </View>
   );
 }
