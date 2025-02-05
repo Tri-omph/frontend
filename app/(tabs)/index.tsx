@@ -1,23 +1,24 @@
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
-  ImageBackground,
   View,
+  Text,
   Image,
   Pressable,
-  Text,
   Dimensions,
+  ImageBackground,
   ScaledSize,
 } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Link } from "expo-router";
 import { routes } from "@/routes/routes";
 import Snowflake from "../../components/snowflake";
-import { useState, useEffect } from "react";
 import { useBackgroundContext } from "@/context/BackgroundContext";
+import { useFontContext } from "@/context/FontContext"; // Importing font context
 
 const fullDimensions = Dimensions.get("window");
 
-export default function Snow({
+export default function IndexPage({
   snowflakesCount = 100,
   fallSpeed = "medium",
   fullScreen = false,
@@ -26,12 +27,13 @@ export default function Snow({
   fallSpeed?: "slow" | "medium" | "fast";
   fullScreen?: boolean;
 }) {
+  // Accessing background context and font size context
   const { selectedBackground } = useBackgroundContext();
+  const { fontSize, increaseFontSize } = useFontContext(); // Font size from context
+
   const [scene, setScene] = useState<ScaledSize | null>(null);
   const [showEyesOpen, setShowEyesOpen] = useState(true);
-  const dimensionsStyle = fullScreen
-    ? fullDimensions
-    : styles.stretchDimensions;
+  const dimensionsStyle = fullScreen ? fullDimensions : styles.stretchDimensions;
 
   useEffect(() => {
     const intervalEyesOpen = setInterval(() => {
@@ -63,26 +65,15 @@ export default function Snow({
   return (
     <ImageBackground source={selectedBackground} style={styles.container}>
       <View style={styles.header}>
-        <Image
-          source={require("@/assets/images/logo_viveris.png")}
-          style={styles.logo}
-        />
-        <Image
-          source={require("@/assets/images/logo_triomph.png")}
-          style={[styles.logo, { left: -50 }]}
-        />
+        <Image source={require("@/assets/images/logo_viveris.png")} style={styles.logo} />
+        <Image source={require("@/assets/images/logo_triomph.png")} style={[styles.logo, { left: -50 }]} />
       </View>
 
       <View style={styles.iconContainer}>
         <Link href={routes.USER.SETTINGS.getHref()} asChild>
           <Pressable>
             {({ pressed }) => (
-              <FontAwesome
-                name="user-o"
-                size={25}
-                color="#FFF"
-                style={{ opacity: pressed ? 0.5 : 1 }}
-              />
+              <FontAwesome name="user-o" size={25} color="#FFF" style={{ opacity: pressed ? 0.5 : 1 }} />
             )}
           </Pressable>
         </Link>
@@ -101,7 +92,7 @@ export default function Snow({
 
       <Link href={routes.TABS.SCAN.getHref()} asChild>
         <Pressable style={styles.button}>
-          <Text style={styles.buttonText}>Scanne-moi !</Text>
+          <Text style={[styles.buttonText, { fontSize }]}>Scanne-moi !</Text>
         </Pressable>
       </Link>
 
@@ -113,6 +104,11 @@ export default function Snow({
               <Snowflake key={i} scene={scene} fallSpeed={fallSpeed} />
             ))}
       </View>
+
+      {/* Button to increase font size */}
+      <Pressable style={styles.increaseFontButton} onPress={increaseFontSize}>
+        <Text style={[styles.increaseFontText, { fontSize }]}>Increase Font Size</Text>
+      </Pressable>
     </ImageBackground>
   );
 }
@@ -126,15 +122,6 @@ const styles = StyleSheet.create({
   stretchDimensions: {
     width: "100%",
     height: "100%",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: "80%",
   },
   header: {
     flexDirection: "row",
@@ -183,7 +170,18 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#FFF",
-    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  increaseFontButton: {
+    marginTop: 10,
+    backgroundColor: "#FF6347",
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+  },
+  increaseFontText: {
+    color: "#FFF",
     fontWeight: "bold",
     textAlign: "center",
   },

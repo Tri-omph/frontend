@@ -26,7 +26,7 @@ cd ./frontend
 ### Installer les dépendances avec npm (la première fois uniquement ou lorsque les dépendances changent)
 
 ```bash
-npm install
+npm install --force
 ```
 
 ## Développement
