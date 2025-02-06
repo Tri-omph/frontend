@@ -11,13 +11,11 @@ import {
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Link } from "expo-router";
 import { routes } from "@/routes/routes";
-import { useAsyncStorage } from "@/hooks/useAsyncStorage";
 
 import Snowflake from "../../components/snowflake";
 import { useState, useEffect } from "react";
 import { useBackgroundContext } from "@/context/BackgroundContext";
-import { levelMonsters } from "@/constants/LevelMonsters";
-import resources from "@/constants/Resources";
+import { usePlayerContext } from "@/context/PlayerContext";
 
 const fullDimensions = Dimensions.get("window");
 
@@ -30,12 +28,11 @@ export default function Snow({
   fallSpeed?: "slow" | "medium" | "fast";
   fullScreen?: boolean;
 }) {
-  const { user } = useAsyncStorage();
   const { selectedBackground } = useBackgroundContext();
   const [scene, setScene] = useState<ScaledSize | null>(null);
   const [showEyesOpen, setShowEyesOpen] = useState(true);
-  const [monsterImage, setMonsterImage] = useState(resources.monster_v1);
-  const [userLevel, setUserLevel] = useState<number | null>(null);
+
+  const { monsterImage } = usePlayerContext();
 
   const dimensionsStyle = fullScreen
     ? fullDimensions
@@ -55,19 +52,6 @@ export default function Snow({
       clearInterval(intervalEyesClosed);
     };
   }, []);
-
-  useEffect(() => {
-    if (user && user.level !== userLevel) {
-      console.log("Mise à jour du niveau utilisateur :", user.level);
-      setUserLevel(user.level); // Met à jour l'état local
-
-      const monster = levelMonsters.find((m) => m.level === user.level);
-      if (monster) {
-        console.log("Monstre sélectionné :", monster);
-        setMonsterImage(monster.image);
-      }
-    }
-  }, [user, userLevel]);
 
   const onLayout = ({
     nativeEvent: {

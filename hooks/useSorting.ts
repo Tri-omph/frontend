@@ -1,9 +1,11 @@
 import { showNotification } from "@/constants/notification";
 import SortingManager from "@/services/managers/sortingManager";
 import { useAsyncStorage } from "@/hooks/useAsyncStorage";
+import { usePlayerContext } from "@/context/PlayerContext";
 
 export const useSorting = () => {
   const { setUserLocalStorage } = useAsyncStorage();
+  const { setUserLevel } = usePlayerContext();
 
   const sortAndReward = async () => {
     try {
@@ -14,6 +16,7 @@ export const useSorting = () => {
       }
 
       await setUserLocalStorage({ level: res.data.level });
+      setUserLevel(res.data.level as number);
 
       showNotification(
         "success",
