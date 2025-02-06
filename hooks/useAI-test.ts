@@ -2,6 +2,7 @@ import { useState } from "react";
 //import * as FileSystem from "expo-file-system";
 import { showNotification } from "@/constants/notification";
 import { CameraCapturedPicture } from "expo-camera"; // CameraCapturedPicture is what you get after capturing the image
+import { Platform } from "react-native";
 
 const useAI = (
   capturedImage: CameraCapturedPicture | null | undefined,
@@ -13,18 +14,33 @@ const useAI = (
     string | null
   >(null);
 
+  const imageUriToBlob = async (uri: string) => {
+    const response = await fetch(uri);
+    return await response.blob();
+  };
+
   const startPrediction = async (image: CameraCapturedPicture) => {
     try {
       // Here we process the image for AI, but we're going to adapt this to send it to Flask instead
       const uri = image.uri;
-      const response_uri = await fetch(uri);
-      const blob = await response_uri.blob(); // Convert the image to a Blob
-
-      // Create a FormData object and append the file
+      // *** Disjonction des cas, pour traiter le formData, voir [https://bmsptra.medium.com/resolving-network-request-failed-error-in-expo-app-when-uploading-images-to-server-931f5cb6bfe6]
       const formData = new FormData();
-      formData.append("file", blob, "photo.jpg");
 
-      const response = await fetch("http://10.188.232.115:5000/predict", {
+      if (Platform.OS === "web") {
+        const imageBlob = await imageUriToBlob(uri);
+        formData.append("file", imageBlob, "photo.jpg");
+      } else {
+        const fileType = uri.split(".").pop();
+        /* eslint-disable @typescript-eslint/no-explicit-any */
+        formData.append("file", {
+          uri: uri, // Image URI
+          name: `image.${fileType}`,
+          type: `image/${fileType}`,
+        } as any);
+        /* eslint-disable @typescript-eslint/no-explicit-any */
+      }
+
+      const response = await fetch("http://192.168.1.102:5000/predict", {
         method: "POST",
         body: formData,
       });
@@ -68,7 +84,7 @@ const useAI = (
       showNotification(
         "success",
         "Début de l'analyse",
-        "Le modèle a été chargé, l'analyse prendra quelques secondes...",
+        "La requete a été transmise, l'analyse prendra quelques secondes...",
       );
       // Process the image and send it to Flask
       const prediction = await startPrediction(capturedImage);
