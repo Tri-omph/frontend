@@ -8,6 +8,7 @@ import { routes } from "@/routes/routes";
 import Toast from "react-native-toast-message";
 import { useSession } from "@/hooks/useSession";
 import { signInFormAndRules } from "@/constants/formRules";
+import { FontSizeProvider, useFontContext } from "@/context/FontContext";
 
 export default function SignIn() {
   const { handleSignIn } = useSession();
@@ -25,6 +26,7 @@ export default function SignIn() {
   }) => {
     handleSignIn(data);
   };
+  const { fontSize, increaseFontSize } = useFontContext();
 
   return (
     <View style={styles.container}>
@@ -68,6 +70,12 @@ export default function SignIn() {
             Créer un compte
           </Link>
         </View>
+
+        <Pressable style={styles.increaseFontButton} onPress={increaseFontSize}>
+            <Text style={[styles.increaseFontText, { fontSize }]}>
+              Increase Font Size
+            </Text>
+        </Pressable>
       </View>
       <Toast />
     </View>
@@ -157,5 +165,17 @@ const styles = StyleSheet.create({
     color: "#28A745",
     fontSize: 16,
     textDecorationLine: "underline",
+  },
+  increaseFontButton: {
+    marginTop: 20,
+    backgroundColor: "#FF6347",
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+  },
+  increaseFontText: {
+    color: "#FFF",
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });

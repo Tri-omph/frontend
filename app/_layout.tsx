@@ -14,6 +14,7 @@ import "react-native-reanimated";
 import { useColorScheme } from "@/components/useColorScheme";
 import { SessionProvider } from "@/context/AuthContext";
 import { BackgroundProvider } from "@/context/BackgroundContext";
+import { FontSizeProvider } from "@/context/FontContext";
 
 // Import des "screens"
 
@@ -61,7 +62,9 @@ export default function RootLayout({
     <GestureHandlerRootView>
       <SessionProvider>
         <BackgroundProvider>
-          <RootLayoutNav />
+          <FontSizeProvider>
+            <RootLayoutNav />
+          </FontSizeProvider>
         </BackgroundProvider>
       </SessionProvider>
     </GestureHandlerRootView>
