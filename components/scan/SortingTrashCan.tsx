@@ -12,26 +12,45 @@ import { Swipeable } from "react-native-gesture-handler";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useSorting } from "@/hooks/useSorting";
 import BottomSheet from "@gorhom/bottom-sheet";
+import { useHistory } from "@/hooks/useHistory";
+import { detectionMethod } from "@/types/detectionMethods";
 
 type SortingTrashCanProps = {
-  title: string; // Titre principal
-  subtitle: string; // Titre secondaire
+  title: string;
+  subtitle: string;
+  bin: string;
   image: ImageSourcePropType;
   bottomSheetRef: React.RefObject<BottomSheet>; // Permet de fermer le bottomSheet une fois, le tri effectué
+  material: string;
+  methodUsed: detectionMethod;
+  wasteImage: string;
 };
 
 const SortingTrashCan: React.FC<SortingTrashCanProps> = ({
   title,
   subtitle,
+  bin,
   image,
   bottomSheetRef,
+  material,
+  methodUsed,
+  wasteImage,
 }) => {
   const { sortAndReward } = useSorting();
   const swipeableRef = useRef<Swipeable>(null);
+  const { addIntoHistory } = useHistory();
 
   const handleSwipeRight = async () => {
+    await addIntoHistory({
+      method: methodUsed,
+      isValid: true,
+      poubelle: bin,
+      type: material,
+    });
+
     await sortAndReward(); // C'est trié donc je ferme le bottomSheet !
     bottomSheetRef.current?.close(); // ✅ Ferme le BottomSheet
+
     swipeableRef.current?.close();
   };
 

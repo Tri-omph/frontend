@@ -101,10 +101,18 @@ const ScanResultScreen: React.FC<ScanResultScreenProps> = ({
 
             <View style={styles.separator} />
             <SortingTrashCan
-              title="Quelle poubelle ?"
-              subtitle={`À jeter dans la poubelle ${nameOfBin}`}
+              title={`Poubelle ${nameOfBin}`}
+              subtitle="Déposez ici votre objet"
+              bin={nameOfBin}
               image={imageOfBin}
               bottomSheetRef={bottomSheetRef}
+              material={material}
+              methodUsed={detectionMethod}
+              wasteImage={
+                typeof imageOfWaste === "object"
+                  ? imageOfWaste.uri
+                  : imageOfWaste
+              }
             />
           </>
         )}
