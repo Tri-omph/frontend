@@ -12,9 +12,11 @@ import {
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Link } from "expo-router";
 import { routes } from "@/routes/routes";
+
 import Snowflake from "../../components/snowflake";
 import { useBackgroundContext } from "@/context/BackgroundContext";
 import { useFontContext } from "@/context/FontContext"; // Importing font context
+import { usePlayerContext } from "@/context/PlayerContext";
 
 const fullDimensions = Dimensions.get("window");
 
@@ -33,7 +35,12 @@ export default function IndexPage({
 
   const [scene, setScene] = useState<ScaledSize | null>(null);
   const [showEyesOpen, setShowEyesOpen] = useState(true);
-  const dimensionsStyle = fullScreen ? fullDimensions : styles.stretchDimensions;
+
+  const { monsterImage } = usePlayerContext();
+
+  const dimensionsStyle = fullScreen
+    ? fullDimensions
+    : styles.stretchDimensions;
 
   useEffect(() => {
     const intervalEyesOpen = setInterval(() => {
@@ -65,15 +72,26 @@ export default function IndexPage({
   return (
     <ImageBackground source={selectedBackground} style={styles.container}>
       <View style={styles.header}>
-        <Image source={require("@/assets/images/logo_viveris.png")} style={styles.logo} />
-        <Image source={require("@/assets/images/logo_triomph.png")} style={[styles.logo, { left: -50 }]} />
+        <Image
+          source={require("@/assets/images/logo_viveris.png")}
+          style={styles.logo}
+        />
+        <Image
+          source={require("@/assets/images/logo_triomph.png")}
+          style={[styles.logo, { left: -50 }]}
+        />
       </View>
 
       <View style={styles.iconContainer}>
         <Link href={routes.USER.SETTINGS.getHref()} asChild>
           <Pressable>
             {({ pressed }) => (
-              <FontAwesome name="user-o" size={25} color="#FFF" style={{ opacity: pressed ? 0.5 : 1 }} />
+              <FontAwesome
+                name="user-o"
+                size={25}
+                color="#FFF"
+                style={{ opacity: pressed ? 0.5 : 1 }}
+              />
             )}
           </Pressable>
         </Link>
@@ -83,7 +101,7 @@ export default function IndexPage({
         <Image
           source={
             showEyesOpen
-              ? require("@/assets/images/monster_noel.png")
+              ? monsterImage
               : require("@/assets/images/monster_noel_eyes_closed.png")
           }
           style={styles.monster}
@@ -107,7 +125,9 @@ export default function IndexPage({
 
       {/* Button to increase font size */}
       <Pressable style={styles.increaseFontButton} onPress={increaseFontSize}>
-        <Text style={[styles.increaseFontText, { fontSize }]}>Increase Font Size</Text>
+        <Text style={[styles.increaseFontText, { fontSize }]}>
+          Increase Font Size
+        </Text>
       </Pressable>
     </ImageBackground>
   );

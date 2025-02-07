@@ -8,6 +8,8 @@ const resources: Record<string, ImageSourcePropType> = {
   // MONSTRE
   monster_v1: require("@/assets/images/monstre_v1.png"),
   monster_v2: require("@/assets/images/monstre_v2.png"),
+  monster_v3: require("@/assets/images/monstre_v3.png"), // Ici, le monstre avec la fleur (niv 2, TODO: Revenir sur la gestion des ressources)
+
   // WASTE
   canetteCoca: require("@/assets/images/canette-coca.jpg"),
   // BIN
