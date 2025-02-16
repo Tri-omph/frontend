@@ -15,7 +15,6 @@ import { routes } from "@/routes/routes";
 
 import Snowflake from "../../components/snowflake";
 import { useBackgroundContext } from "@/context/BackgroundContext";
-import { useFontContext } from "@/context/FontContext"; // Importing font context
 import { usePlayerContext } from "@/context/PlayerContext";
 
 const fullDimensions = Dimensions.get("window");
@@ -31,7 +30,6 @@ export default function IndexPage({
 }) {
   // Accessing background context and font size context
   const { selectedBackground } = useBackgroundContext();
-  const { fontSize, increaseFontSize } = useFontContext(); // Font size from context
 
   const [scene, setScene] = useState<ScaledSize | null>(null);
   const [showEyesOpen, setShowEyesOpen] = useState(true);
@@ -110,7 +108,7 @@ export default function IndexPage({
 
       <Link href={routes.TABS.SCAN.getHref()} asChild>
         <Pressable style={styles.button}>
-          <Text style={[styles.buttonText, { fontSize }]}>Scanne-moi !</Text>
+          <Text style={styles.buttonText}>Scanne-moi !</Text>
         </Pressable>
       </Link>
 
@@ -122,13 +120,6 @@ export default function IndexPage({
               <Snowflake key={i} scene={scene} fallSpeed={fallSpeed} />
             ))}
       </View>
-
-      {/* Button to increase font size */}
-      <Pressable style={styles.increaseFontButton} onPress={increaseFontSize}>
-        <Text style={[styles.increaseFontText, { fontSize }]}>
-          Increase Font Size
-        </Text>
-      </Pressable>
     </ImageBackground>
   );
 }
