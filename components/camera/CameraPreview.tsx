@@ -10,7 +10,7 @@ import { CameraCapturedPicture } from "expo-camera";
 import Toast from "react-native-toast-message";
 
 import ScanResultScreen from "@/app/(screens)/(scan)/scan-result";
-import useAI from "@/hooks/useAI-test";
+import useAI from "@/hooks/useAI";
 import { detectionMethod } from "@/types/detectionMethods";
 
 type CameraPreviewProps = {
