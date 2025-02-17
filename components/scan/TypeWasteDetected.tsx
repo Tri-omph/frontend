@@ -7,7 +7,6 @@ import { detectionMethod } from "@/types/detectionMethods";
 
 type TypeWasteDetectedProps = {
   title: string; // Titre principal
-  subtitle: string; // Titre secondaire
   activeMethod: string; // Méthode active (par ex. "IA")
   askUserFeedback?: boolean;
   onThumbUp?: () => void; // Ajout de la fonction callback pour pouce du haut
@@ -16,7 +15,6 @@ type TypeWasteDetectedProps = {
 
 const TypeWasteDetected: React.FC<TypeWasteDetectedProps> = ({
   title,
-  subtitle,
   activeMethod,
   askUserFeedback = false,
   onThumbUp,
@@ -45,7 +43,7 @@ const TypeWasteDetected: React.FC<TypeWasteDetectedProps> = ({
       {/* Ligne avec description et boutons */}
       <View style={styles.rowContainer}>
         <View style={styles.titleAndSubtitleContainer}>
-          <TitleAndSubtitle title={title} subtitle={subtitle} />
+          <TitleAndSubtitle title={title} subtitle={"Méthode de détection"} />
         </View>
 
         {/* Dans le cas où le feedback user est attendu: boutons d'approbation et de rejet */}

@@ -3,19 +3,17 @@ import { View, Text, StyleSheet, ImageSourcePropType } from "react-native";
 import ContentWithImage from "@/components/scan/ContentWithImage";
 
 type ImageWasteDetectedProps = {
-  title: string; // Titre principal
-  subtitle: string; // Titre secondaire
-  image: ImageSourcePropType | { uri: string };
+  image: ImageSourcePropType | null;
 };
 
-const ImageWasteDetected: React.FC<ImageWasteDetectedProps> = ({
-  title,
-  subtitle,
-  image,
-}) => {
+const ImageWasteDetected: React.FC<ImageWasteDetectedProps> = ({ image }) => {
   return (
     <View style={styles.container}>
-      <ContentWithImage title={title} subtitle={subtitle} image={image}>
+      <ContentWithImage
+        title="Votre photo"
+        subtitle={`Prise le ${new Date().toLocaleDateString()}`}
+        image={image}
+      >
         {/* Injection du texte de description */}
         <Text style={styles.descriptionText}>
           Votre photo (ne) sera (pas) stockée.{"\n"}Pour plus d’informations,

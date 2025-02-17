@@ -1,12 +1,5 @@
 import React, { useRef } from "react";
-import {
-  View,
-  StyleSheet,
-  ImageSourcePropType,
-  Text,
-  TouchableOpacity,
-  Alert,
-} from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity, Alert } from "react-native";
 import ContentWithImage from "@/components/scan/ContentWithImage";
 import { Swipeable } from "react-native-gesture-handler";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -14,37 +7,31 @@ import { useSorting } from "@/hooks/useSorting";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { useHistory } from "@/hooks/useHistory";
 import { detectionMethod } from "@/types/detectionMethods";
+import getBinToThrowIn from "@/utils/bin/BinToThrowIn";
 
 type SortingTrashCanProps = {
-  title: string;
-  subtitle: string;
-  bin: string;
-  image: ImageSourcePropType;
-  bottomSheetRef: React.RefObject<BottomSheet>; // Permet de fermer le bottomSheet une fois, le tri effectué
   material: string;
   methodUsed: detectionMethod;
-  wasteImage: string;
+  bottomSheetRef: React.RefObject<BottomSheet>; // Permet de fermer le bottomSheet une fois, le tri effectué
 };
 
 const SortingTrashCan: React.FC<SortingTrashCanProps> = ({
-  title,
-  subtitle,
-  bin,
-  image,
-  bottomSheetRef,
   material,
   methodUsed,
-  wasteImage,
+  bottomSheetRef,
 }) => {
   const { sortAndReward } = useSorting();
   const swipeableRef = useRef<Swipeable>(null);
   const { addIntoHistory } = useHistory();
 
+  // Récupérer la poubelle et son image en utilisant la fonction getBinToThrowIn
+  const { nameOfBin, imageOfBin } = getBinToThrowIn(material);
+
   const handleSwipeRight = async () => {
     await addIntoHistory({
       method: methodUsed,
       isValid: true,
-      poubelle: bin,
+      poubelle: nameOfBin,
       type: material,
     });
 
@@ -65,7 +52,11 @@ const SortingTrashCan: React.FC<SortingTrashCanProps> = ({
 
   return (
     <View style={styles.container}>
-      <ContentWithImage title={title} subtitle={subtitle} image={image}>
+      <ContentWithImage
+        title={`Poubelle ${nameOfBin}`}
+        subtitle="Déposer ici votre déchet"
+        image={imageOfBin}
+      >
         <Swipeable
           ref={swipeableRef}
           renderRightActions={() => (

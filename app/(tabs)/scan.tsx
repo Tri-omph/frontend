@@ -1,17 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import ScanResultScreen from "@/app/(screens)/(scan)/scan-result";
 import { useScan } from "@/hooks/useScan";
 import { useCamera } from "@/hooks/useCamera";
-import { detectionMethod } from "@/types/detectionMethods";
 import { barcodeTypes } from "@/types/barcodeTypes";
 import CameraPreview from "@/components/camera/CameraPreview";
 import { useLocalSearchParams } from "expo-router";
 
 import Toast from "react-native-toast-message";
 
-export default function App() {
+export default function Scan() {
   const [permission, requestPermission] = useCameraPermissions();
   // Camera (prendre une photo et l'analyser avec l'IA)
   const {
@@ -28,19 +27,21 @@ export default function App() {
   // Scan (detecter le code-barre et chercher les informations correspondantes), priorité à la caméra, le scan doit s'adapter !
   const {
     scanned,
-    scannedImage,
-    scannedMaterialByBarcode,
     handleBarcodeScanned,
     resetScan,
+    imageOfWaste: scannedImage,
+    material: scannedMaterialByBarcode,
   } = useScan(cameraRef);
 
   // L'utilisateur peut apporter une correction depuis le mode "recherche avancé"
-  const { wasteCorrectedByUser, imageOfWasteToCorrect } =
-    useLocalSearchParams();
-  const [isCorrectionInUse, setIsCorrectionInUse] = useState(false); // Condition pour savoir si "CX" est ouvert
+  let { wasteCorrectedByUser, imageOfWasteToCorrect } = useLocalSearchParams();
+  const [isCorrectionInUse, setIsCorrectionInUse] = useState(false);
 
-  // TODO: Revenir checker le problème de "quand tu passes en mode avancé, comment accéder à nouveau au scan, la condition sur une constante (cf ligne dessus), n'a pas de sens !!!"
-  // TODO: Résoudre le problème des photos !!
+  useEffect(() => {
+    if (wasteCorrectedByUser !== undefined) {
+      setIsCorrectionInUse(true);
+    }
+  }, [wasteCorrectedByUser]); // Permet de savoir  si l'utilsateur utilise le scana après etre revenu de la recherche avancée !
 
   // ********************************* Vue SCAN
 
@@ -89,22 +90,19 @@ export default function App() {
         </View>
       </CameraView>
       {scanned && scannedImage && scannedMaterialByBarcode && (
-        <ScanResultScreen
-          material={scannedMaterialByBarcode}
-          imageOfWaste={scannedImage}
-          detectionMethod={detectionMethod.Barcode}
-          onDismiss={resetScan}
-        />
+        <ScanResultScreen imageOfWaste={scannedImage} onDismiss={resetScan} />
       )}
+      {/* TODO => modifier la procédure de passage dans le mode recherche avancé !  */}
       {wasteCorrectedByUser && (
         <ScanResultScreen
-          material={wasteCorrectedByUser.toString()}
           imageOfWaste={{ uri: imageOfWasteToCorrect.toString() }}
-          detectionMethod={detectionMethod.Advanced}
           onDismiss={() => {
             resetScan();
             setIsCorrectionInUse(false);
+            wasteCorrectedByUser = undefined;
+            imageOfWasteToCorrect = undefined;
           }}
+          askUserFeedBack={false}
         />
       )}
       <Toast />

@@ -5,7 +5,7 @@ export const SCAN_ENDPOINTS = {
   // ******************* POST
   // ******************* GET
   GET_PRODUCT_PACKAGE_MATERIAL: (barcode: string) =>
-    `/scan/products?barcode=${barcode}`,
+    `/scan/barcode?barcode=${barcode}`,
 
   // ******************* PATCH
 };
