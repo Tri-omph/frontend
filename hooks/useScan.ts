@@ -5,24 +5,33 @@ import { showNotification } from "@/constants/notification";
 import { useScanContext } from "@/context/ScanContext"; // Importation du ScanContext
 import { detectionMethod } from "@/types/detectionMethods";
 
-export const useScan = (cameraRef: React.RefObject<CameraView>) => {
-  const { setScanData, imageOfWaste, material } = useScanContext(); // Accéder aux données du ScanContext
+export const useScan = (cameraRef?: React.RefObject<CameraView>) => {
+  const {
+    setScanData,
+    resetScanData,
+    imageOfWaste,
+    material,
+    methodUsed,
+    correctedByUser,
+  } = useScanContext(); // Accéder aux données du ScanContext
   const [dealingWithScannedImg, setDealingWithScannedImg] = useState(false);
   const [scanned, setScanned] = useState(false);
 
   const resetScan = useCallback(() => {
     setScanned(false);
     setDealingWithScannedImg(false);
-  }, []);
+    resetScanData();
+  }, [resetScanData]);
 
   const handleBarcodeScanned = useCallback(
     async (barcodeScanningResult: BarcodeScanningResult) => {
-      if (dealingWithScannedImg || scanned) return;
+      if (dealingWithScannedImg || scanned || imageOfWaste) return;
 
       try {
         setDealingWithScannedImg(true);
 
         // Pas Déjà en cours de traitement avec une image ! (scanned ne suffit pas, car entre temps, il y a la prise de photo !!)
+        if (!cameraRef) return;
         const photo = await cameraRef.current?.takePictureAsync();
         setScanned(true);
 
@@ -51,14 +60,24 @@ export const useScan = (cameraRef: React.RefObject<CameraView>) => {
         resetScan();
       }
     },
-    [cameraRef, dealingWithScannedImg, scanned, resetScan, setScanData],
+    [
+      cameraRef,
+      dealingWithScannedImg,
+      scanned,
+      imageOfWaste,
+      resetScan,
+      setScanData,
+    ],
   );
 
   return {
     scanned,
     handleBarcodeScanned,
+    setScanData,
     resetScan,
     imageOfWaste,
     material,
+    methodUsed,
+    correctedByUser,
   };
 };

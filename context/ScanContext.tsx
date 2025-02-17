@@ -8,14 +8,15 @@ type ScanContextType = {
   material: string;
   methodUsed: detectionMethod;
   imageOfWaste: ImageSourcePropType | null;
-  correctedMaterial?: string;
+  correctedByUser: boolean;
   setScanData: (data: UpdatableScanData) => void;
+  resetScanData: () => void;
 
   /* NB: Un useState ne pouvant pas contenir une fonction, setScanData est "omit"
       On retire la clé setScanData de ScanContextType*/
 };
 
-type ScanContextData = Omit<ScanContextType, "setScanData">;
+type ScanContextData = Omit<ScanContextType, "setScanData" | "resetScanData">;
 type UpdatableScanData = Partial<ScanContextData>;
 
 /* On met à jour qu'une seule partie des données, une clé en particulier, c'est pour ca
@@ -32,15 +33,30 @@ export const ScanProvider: React.FC<{ children: React.ReactNode }> = ({
     material: "",
     methodUsed: detectionMethod.Barcode,
     imageOfWaste: null,
-    correctedMaterial: undefined,
+    correctedByUser: false,
   });
+
+  /*useEffect(() => {
+    console.log("Scan data updated:", scanData);
+  }, [scanData]);*/
+
+  const resetScanData = () => {
+    setScanData({
+      material: "",
+      methodUsed: detectionMethod.Barcode,
+      imageOfWaste: null,
+      correctedByUser: false,
+    });
+  };
 
   const updateScanData = (data: UpdatableScanData) => {
     setScanData((prev) => ({ ...prev, ...data }));
   };
 
   return (
-    <ScanContext.Provider value={{ ...scanData, setScanData: updateScanData }}>
+    <ScanContext.Provider
+      value={{ ...scanData, setScanData: updateScanData, resetScanData }}
+    >
       {children}
     </ScanContext.Provider>
   );
