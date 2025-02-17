@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Button, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import ScanResultScreen from "@/app/(screens)/(scan)/scan-result";
@@ -6,7 +6,6 @@ import { useScan } from "@/hooks/useScan";
 import { useCamera } from "@/hooks/useCamera";
 import { barcodeTypes } from "@/types/barcodeTypes";
 import CameraPreview from "@/components/camera/CameraPreview";
-import { useLocalSearchParams } from "expo-router";
 
 import Toast from "react-native-toast-message";
 
@@ -31,17 +30,8 @@ export default function Scan() {
     resetScan,
     imageOfWaste: scannedImage,
     material: scannedMaterialByBarcode,
+    correctedByUser,
   } = useScan(cameraRef);
-
-  // L'utilisateur peut apporter une correction depuis le mode "recherche avancé"
-  let { wasteCorrectedByUser, imageOfWasteToCorrect } = useLocalSearchParams();
-  const [isCorrectionInUse, setIsCorrectionInUse] = useState(false);
-
-  useEffect(() => {
-    if (wasteCorrectedByUser !== undefined) {
-      setIsCorrectionInUse(true);
-    }
-  }, [wasteCorrectedByUser]); // Permet de savoir  si l'utilsateur utilise le scana après etre revenu de la recherche avancée !
 
   // ********************************* Vue SCAN
 
@@ -72,9 +62,7 @@ export default function Scan() {
       <CameraView
         ref={cameraRef}
         style={StyleSheet.absoluteFillObject}
-        onBarcodeScanned={
-          capturedImage || isCorrectionInUse ? undefined : handleBarcodeScanned
-        }
+        onBarcodeScanned={capturedImage ? undefined : handleBarcodeScanned}
         barcodeScannerSettings={{
           barcodeTypes: barcodeTypes,
         }}
@@ -89,21 +77,9 @@ export default function Scan() {
           />
         </View>
       </CameraView>
-      {scanned && scannedImage && scannedMaterialByBarcode && (
+      {((scanned && scannedImage && scannedMaterialByBarcode) ||
+        correctedByUser) && (
         <ScanResultScreen imageOfWaste={scannedImage} onDismiss={resetScan} />
-      )}
-      {/* TODO => modifier la procédure de passage dans le mode recherche avancé !  */}
-      {wasteCorrectedByUser && (
-        <ScanResultScreen
-          imageOfWaste={{ uri: imageOfWasteToCorrect.toString() }}
-          onDismiss={() => {
-            resetScan();
-            setIsCorrectionInUse(false);
-            wasteCorrectedByUser = undefined;
-            imageOfWasteToCorrect = undefined;
-          }}
-          askUserFeedBack={false}
-        />
       )}
       <Toast />
     </View>

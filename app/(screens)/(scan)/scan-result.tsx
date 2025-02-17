@@ -6,7 +6,7 @@ import BottomSheet from "@gorhom/bottom-sheet";
 import TypeWasteDetected from "@/components/scan/TypeWasteDetected";
 import ImageWasteDetected from "@/components/scan/ImageWasteDetected";
 import SortingTrashCan from "@/components/scan/SortingTrashCan";
-import { useScanContext } from "@/context/ScanContext";
+import { useScan } from "@/hooks/useScan";
 
 type ScanResultScreenProps = {
   imageOfWaste: ImageSourcePropType | null;
@@ -18,8 +18,8 @@ const ScanResultScreen: React.FC<ScanResultScreenProps> = ({
   onDismiss,
   askUserFeedBack,
 }) => {
-  // ***** UTILISATION DU CONTEXT
-  const { material, methodUsed, imageOfWaste, setScanData } = useScanContext();
+  // ***** UTILISATION DU CONTEXT (/!\ En passant par le hooks useScan)
+  const { material, methodUsed, imageOfWaste } = useScan();
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [bottomSheetState, setBottomSheetState] = useState({
     snapPoints: ["30%"],
@@ -43,11 +43,8 @@ const ScanResultScreen: React.FC<ScanResultScreenProps> = ({
   // L'utilisateur n'est pas d'accord avec le résultat fourni par le scan !
   // On passe alors en mode recherche avancée !
   const handleThumbDown = async () => {
-    if (imageOfWaste) {
-      setScanData({ imageOfWaste }); // Enregistre l’image pour AdvancedResearch
-    }
     bottomSheetRef.current?.close();
-    router.push("/advanced-research");
+    router.replace("/advanced-research"); // L'expérience montre que pour ce cas, utiliser replace est plus fluide ...
   };
 
   return (
