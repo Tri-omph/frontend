@@ -1,14 +1,16 @@
 import { useState } from "react";
-//import * as FileSystem from "expo-file-system";
-import { showNotification } from "@/constants/notification";
-import { CameraCapturedPicture } from "expo-camera"; // CameraCapturedPicture is what you get after capturing the image
 import { Platform } from "react-native";
+import { CameraCapturedPicture } from "expo-camera";
+
+import { useScanContext } from "@/context/ScanContext";
+import { showNotification } from "@/constants/notification";
+import { detectionMethod } from "@/types/detectionMethods";
 
 const useAI = (
   capturedImage: CameraCapturedPicture | null | undefined,
   retakePicture: () => void,
 ) => {
-  //const [loading, setLoading] = useState(true);
+  const { setScanData } = useScanContext(); // Accéder aux données du ScanContext
   const [aiIsProcessing, setAiIsProcessing] = useState(false);
   const [wasteTypePredictionResult, setWasteTypePredictionResult] = useState<
     string | null
@@ -50,9 +52,6 @@ const useAI = (
         setWasteTypePredictionResult(result.predicted_class);
         return result.predicted_class;
       } else {
-        console.log(
-          "L'image que vous avez fournie semble invalide. Veuillez essayer avec une autre photo.",
-        );
         showNotification(
           "error",
           "Image invalide",
@@ -61,22 +60,16 @@ const useAI = (
         return null;
       }
     } catch (error) {
-      console.log(
-        "Une erreur est survenue lors de l'utilisation de l'IA. Veuillez réessayer plus tard.",
-        error,
-      );
       showNotification(
         "error",
         "Impossible de renvoyer le résultat",
-        "Une erreur est survenue lors de l'utilisation de l'IA. Veuillez réessayer plus tard.",
+        error.message,
       );
     }
   };
 
   const processWasteTypePrediction = async () => {
     if (aiIsProcessing) return;
-
-    console.log("Votre image est en cours d'analyse");
 
     setAiIsProcessing(true);
 
@@ -91,17 +84,12 @@ const useAI = (
 
       if (prediction) {
         setWasteTypePredictionResult(prediction);
-        console.log(`C'est du ${prediction}`);
-        showNotification(
-          "success",
-          "Résultat IA => SUPPP",
-          `C'est du ${prediction}`,
-        );
+        setScanData({
+          material: prediction,
+          methodUsed: detectionMethod.AI,
+          imageOfWaste: capturedImage,
+        });
       }
-    } else {
-      console.log(
-        'Le model n\'est pas chargé. Relancer la requete en appuyant à noubeau sur "Analyser"',
-      );
     }
     setAiIsProcessing(false);
   };
