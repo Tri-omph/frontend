@@ -1,41 +1,35 @@
-import React, { useState, useRef } from "react";
-import {
-  View,
-  StyleSheet,
-  ImageSourcePropType,
-  ImageURISource,
-} from "react-native";
+import React, { useRef, useState } from "react";
+import { View, StyleSheet, ImageSourcePropType } from "react-native";
 import { router } from "expo-router";
 
 import BottomSheet from "@gorhom/bottom-sheet";
 import TypeWasteDetected from "@/components/scan/TypeWasteDetected";
 import ImageWasteDetected from "@/components/scan/ImageWasteDetected";
 import SortingTrashCan from "@/components/scan/SortingTrashCan";
-import getBinToThrowIn from "@/utils/bin/BinToThrowIn";
-import useFileSystem from "@/hooks/useFileSystem";
+import { useScan } from "@/hooks/useScan";
 
 type ScanResultScreenProps = {
-  material: string; // Le matériau du produit (ex : "aluminium")
-  detectionMethod: string; // La méthode de détection (ex : "Code barre")
-  imageOfWaste: ImageSourcePropType | { uri: string };
+  imageOfWaste: ImageSourcePropType | null;
   onDismiss?: () => void;
+  askUserFeedBack?: boolean;
 };
 
 const ScanResultScreen: React.FC<ScanResultScreenProps> = ({
-  material,
-  detectionMethod,
-  imageOfWaste,
   onDismiss,
+  askUserFeedBack,
 }) => {
-  const { saveImageLocally } = useFileSystem();
-  const { nameOfBin, imageOfBin } = getBinToThrowIn(material);
-
+  // ***** UTILISATION DU CONTEXT (/!\ En passant par le hooks useScan)
+  const { material, methodUsed, imageOfWaste } = useScan();
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [bottomSheetState, setBottomSheetState] = useState({
     snapPoints: ["30%"],
     showAdditionalComponents: false,
   });
 
+  // ***** GESTION DE L'OUVERTURE/FERMETURE DU BOTTOMSHEET
+
+  // L'utilisateur est d'accord avec le résultat fourni par le scan ! => Alors on affiche les informations
+  // supplémentaires
   const handleThumbUp = () => {
     setBottomSheetState({
       snapPoints: ["30%", "80%"],
@@ -46,10 +40,11 @@ const ScanResultScreen: React.FC<ScanResultScreenProps> = ({
     }, 100); // Délai nécessaire pour garantir l'ajout du deuxième snapoints dans la liste avec d'étendre le composant.
   };
 
-  const handleSheetClose = () => {
-    if (onDismiss) {
-      onDismiss();
-    }
+  // L'utilisateur n'est pas d'accord avec le résultat fourni par le scan !
+  // On passe alors en mode recherche avancée !
+  const handleThumbDown = async () => {
+    bottomSheetRef.current?.close();
+    router.replace("/advanced-research"); // L'expérience montre que pour ce cas, utiliser replace est plus fluide ...
   };
 
   return (
@@ -59,7 +54,7 @@ const ScanResultScreen: React.FC<ScanResultScreenProps> = ({
       snapPoints={bottomSheetState.snapPoints}
       enableDynamicSizing={false} // Sans cela, le bottomSheet ne s'affiche pas, il semblerait que cela soit à cause de expo 52,
       enablePanDownToClose={true}
-      onClose={handleSheetClose}
+      onClose={onDismiss || undefined}
       style={{ borderRadius: 20, overflow: "hidden" }}
       handleIndicatorStyle={{
         width: 100,
@@ -69,41 +64,21 @@ const ScanResultScreen: React.FC<ScanResultScreenProps> = ({
       <View style={styles.contentContainer}>
         <TypeWasteDetected
           title={`Emballage en ${material}`}
-          subtitle="Méthode de détection"
-          activeMethod={detectionMethod}
-          askUserFeedback={true}
+          activeMethod={methodUsed}
+          askUserFeedback={askUserFeedBack || true}
           onThumbUp={handleThumbUp}
-          onThumbDown={async () => {
-            if ((imageOfWaste as ImageURISource) !== undefined) {
-              console.log("it should work !");
-              const localUri = await saveImageLocally(
-                (imageOfWaste as ImageURISource).uri,
-              );
-              bottomSheetRef.current?.close();
-              router.replace({
-                pathname: "/advanced-research",
-                params: {
-                  imageOfWasteToCorrect: localUri,
-                },
-              });
-            }
-          }}
+          onThumbDown={handleThumbDown}
         />
 
         {bottomSheetState.showAdditionalComponents && (
           <>
             <View style={styles.separator} />
-            <ImageWasteDetected
-              title="Votre photo"
-              subtitle="prise le {date téléphone}"
-              image={imageOfWaste}
-            />
+            <ImageWasteDetected image={imageOfWaste} />
 
             <View style={styles.separator} />
             <SortingTrashCan
-              title="Quelle poubelle ?"
-              subtitle={`À jeter dans la poubelle ${nameOfBin}`}
-              image={imageOfBin}
+              material={material}
+              methodUsed={methodUsed}
               bottomSheetRef={bottomSheetRef}
             />
           </>

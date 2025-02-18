@@ -36,6 +36,7 @@ class UserManager {
     username: string;
     password: string;
     email: string;
+    saveImage: boolean;
   }) => {
     return ApiClient.post<{ message: string; token: string }>(
       ENDPOINTS.CREATE_USER(),
@@ -63,7 +64,12 @@ class UserManager {
 
   // ******************* GET
   static GET_INFO_USER = () => {
-    return ApiClient.get(ENDPOINTS.GET_INFO_USER());
+    return ApiClient.get<{
+      username: string;
+      email: string;
+      saveImage: boolean;
+      points: number;
+    }>(ENDPOINTS.GET_INFO_USER());
   };
 
   // ******************* PATCH
@@ -71,6 +77,7 @@ class UserManager {
     username: string;
     password: string;
     email: string;
+    saveImage: boolean;
   }) => {
     return ApiClient.patch(ENDPOINTS.UPDATE_INFO_USER(), body);
   };

@@ -1,11 +1,12 @@
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
-  ImageBackground,
   View,
+  Text,
   Image,
   Pressable,
-  Text,
   Dimensions,
+  ImageBackground,
   ScaledSize,
 } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -13,13 +14,12 @@ import { Link } from "expo-router";
 import { routes } from "@/routes/routes";
 
 import Snowflake from "../../components/snowflake";
-import { useState, useEffect } from "react";
 import { useBackgroundContext } from "@/context/BackgroundContext";
 import { usePlayerContext } from "@/context/PlayerContext";
 
 const fullDimensions = Dimensions.get("window");
 
-export default function Snow({
+export default function IndexPage({
   snowflakesCount = 100,
   fallSpeed = "medium",
   fullScreen = false,
@@ -28,7 +28,9 @@ export default function Snow({
   fallSpeed?: "slow" | "medium" | "fast";
   fullScreen?: boolean;
 }) {
+  // Accessing background context and font size context
   const { selectedBackground } = useBackgroundContext();
+
   const [scene, setScene] = useState<ScaledSize | null>(null);
   const [showEyesOpen, setShowEyesOpen] = useState(true);
 
@@ -132,15 +134,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: "80%",
-  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -188,7 +181,18 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#FFF",
-    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  increaseFontButton: {
+    marginTop: 10,
+    backgroundColor: "#FF6347",
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+  },
+  increaseFontText: {
+    color: "#FFF",
     fontWeight: "bold",
     textAlign: "center",
   },

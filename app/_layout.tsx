@@ -13,8 +13,10 @@ import "react-native-reanimated";
 
 import { useColorScheme } from "@/components/useColorScheme";
 import { SessionProvider } from "@/context/AuthContext";
+import { ScanProvider } from "@/context/ScanContext";
 import { BackgroundProvider } from "@/context/BackgroundContext";
 import { PlayerProvider } from "@/context/PlayerContext";
+import { UserInformationProvider } from "@/context/UserInformationContext";
 
 // Import des "screens"
 
@@ -60,13 +62,17 @@ export default function RootLayout({
   /* GestureHandlerRootView, nous permet d'utiliser le bottom sheet (utile pour la partie scan) ! */
   return (
     <GestureHandlerRootView>
-      <SessionProvider>
-        <BackgroundProvider>
-          <PlayerProvider>
-            <RootLayoutNav />
-          </PlayerProvider>
-        </BackgroundProvider>
-      </SessionProvider>
+      <UserInformationProvider>
+        <SessionProvider>
+          <ScanProvider>
+            <BackgroundProvider>
+              <PlayerProvider>
+                <RootLayoutNav />
+              </PlayerProvider>
+            </BackgroundProvider>
+          </ScanProvider>
+        </SessionProvider>
+      </UserInformationProvider>
     </GestureHandlerRootView>
   );
 }

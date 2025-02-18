@@ -13,11 +13,13 @@ import FormInput from "@/components/user/FormInput";
 import { useSession } from "@/hooks/useSession";
 import { signUpFormAndRules } from "@/constants/formRules";
 import { useUserActions } from "@/hooks/useUserActions";
+import { useUserInformation } from "@/context/UserInformationContext";
 
 export default function UserSignUpScreen() {
   const { control, handleSubmit, errors } = useUserActions();
-
   const { handleSignUp } = useSession();
+
+  const { saveImage } = useUserInformation();
 
   const onSubmit = (data: {
     username: string;
@@ -25,7 +27,9 @@ export default function UserSignUpScreen() {
     email: string;
     confirmPassword: string;
   }) => {
-    handleSignUp(data);
+    // On rajoute au formulaire le boolean saveImage depuis le context UserInformation
+    const signUpData = { ...data, saveImage };
+    handleSignUp(signUpData);
   };
 
   return (
