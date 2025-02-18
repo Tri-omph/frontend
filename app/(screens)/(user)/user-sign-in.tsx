@@ -158,4 +158,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textDecorationLine: "underline",
   },
+  increaseFontButton: {
+    marginTop: 20,
+    backgroundColor: "#FF6347",
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+  },
+  increaseFontText: {
+    color: "#FFF",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
 });
