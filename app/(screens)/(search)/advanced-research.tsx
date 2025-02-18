@@ -8,10 +8,12 @@ import {
 } from "react-native";
 import AdviceCard from "@/components/search/AdviceCard";
 import { userAdvancedResearchAdvice } from "@/constants/UserAdvancedResearch";
-import { router, useLocalSearchParams } from "expo-router";
+import { router } from "expo-router";
+import { detectionMethod } from "@/types/detectionMethods";
+import { useScan } from "@/hooks/useScan";
 
 const AdvancedResearch: React.FC = () => {
-  const { imageOfWasteToCorrect } = useLocalSearchParams();
+  const { setScanData } = useScan();
   const [selectedOptions, setSelectedOptions] = useState<string[]>(
     new Array(userAdvancedResearchAdvice.length).fill(null),
   );
@@ -24,13 +26,15 @@ const AdvancedResearch: React.FC = () => {
 
   const onValidateClick = () => {
     console.log("Options sélectionnées :", selectedOptions);
-    router.replace({
-      pathname: "/scan",
-      params: {
-        wasteCorrectedByUser: selectedOptions[0],
-        imageOfWasteToCorrect: imageOfWasteToCorrect,
-      },
+
+    // Mettre à jour le contexte ScanContext avec les données corrigées par l'utilisateur
+    setScanData({
+      material: selectedOptions[0],
+      methodUsed: detectionMethod.Advanced,
+      correctedByUser: true,
     });
+
+    router.replace("/scan");
   };
 
   return (

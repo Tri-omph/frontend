@@ -5,7 +5,7 @@ import TitleAndSubtitle from "@/components/scan/TitleAndSubtitle";
 type ContentWithImageProps = {
   title: string;
   subtitle: string;
-  image: ImageSourcePropType | { uri: string };
+  image: ImageSourcePropType | null;
   children?: React.ReactNode;
 };
 
@@ -21,7 +21,7 @@ const ContentWithImage: React.FC<ContentWithImageProps> = ({
         <TitleAndSubtitle title={title} subtitle={subtitle} />
         {children}
       </View>
-      <Image source={image} style={styles.image} />
+      {image && <Image source={image} style={styles.image} />}
     </View>
   );
 };

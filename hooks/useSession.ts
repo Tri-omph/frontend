@@ -3,6 +3,7 @@ import { router } from "expo-router";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { showNotification } from "@/constants/notification";
 import UserManager from "@/services/managers/userManager";
+import { useAsyncStorage } from "@/hooks/useAsyncStorage";
 
 const goToHomePage = () => {
   router.replace("/(tabs)");
@@ -15,6 +16,7 @@ const goToTutoriel = () => {
 export const useSession = () => {
   // Ce hook gère les connexion et déconnexion et surtout, il cache la complexité liée à la gestion du token !
   // Se pose tout de meme la question de où l'on catch l'erreur, ici ou dans le composants ...
+  const { removeUserLocalStorage } = useAsyncStorage();
   const { signIn, signOut } = useAuthContext();
 
   // ************* Appels des méthodes de connexion/déconnexion et gestion des erreurs !
@@ -67,6 +69,7 @@ export const useSession = () => {
 
   const handleSignOut = async () => {
     try {
+      await removeUserLocalStorage();
       signOut();
       router.back(); // Pas besoin d'aller sur SIGN_IN, dès que l'utilisateur n'a plus son token, l'application le renvoie vers la page de connexion !
     } catch (error) {
