@@ -4,6 +4,8 @@ import FormInput from "@/components/user/FormInput";
 import Toast from "react-native-toast-message";
 import { useUserActions } from "@/hooks/useUserActions";
 import { useUserInformation } from "@/context/UserInformationContext";
+import SettingsOption from "@/components/user/SettingsOption";
+import { dataPolicy } from "@/constants/DataPolicy";
 
 export default function UserUpdateScreen() {
   const {
@@ -14,12 +16,16 @@ export default function UserUpdateScreen() {
     handleUpdateUserInformation,
   } = useUserActions();
 
-  const { username, email, saveImage } = useUserInformation();
+  const { username, email, saveImage, setUserData } = useUserInformation();
 
   // Dictionnaire associant les valeurs du contexte aux champs du formulaire
   const defaultValues: { [key: string]: string } = {
     username,
     email,
+  };
+
+  const toggleSavePhotos = () => {
+    setUserData({ saveImage: !saveImage });
   };
 
   const onSubmit = (data: {
@@ -60,6 +66,13 @@ export default function UserUpdateScreen() {
             defaultValue={defaultValues[rule.name] ?? ""}
           />
         ))}
+
+        <SettingsOption
+          value={saveImage}
+          onValueChange={toggleSavePhotos}
+          title={dataPolicy[0].title}
+          description={dataPolicy[0].description}
+        />
 
         <Pressable
           style={styles.button}
