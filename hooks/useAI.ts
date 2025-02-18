@@ -6,6 +6,8 @@ import { useScanContext } from "@/context/ScanContext";
 import { showNotification } from "@/constants/notification";
 import { detectionMethod } from "@/types/detectionMethods";
 
+const IA_URL = process.env.EXPO_PUBLIC_IA_URL;
+
 const useAI = (
   capturedImage: CameraCapturedPicture | null | undefined,
   retakePicture: () => void,
@@ -16,84 +18,104 @@ const useAI = (
     string | null
   >(null);
 
+  if (!IA_URL) {
+    showNotification(
+      "error",
+      "Impossible d'accéder à l'IA",
+      "Veuillez renseigner un URL valide",
+    );
+    return;
+  }
+
+  /** Convertit une URI d’image en blob */
   const imageUriToBlob = async (uri: string) => {
     const response = await fetch(uri);
     return await response.blob();
   };
 
-  const startPrediction = async (image: CameraCapturedPicture) => {
-    try {
-      // Here we process the image for AI, but we're going to adapt this to send it to Flask instead
-      const uri = image.uri;
-      // *** Disjonction des cas, pour traiter le formData, voir [https://bmsptra.medium.com/resolving-network-request-failed-error-in-expo-app-when-uploading-images-to-server-931f5cb6bfe6]
-      const formData = new FormData();
+  /** Prépare le FormData en fonction de la plateforme (web ou mobile) */
+  const prepareFormData = async (imageUri: string): Promise<FormData> => {
+    const formData = new FormData();
 
-      if (Platform.OS === "web") {
-        const imageBlob = await imageUriToBlob(uri);
-        formData.append("file", imageBlob, "photo.jpg");
-      } else {
-        const fileType = uri.split(".").pop();
-        /* eslint-disable @typescript-eslint/no-explicit-any */
-        formData.append("file", {
-          uri: uri, // Image URI
-          name: `image.${fileType}`,
-          type: `image/${fileType}`,
-        } as any);
-        /* eslint-disable @typescript-eslint/no-explicit-any */
-      }
-
-      const response = await fetch("http://192.168.1.102:5000/predict", {
-        method: "POST",
-        body: formData,
-      });
-
-      const result = await response.json();
-      if (result.predicted_class) {
-        setWasteTypePredictionResult(result.predicted_class);
-        return result.predicted_class;
-      } else {
-        showNotification(
-          "error",
-          "Image invalide",
-          "L'image que vous avez fournie semble invalide. Veuillez essayer avec une autre photo.",
-        );
-        return null;
-      }
-    } catch (error) {
-      showNotification(
-        "error",
-        "Impossible de renvoyer le résultat",
-        error.message,
-      );
+    if (Platform.OS === "web") {
+      const imageBlob = await imageUriToBlob(imageUri);
+      formData.append("file", imageBlob, "photo.jpg");
+    } else {
+      const fileType = imageUri.split(".").pop();
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+      formData.append("file", {
+        uri: imageUri,
+        name: `image.${fileType}`,
+        type: `image/${fileType}`,
+      } as any);
+      /* eslint-disable @typescript-eslint/no-explicit-any */
     }
+
+    return formData;
   };
 
-  const processWasteTypePrediction = async () => {
-    if (aiIsProcessing) return;
-
-    setAiIsProcessing(true);
-
-    if (capturedImage) {
-      showNotification(
-        "success",
-        "Début de l'analyse",
-        "La requete a été transmise, l'analyse prendra quelques secondes...",
-      );
-      // Process the image and send it to Flask
-      const prediction = await startPrediction(capturedImage);
-
-      if (prediction) {
-        setWasteTypePredictionResult(prediction);
-        setScanData({
-          material: prediction,
-          methodUsed: detectionMethod.AI,
-          imageOfWaste: capturedImage,
-        });
-      }
-    }
+  /** Gère les erreurs d'appel API */
+  const handleError = (error: unknown) => {
+    showNotification(
+      "error",
+      "Erreur lors de l'analyse",
+      error instanceof Error
+        ? error.message
+        : "Une erreur inconnue s'est produite.",
+    );
     setAiIsProcessing(false);
   };
 
+  /** Envoie l'image à l'IA et retourne la prédiction */
+  const uploadImageToAI = async (
+    image: CameraCapturedPicture,
+  ): Promise<string | null> => {
+    try {
+      const formData = await prepareFormData(image.uri);
+      const response = await fetch(IA_URL!, { method: "POST", body: formData });
+      const result = await response.json();
+
+      if (!result.predicted_class) {
+        showNotification(
+          "error",
+          "Image invalide",
+          "L'image fournie semble invalide. Veuillez réessayer.",
+        );
+        return null;
+      }
+
+      return result.predicted_class;
+    } catch (error) {
+      handleError(error);
+      return null;
+    }
+  };
+
+  /** Démarre la prédiction et met à jour le contexte */
+  const processWasteTypePrediction = async () => {
+    if (aiIsProcessing || !capturedImage) return;
+
+    setAiIsProcessing(true);
+    showNotification(
+      "success",
+      "Début de l'analyse",
+      "Analyse en cours, veuillez patienter...",
+    );
+
+    const prediction = await uploadImageToAI(capturedImage);
+    if (prediction) {
+      setWasteTypePredictionResult(prediction);
+      setScanData({
+        material: prediction,
+        methodUsed: detectionMethod.AI,
+        imageOfWaste: capturedImage,
+      });
+    }
+
+    setAiIsProcessing(false);
+  };
+
+  /** Réinitialise l'état du hook */
   const makeAIAvailable = () => {
     retakePicture();
     setAiIsProcessing(false);
@@ -101,7 +123,6 @@ const useAI = (
   };
 
   return {
-    //loading,
     aiIsProcessing,
     wasteTypePredictionResult,
     processWasteTypePrediction,

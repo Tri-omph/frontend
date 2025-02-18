@@ -43,9 +43,11 @@ Créez un fichier `.env` à la racine du projet et ajoutez les variables d'envir
 - Les variables d'environnement sont préfixées par `EXPO_PUBLIC_` pour être accessibles dans le frontend.
 - Les variables d'environnement sont :
     - `EXPO_PUBLIC_BASE_URL` : l'URL de l'API
+    - `EXPO_PUBLIC_IA_URL` : l'URL de l'IA
 
 ```bash
 EXPO_PUBLIC_BASE_URL=http://adresseIP:3000/api/v1
+EXPO_PUBLIC_IA_URL=http://adresseIP:5000/predict
 ```
 
 **Notez bien**: Vous devez utiliser l'adresse IP de la machine sur laquelle vous allez faire tourner ce projet. En effet, [si vous utilisez votre portable](#avec-votre-portable), se contenter de préciser `localhost` sera inapproprié !
