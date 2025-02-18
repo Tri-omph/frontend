@@ -9,6 +9,7 @@ interface FormInputProps {
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   errors: any;
   label?: string;
+  defaultValue?: string;
   placeholder: string;
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   rules?: any;
@@ -21,6 +22,7 @@ const FormInput: React.FC<FormInputProps> = ({
   control,
   errors,
   label,
+  defaultValue,
   placeholder,
   rules,
   secureTextEntry = false,
@@ -32,6 +34,7 @@ const FormInput: React.FC<FormInputProps> = ({
       <Controller
         control={control}
         name={name}
+        defaultValue={defaultValue}
         rules={rules}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
@@ -42,7 +45,7 @@ const FormInput: React.FC<FormInputProps> = ({
             keyboardType={keyboardType}
             onBlur={onBlur}
             onChangeText={onChange}
-            value={value}
+            value={value || defaultValue}
           />
         )}
       />

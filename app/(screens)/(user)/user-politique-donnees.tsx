@@ -15,22 +15,23 @@ import { showNotification } from "@/constants/notification";
 import { routes } from "@/routes/routes";
 import { dataPolicy } from "@/constants/DataPolicy";
 import resources from "@/constants/Resources";
+import { useUserInformation } from "@/context/UserInformationContext";
 
 const Politique = () => {
   const [isSavePhotosEnabled, setIsSavePhotosEnabled] = useState(false);
-  const [isAIModeEnabled, setIsAIModeEnabled] = useState(false);
-  const [isLocationEnabled, setIsLocationEnabled] = useState(false);
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
 
-  const toggleSavePhotos = () => setIsSavePhotosEnabled((prev) => !prev);
-  const toggleAIMode = () => setIsAIModeEnabled((prev) => !prev);
-  const toggleLocation = () => setIsLocationEnabled((prev) => !prev);
+  const { setUserData } = useUserInformation();
+
+  /* On sauvegarde dans le contexte useUserInformation la valeur donnée par l'utilisateur */
+  const toggleSavePhotos = () => {
+    setIsSavePhotosEnabled((prev) => !prev);
+    setUserData({ saveImage: !isSavePhotosEnabled });
+  };
 
   // Les deux fonctions suivantes
   const toggleGettersAndSetters: [boolean, () => void][] = [
     [isSavePhotosEnabled, toggleSavePhotos],
-    [isAIModeEnabled, toggleAIMode],
-    [isLocationEnabled, toggleLocation],
   ];
 
   const handleGoToAccountCreation = () => {

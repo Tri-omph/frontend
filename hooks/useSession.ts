@@ -4,6 +4,7 @@ import { useAuthContext } from "@/hooks/useAuthContext";
 import { showNotification } from "@/constants/notification";
 import UserManager from "@/services/managers/userManager";
 import { useAsyncStorage } from "@/hooks/useAsyncStorage";
+import { useUserInformation } from "@/context/UserInformationContext";
 
 const goToHomePage = () => {
   router.replace("/(tabs)");
@@ -19,12 +20,16 @@ export const useSession = () => {
   const { removeUserLocalStorage } = useAsyncStorage();
   const { signIn, signOut } = useAuthContext();
 
+  // Accès au contexte pour mettre à jour les données utilisateur
+  const { setUserData, resetUserData } = useUserInformation();
+
   // ************* Appels des méthodes de connexion/déconnexion et gestion des erreurs !
 
   const handleSignUp = async (body: {
     username: string;
     password: string;
     email: string;
+    saveImage: boolean;
     confirmPassword: string;
   }) => {
     if (body.password !== body.confirmPassword) {
@@ -41,6 +46,15 @@ export const useSession = () => {
 
       if ("token" in res.data) {
         signIn(res.data.token);
+
+        // Mettre à jour le contexte avec les données de l'utilisateur après un signUp
+        setUserData({
+          username: body.username,
+          email: body.email,
+          saveImage: body.saveImage,
+          points: 0,
+        });
+
         goToTutoriel();
       } else {
         // alors c'est un ErrorResponse et on récupère le message d'erreur !
@@ -57,6 +71,17 @@ export const useSession = () => {
 
       if ("token" in res.data) {
         signIn(res.data.token);
+
+        // Là il faut récupérer les informations de l'utiliseur pour pouvoir remplir le contexte useUserInformation
+        const fetchUserInformation = await UserManager.GET_INFO_USER();
+
+        setUserData({
+          username: fetchUserInformation.data.username,
+          email: fetchUserInformation.data.login,
+          saveImage: fetchUserInformation.data.saveImage,
+          points: fetchUserInformation.data.points,
+        });
+
         goToHomePage();
       } else {
         // alors c'est un ErrorResponse et on récupère le message d'erreur !
@@ -71,6 +96,7 @@ export const useSession = () => {
     try {
       await removeUserLocalStorage();
       signOut();
+      resetUserData();
       router.back(); // Pas besoin d'aller sur SIGN_IN, dès que l'utilisateur n'a plus son token, l'application le renvoie vers la page de connexion !
     } catch (error) {
       showNotification("error", "Erreur lors de la déconnexion", error.message);

@@ -3,6 +3,7 @@ import { signUpFormAndRules } from "@/constants/formRules";
 import FormInput from "@/components/user/FormInput";
 import Toast from "react-native-toast-message";
 import { useUserActions } from "@/hooks/useUserActions";
+import { useUserInformation } from "@/context/UserInformationContext";
 
 export default function UserUpdateScreen() {
   const {
@@ -13,13 +14,23 @@ export default function UserUpdateScreen() {
     handleUpdateUserInformation,
   } = useUserActions();
 
+  const { username, email, saveImage } = useUserInformation();
+
+  // Dictionnaire associant les valeurs du contexte aux champs du formulaire
+  const defaultValues: { [key: string]: string } = {
+    username,
+    email,
+  };
+
   const onSubmit = (data: {
     username: string;
     password: string;
     email: string;
     confirmPassword: string;
   }) => {
-    handleUpdateUserInformation(data);
+    // On rajoute au formulaire le boolean saveImage depuis le context UserInformation
+    const updatedData = { ...data, saveImage };
+    handleUpdateUserInformation(updatedData);
   };
 
   return (
@@ -46,6 +57,7 @@ export default function UserUpdateScreen() {
             keyboardType={rule.keyboardType}
             secureTextEntry={rule.secureTextEntry}
             rules={rule.rules}
+            defaultValue={defaultValues[rule.name] ?? ""}
           />
         ))}
 
