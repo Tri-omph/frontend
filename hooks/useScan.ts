@@ -43,7 +43,13 @@ export const useScan = (cameraRef?: React.RefObject<CameraView>) => {
           throw new Error(res.data.message);
         }
 
-        console.log(res.data.productPackagingMaterial);
+        if (res.data.warning) {
+          showNotification(
+            "error", // Ce n'est clairement pas une erreur, mais on souhaite mettre en avant l'importance de l'avertissement !
+            "🚨 Vous avez recu un avertissement pour activité suspecte",
+            `Vous avez scanné ce produit ${res.data.nbRequestsForBarcode} fois en 1 heure.`,
+          );
+        }
 
         // Mettre à jour le contexte ScanContext avec les données scannées
         setScanData({

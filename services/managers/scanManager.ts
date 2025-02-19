@@ -14,6 +14,8 @@ class ScanManager {
     return ApiClient.get<{
       productFound: boolean;
       productPackagingMaterial: string;
+      warning?: boolean;
+      nbRequestsForBarcode?: number;
     }>(SCAN_ENDPOINTS.GET_PRODUCT_PACKAGE_MATERIAL(barcode));
   };
 }
