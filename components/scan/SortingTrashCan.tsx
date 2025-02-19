@@ -3,7 +3,6 @@ import { View, StyleSheet, Text, TouchableOpacity, Alert } from "react-native";
 import ContentWithImage from "@/components/scan/ContentWithImage";
 import { Swipeable } from "react-native-gesture-handler";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { useSorting } from "@/hooks/useSorting";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { useHistory } from "@/hooks/useHistory";
 import { detectionMethod } from "@/types/detectionMethods";
@@ -20,7 +19,6 @@ const SortingTrashCan: React.FC<SortingTrashCanProps> = ({
   methodUsed,
   bottomSheetRef,
 }) => {
-  const { sortAndReward } = useSorting();
   const swipeableRef = useRef<Swipeable>(null);
   const { addIntoHistory } = useHistory();
 
@@ -35,7 +33,6 @@ const SortingTrashCan: React.FC<SortingTrashCanProps> = ({
       type: material,
     });
 
-    await sortAndReward(); // C'est trié donc je ferme le bottomSheet !
     bottomSheetRef.current?.close(); // ✅ Ferme le BottomSheet
 
     swipeableRef.current?.close();

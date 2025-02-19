@@ -4,10 +4,14 @@ import HistoryManager, {
   ScanHistory,
 } from "@/services/managers/historyManager";
 import { AddIntoHistoryRequest } from "@/services/managers/historyManager";
+import { useUserInformation } from "@/context/UserInformationContext";
 
 export const useHistory = () => {
   const [loading, setLoading] = useState(false);
   const [history, setHistory] = useState<ScanHistory[]>();
+
+  // Accès au contexte pour mettre à jour les données utilisateur
+  const { setUserData } = useUserInformation();
 
   const fetchUserHistory = async () => {
     try {
@@ -62,9 +66,14 @@ export const useHistory = () => {
 
       showNotification(
         "success",
-        "Ajout réussi",
-        "L'élément a été ajouté avec succès.",
+        res.data.message,
+        `Vous avez ${res.data.points} points`,
       );
+
+      setUserData({
+        points: res.data.points,
+      });
+
       fetchUserHistory(); // Rafraîchir la liste après l'ajout
     } catch (error) {
       showNotification(

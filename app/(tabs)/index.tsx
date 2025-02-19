@@ -15,7 +15,7 @@ import { routes } from "@/routes/routes";
 
 import Snowflake from "../../components/snowflake";
 import { useBackgroundContext } from "@/context/BackgroundContext";
-import { usePlayerContext } from "@/context/PlayerContext";
+import { useUserInformation } from "@/context/UserInformationContext";
 
 const fullDimensions = Dimensions.get("window");
 
@@ -34,7 +34,7 @@ export default function IndexPage({
   const [scene, setScene] = useState<ScaledSize | null>(null);
   const [showEyesOpen, setShowEyesOpen] = useState(true);
 
-  const { monsterImage } = usePlayerContext();
+  const { monsterImage, monsterImageClosed } = useUserInformation();
 
   const dimensionsStyle = fullScreen
     ? fullDimensions
@@ -97,11 +97,7 @@ export default function IndexPage({
 
       <View style={styles.monsterContainer}>
         <Image
-          source={
-            showEyesOpen
-              ? monsterImage
-              : require("@/assets/images/monster_noel_eyes_closed.png")
-          }
+          source={showEyesOpen ? monsterImage : monsterImageClosed}
           style={styles.monster}
         />
       </View>

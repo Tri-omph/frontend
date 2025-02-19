@@ -33,7 +33,10 @@ export interface ScanHistory {
 class HistoryManager {
   // ******************* POST
   static ADD_INTO_HISTORY = (data: AddIntoHistoryRequest) => {
-    return ApiClient.post(HISTORY_ENDPOINTS.ADD_INTO_HISTORY(), data);
+    return ApiClient.post<{ message: string; points: number }>(
+      HISTORY_ENDPOINTS.ADD_INTO_HISTORY(),
+      data,
+    );
   };
 
   // ******************* GET

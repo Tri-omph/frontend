@@ -15,7 +15,6 @@ import { useColorScheme } from "@/components/useColorScheme";
 import { SessionProvider } from "@/context/AuthContext";
 import { ScanProvider } from "@/context/ScanContext";
 import { BackgroundProvider } from "@/context/BackgroundContext";
-import { PlayerProvider } from "@/context/PlayerContext";
 import { UserInformationProvider } from "@/context/UserInformationContext";
 
 // Import des "screens"
@@ -66,9 +65,7 @@ export default function RootLayout({
         <SessionProvider>
           <ScanProvider>
             <BackgroundProvider>
-              <PlayerProvider>
-                <RootLayoutNav />
-              </PlayerProvider>
+              <RootLayoutNav />
             </BackgroundProvider>
           </ScanProvider>
         </SessionProvider>
