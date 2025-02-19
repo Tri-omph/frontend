@@ -1,17 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  FlatList,
-  StyleSheet,
-  Text,
-  ActivityIndicator,
-  RefreshControl,
-} from "react-native";
+import { View, StyleSheet, Text, ActivityIndicator } from "react-native";
 import Toast from "react-native-toast-message";
 import AdminUserCard from "@/components/admin/AdminUserCard";
 import { useAdminUserActions } from "@/hooks/useAdminActions";
 import SearchBar from "@/components/filters/SearchBar";
 import AdminFilterOnUsers from "@/components/admin/AdminFilterOnUsers";
+import UserList from "@/components/user/UserList";
 
 const AdminScreenSearch = () => {
   const {
@@ -64,32 +58,19 @@ const AdminScreenSearch = () => {
             onChangeText={(query: string) => handleSearchQuery(query)}
             onClickOnFilterIcon={handleOpenFilter}
           />
-          <FlatList
-            data={filterUsers}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item, index }) => (
-              <View>
-                <AdminUserCard
-                  userId={item.id}
-                  userPseudo={item.username}
-                  userPoints={item.points}
-                  restricted={item.restricted}
-                  admin={item.admin}
-                />
-                {index < filterUsers.length - 1 && (
-                  <View style={styles.separator} />
-                )}
-              </View>
-            )}
-            contentContainerStyle={styles.listContainer}
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={onRefresh}
-                colors={["#6AA84F"]}
-                progressBackgroundColor={"#F5F5F5"}
+          <UserList
+            users={filterUsers}
+            onRefresh={onRefresh}
+            refreshing={refreshing}
+            renderItem={({ item }) => (
+              <AdminUserCard
+                userId={item.id}
+                userPseudo={item.username}
+                userPoints={item.points}
+                restricted={item.restricted}
+                admin={item.admin}
               />
-            }
+            )}
           />
         </View>
       )}
