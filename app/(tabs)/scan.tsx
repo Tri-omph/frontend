@@ -101,14 +101,14 @@ const styles = StyleSheet.create({
   scanArea: {
     width: 250,
     height: 250,
-    borderWidth: 2,
-    borderColor: "white",
-    justifyContent: "center",
-    alignItems: "center",
+    borderRadius: 30, // coins arrondis
+    borderWidth: 4, // bordure légère
+    borderColor: "white", // bordure blanche pour les coins
     position: "absolute",
     top: "50%",
     left: "50%",
     transform: [{ translateX: -125 }, { translateY: -125 }],
+    overflow: "hidden", // évite que la bordure dépasse
   },
   scanText: {
     color: "white",
