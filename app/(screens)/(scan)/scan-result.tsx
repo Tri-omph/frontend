@@ -22,7 +22,7 @@ const ScanResultScreen: React.FC<ScanResultScreenProps> = ({
   const { material, methodUsed, imageOfWaste } = useScan();
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [bottomSheetState, setBottomSheetState] = useState({
-    snapPoints: ["30%"],
+    snapPoints: ["27%"],
     showAdditionalComponents: false,
   });
 
@@ -32,7 +32,7 @@ const ScanResultScreen: React.FC<ScanResultScreenProps> = ({
   // supplémentaires
   const handleThumbUp = () => {
     setBottomSheetState({
-      snapPoints: ["30%", "80%"],
+      snapPoints: ["27%", "73%"],
       showAdditionalComponents: true,
     });
     setTimeout(() => {

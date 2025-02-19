@@ -5,7 +5,6 @@ import { Text } from "react-native";
 
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
-import { useClientOnlyValue } from "@/components/useClientOnlyValue";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { routes } from "@/routes/routes";
 
@@ -19,7 +18,6 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   // Utilisation, on commnece toujours par les appels aux hooks
-  const isHeaderShown = useClientOnlyValue(false, true);
   const colorScheme = useColorScheme();
   const { session, isLoading } = useAuthContext();
   const TABS_ROUTES = routes.TABS;
@@ -39,7 +37,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-        headerShown: isHeaderShown,
+        headerShown: false,
       }}
     >
       {Object.entries(TABS_ROUTES).map(([key, route]) => (

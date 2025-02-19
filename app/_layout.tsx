@@ -81,6 +81,43 @@ function RootLayoutNav() {
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        {/* On désactive l'ensembles des headers pour les screens*/}
+        <Stack.Screen
+          name="(screens)/(search)/advanced-research"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="(screens)/(user)/user-settings-menu"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="(screens)/(user)/user-sign-in"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="(screens)/(user)/user-politique-donnees"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="(screens)/(user)/user-sign-up"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="(screens)/(user)/user-modification-donnees"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="(screens)/(user)/user-image-fond"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="(screens)/(user)/user-tutoriel"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="(screens)/(user)/user-about-us"
+          options={{ headerShown: false }}
+        />
       </Stack>
     </ThemeProvider>
   );

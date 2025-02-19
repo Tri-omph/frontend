@@ -63,6 +63,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    borderWidth: 1, // Ajoute l'épaisseur du contour
+    borderColor: "#D3D3D3", // Définir la couleur du contour (gris)
   },
   cardHeader: {
     flexDirection: "row",

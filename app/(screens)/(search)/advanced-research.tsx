@@ -1,16 +1,11 @@
 import React, { useState } from "react";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-} from "react-native";
+import { ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
 import AdviceCard from "@/components/search/AdviceCard";
 import { userAdvancedResearchAdvice } from "@/constants/UserAdvancedResearch";
 import { router } from "expo-router";
 import { detectionMethod } from "@/types/detectionMethods";
 import { useScan } from "@/hooks/useScan";
+import FactHeader from "@/components/general/FactHeader";
 
 const AdvancedResearch: React.FC = () => {
   const { setScanData } = useScan();
@@ -27,7 +22,6 @@ const AdvancedResearch: React.FC = () => {
   const onValidateClick = () => {
     console.log("Options sélectionnées :", selectedOptions);
 
-    // Mettre à jour le contexte ScanContext avec les données corrigées par l'utilisateur
     setScanData({
       material: selectedOptions[0],
       methodUsed: detectionMethod.Advanced,
@@ -38,7 +32,10 @@ const AdvancedResearch: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
+      {/* Utilisation de FactHeader */}
+      <FactHeader />
+
       <Text style={styles.title}>Recherche avancée</Text>
       <ScrollView style={styles.scrollView}>
         {userAdvancedResearchAdvice.map((researchItem, index) => (
@@ -54,27 +51,26 @@ const AdvancedResearch: React.FC = () => {
         ))}
       </ScrollView>
       <TouchableOpacity style={styles.button} onPress={onValidateClick}>
-        <Text>Valider</Text>
+        <Text style={styles.buttonText}>Valider</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "white",
   },
   title: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 10,
-    textAlign: "center",
+    textAlign: "left",
+    marginTop: 60,
+    marginLeft: 22, // ajout d'une marge à gauche si tu veux espacer un peu le titre
   },
   scrollView: {
     flex: 1,
-    marginBottom: 5,
   },
   button: {
     flexDirection: "row",
@@ -84,7 +80,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 15,
     marginHorizontal: 20,
-    marginTop: 20,
+    marginVertical: 20,
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 
