@@ -5,6 +5,7 @@ export const ADMIN_ENDPOINTS = {
   // ******************* POST
 
   // ******************* GET
+  GET_USER_WARNINGS: (id: number) => `/warnings/${id}`,
 
   // ******************* PATCH
   PROMOTE_USER: (id: number) => `/admin/promote/${id}`,

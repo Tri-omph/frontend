@@ -7,10 +7,22 @@
 import ApiClient from "@/services/ApiClient";
 import { ADMIN_ENDPOINTS } from "@/services/endpoints/adminEndpoints";
 
+export type ScanAbuseWarningType = {
+  id: number;
+  barcode: string;
+  scanCount: number;
+  createdAt: string;
+};
+
 class AdminManager {
   // ******************* POST
 
   // ******************* GET
+  static GET_USER_WARNINGS = (id: number) => {
+    return ApiClient.get<ScanAbuseWarningType>(
+      ADMIN_ENDPOINTS.GET_USER_WARNINGS(id),
+    );
+  };
 
   // ******************* PATCH
   static PROMOTE_USER = (id: number) => {

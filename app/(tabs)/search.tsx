@@ -1,67 +1,13 @@
-import React, { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  TouchableOpacity,
-} from "react-native";
-import HistoricCard from "@/components/search/HistoricCard";
-import { useHistory } from "@/hooks/useHistory";
-import { RefreshControl } from "react-native-gesture-handler";
+import React from "react";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import Toast from "react-native-toast-message";
-import BinInfo from "@/components/bins/BinInfo";
-import ScanInfo from "@/components/scan/ScanInfo";
-import { useMetrics } from "@/hooks/useMetrics";
+import UserHistoryScreen from "@/components/user/UserHistoryScreen";
 
 export default function TabHistoryScreen() {
-  const { history, fetchUserHistory, loading } = useHistory();
-  const {
-    bins,
-    scanInfo,
-    loading: binLoading,
-    fetchCurrentUserBins,
-    fetchCurrentUserScanInfo,
-  } = useMetrics();
-  const [refreshing, setRefreshing] = useState(false);
-
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    await fetchUserHistory();
-    await fetchCurrentUserBins();
-    await fetchCurrentUserScanInfo();
-    setRefreshing(false);
-  };
-
   return (
     <View style={styles.container}>
-      <BinInfo bins={bins} loading={binLoading} />
-      <ScanInfo scanInfo={scanInfo} loading={binLoading} />
-      {/* Passer les props à ScanInfo */}
-      <Text style={styles.header}>Votre historique</Text>
-      <ScrollView
-        contentContainerStyle={styles.historyList}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
-      >
-        {loading ? (
-          <Text>Chargement...</Text>
-        ) : history && history.length > 0 ? (
-          history.map((item, index) => (
-            <HistoricCard
-              key={index}
-              wasteImage={{ uri: item.image }}
-              wasteType={item.type}
-              date={item.date}
-              wasteIdentificationMethod={item.method}
-              targertedBin={item.poubelle}
-            />
-          ))
-        ) : (
-          <Text>Aucun historique disponible.</Text>
-        )}
-      </ScrollView>
+      <UserHistoryScreen />
+
       <View style={styles.advancedSearch}>
         <Text style={styles.advancedTitle}>Mode recherche avancée</Text>
         <Text style={styles.advancedDescription}>

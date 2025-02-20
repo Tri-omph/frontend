@@ -61,7 +61,7 @@ export const useMetrics = () => {
         throw new Error(res.data.message);
       }
 
-      return res.data;
+      setScanInfo(res.data);
     } catch (error) {
       showNotification(
         "error",
@@ -82,7 +82,7 @@ export const useMetrics = () => {
         throw new Error(res.data.message);
       }
 
-      return res.data;
+      setScanInfo(res.data);
     } catch (error) {
       showNotification(
         "error",
@@ -103,7 +103,7 @@ export const useMetrics = () => {
         throw new Error(res.data.message);
       }
 
-      return res.data;
+      setBins(res.data);
     } catch (error) {
       showNotification(
         "error",
@@ -124,7 +124,7 @@ export const useMetrics = () => {
         throw new Error(res.data.message);
       }
 
-      return res.data;
+      setBins(res.data);
     } catch (error) {
       showNotification(
         "error",
@@ -145,9 +145,11 @@ export const useMetrics = () => {
     // Actions
     fetchCurrentUserScanInfo,
     fetchCurrentUserBins,
-    fetchAllScanInfo,
+
     fetchUserScanInfo,
-    fetchAllBins,
     fetchUserBins,
+
+    fetchAllScanInfo,
+    fetchAllBins,
   };
 };

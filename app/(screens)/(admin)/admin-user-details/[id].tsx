@@ -1,6 +1,7 @@
 import { View, StyleSheet } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import AdminUserCard from "@/components/admin/AdminUserCard";
+import AdminUserHistoryScreen from "@/components/admin/AdminUserHistoryScreen";
 
 export default function AdminUserDetails() {
   const { id, username, points, restricted, admin } = useLocalSearchParams<{
@@ -23,6 +24,8 @@ export default function AdminUserDetails() {
         restricted={isRestricted}
         admin={isAdmin}
       />
+
+      <AdminUserHistoryScreen id={Number(id)} />
     </View>
   );
 }
