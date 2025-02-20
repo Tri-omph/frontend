@@ -19,7 +19,7 @@ class AdminManager {
 
   // ******************* GET
   static GET_USER_WARNINGS = (id: number) => {
-    return ApiClient.get<ScanAbuseWarningType>(
+    return ApiClient.get<ScanAbuseWarningType[]>(
       ADMIN_ENDPOINTS.GET_USER_WARNINGS(id),
     );
   };

@@ -4,6 +4,7 @@ import Swipeable from "react-native-gesture-handler/Swipeable";
 import UserCard from "@/components/user/UserCard";
 import { router } from "expo-router";
 import { useAdminUserActions } from "@/hooks/useAdminActions";
+import { FontAwesome } from "@expo/vector-icons";
 
 type UserCardProps = {
   userId: number;
@@ -11,6 +12,7 @@ type UserCardProps = {
   userPoints: number;
   restricted: boolean;
   admin: boolean;
+  hasWarnings: boolean;
   onPress?: () => void;
 };
 
@@ -20,6 +22,7 @@ const AdminUserCard: React.FC<UserCardProps> = ({
   userPoints,
   restricted,
   admin,
+  hasWarnings,
   onPress,
 }) => {
   const { promoteUser, demoteUser, restrictUser, freeUser } =
@@ -109,6 +112,7 @@ const AdminUserCard: React.FC<UserCardProps> = ({
         points: userPoints.toString(),
         restricted: restricted.toString(),
         admin: admin.toString(),
+        hasWarnings: hasWarnings.toString(),
       },
     });
   };
@@ -136,6 +140,15 @@ const AdminUserCard: React.FC<UserCardProps> = ({
           restricted={restricted}
           admin={admin}
           onPress={handleUserPress}
+          additionalContent={
+            hasWarnings && (
+              <FontAwesome
+                name="exclamation-triangle"
+                size={20}
+                color="orange"
+              />
+            )
+          }
         />
       </Swipeable>
     </View>

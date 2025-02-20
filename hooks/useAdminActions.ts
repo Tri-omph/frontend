@@ -20,7 +20,7 @@ export const useAdminUserActions = () => {
   const [users, setUsers] = useState<UserSearchResult[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterUsers, setFilterUsers] = useState<UserSearchResult[]>([]);
-  const [userWarnings, setUserWarnings] = useState<ScanAbuseWarningType>({});
+  const [userWarnings, setUserWarnings] = useState<ScanAbuseWarningType[]>([]);
 
   // ******************* Appels à l'API
 
@@ -155,14 +155,12 @@ export const useAdminUserActions = () => {
       setLoading(true);
       const res = await AdminManager.GET_USER_WARNINGS(userId);
 
-      if (res.status !== 200) {
+      if (res.status !== 200 || "error" in res.data) {
         throw new Error(res.data.message);
       }
 
-      setUserWarnings((prevWarnings) => ({
-        ...prevWarnings,
-        [userId]: res.data,
-      }));
+      const allUserWarnings: ScanAbuseWarningType[] = res.data;
+      setUserWarnings(allUserWarnings);
     } catch (error) {
       showNotification(
         "error",
