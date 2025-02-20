@@ -1,5 +1,9 @@
+import React, { ReactNode } from "react";
+import { FontAwesome } from "@expo/vector-icons";
+
 export interface FormRuleType {
   name: string;
+  icon: ReactNode;
   label?: string;
   placeholder: string;
   keyboardType?:
@@ -22,6 +26,7 @@ export interface FormRuleType {
 export const signUpFormAndRules: FormRuleType[] = [
   {
     name: "username",
+    icon: <FontAwesome name="user" size={20} color="#888" />,
     label: "Nom d'utilisateur",
     placeholder: "Votre nom d'utilisateur",
     rules: {
@@ -35,6 +40,7 @@ export const signUpFormAndRules: FormRuleType[] = [
   },
   {
     name: "email",
+    icon: <FontAwesome name="envelope" size={15} color="#888" />,
     label: "Adresse mail",
     placeholder: "Votre email",
     keyboardType: "email-address",
@@ -50,6 +56,7 @@ export const signUpFormAndRules: FormRuleType[] = [
   {
     name: "password",
     label: "Mot de passe",
+    icon: <FontAwesome name="lock" size={20} color="#888" />,
     placeholder: "Mot de passe",
     secureTextEntry: true,
     rules: {
@@ -65,6 +72,7 @@ export const signUpFormAndRules: FormRuleType[] = [
   {
     name: "confirmPassword",
     label: "Confirmer le mot de passe",
+    icon: <FontAwesome name="lock" size={20} color="#888" />,
     placeholder: "Confirmer le mot de passe",
     secureTextEntry: true,
     rules: {
@@ -76,6 +84,7 @@ export const signUpFormAndRules: FormRuleType[] = [
 export const signInFormAndRules: FormRuleType[] = [
   {
     name: "login",
+    icon: <FontAwesome name="user" size={20} color="#888" />,
     placeholder: "Votre nom d'utilisateur ou email",
     rules: {
       required: "Le login est requis.",
@@ -83,6 +92,7 @@ export const signInFormAndRules: FormRuleType[] = [
   },
   {
     name: "password",
+    icon: <FontAwesome name="lock" size={20} color="#888" />,
     placeholder: "Votre mot de passe",
     secureTextEntry: true,
     rules: {

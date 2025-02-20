@@ -1,6 +1,5 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import FormInput from "@/components/user/FormInput";
 import { FormRuleType } from "@/constants/formRules";
 
@@ -21,12 +20,8 @@ const FormDisplayer: React.FC<FormDisplayerProps> = ({
     <>
       {formRules.map((rule) => (
         <View key={rule.name} style={styles.inputContainer}>
-          <FontAwesome
-            name={rule.name === "login" ? "user" : "lock"}
-            size={20}
-            color="#888"
-            style={styles.icon}
-          />
+          {rule.icon}
+
           <FormInput
             name={rule.name}
             control={control}
