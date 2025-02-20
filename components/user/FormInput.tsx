@@ -9,6 +9,7 @@ interface FormInputProps {
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   errors: any;
   label?: string;
+  defaultValue?: string;
   placeholder: string;
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   rules?: any;
@@ -21,6 +22,7 @@ const FormInput: React.FC<FormInputProps> = ({
   control,
   errors,
   label,
+  defaultValue,
   placeholder,
   rules,
   secureTextEntry = false,
@@ -29,35 +31,49 @@ const FormInput: React.FC<FormInputProps> = ({
   return (
     <View style={styles.inputContainer}>
       <Text style={styles.label}>{label}</Text>
-      <Controller
-        control={control}
-        name={name}
-        rules={rules}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            style={[styles.input, errors[name] && styles.inputError]}
-            placeholder={placeholder}
-            placeholderTextColor="#6D6D6D"
-            secureTextEntry={secureTextEntry}
-            keyboardType={keyboardType}
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-          />
+      {/* Conteneur interne pour le champ et l'erreur */}
+      <View style={styles.inputWrapper}>
+        <Controller
+          control={control}
+          name={name}
+          defaultValue={defaultValue}
+          rules={rules}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              style={[styles.input, errors[name] && styles.inputError]}
+              placeholder={placeholder}
+              placeholderTextColor="#6D6D6D"
+              secureTextEntry={secureTextEntry}
+              keyboardType={keyboardType}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value || defaultValue}
+            />
+          )}
+        />
+        {/* Affichage de l'erreur sous le champ si elle existe */}
+        {errors[name] && (
+          <Text style={styles.error}>{errors[name].message}</Text>
         )}
-      />
-      {errors[name] && <Text style={styles.error}>{errors[name].message}</Text>}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   inputContainer: {
-    marginVertical: 10,
+    marginVertical: 15,
+    flexDirection: "row", // Reste en row pour l'alignement général
+    alignItems: "flex-start", // Garde les éléments alignés en haut
   },
   label: {
     fontSize: 16,
     color: "#000",
+    marginRight: 10, // Un peu d'espace entre l'étiquette et le champ
+  },
+  inputWrapper: {
+    flexDirection: "column", // Aligner le champ et l'erreur en colonne
+    width: 275,
   },
   input: {
     borderWidth: 1,
@@ -68,8 +84,13 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     color: "#6D6D6D",
   },
-  inputError: { borderColor: "red" },
-  error: { color: "red", marginBottom: 10 },
+  inputError: {
+    borderColor: "red",
+  },
+  error: {
+    color: "red",
+    marginTop: 5, // Un peu d'espace entre le champ et l'erreur
+  },
 });
 
 export default FormInput;

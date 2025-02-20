@@ -1,17 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
 import { Button, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import ScanResultScreen from "@/app/(screens)/(scan)/scan-result";
 import { useScan } from "@/hooks/useScan";
 import { useCamera } from "@/hooks/useCamera";
-import { detectionMethod } from "@/types/detectionMethods";
 import { barcodeTypes } from "@/types/barcodeTypes";
 import CameraPreview from "@/components/camera/CameraPreview";
-import { useLocalSearchParams } from "expo-router";
 
 import Toast from "react-native-toast-message";
 
-export default function App() {
+export default function Scan() {
   const [permission, requestPermission] = useCameraPermissions();
   // Camera (prendre une photo et l'analyser avec l'IA)
   const {
@@ -28,19 +26,12 @@ export default function App() {
   // Scan (detecter le code-barre et chercher les informations correspondantes), priorité à la caméra, le scan doit s'adapter !
   const {
     scanned,
-    scannedImage,
-    scannedMaterialByBarcode,
     handleBarcodeScanned,
     resetScan,
+    imageOfWaste: scannedImage,
+    material: scannedMaterialByBarcode,
+    correctedByUser,
   } = useScan(cameraRef);
-
-  // L'utilisateur peut apporter une correction depuis le mode "recherche avancé"
-  const { wasteCorrectedByUser, imageOfWasteToCorrect } =
-    useLocalSearchParams();
-  const [isCorrectionInUse, setIsCorrectionInUse] = useState(false); // Condition pour savoir si "CX" est ouvert
-
-  // TODO: Revenir checker le problème de "quand tu passes en mode avancé, comment accéder à nouveau au scan, la condition sur une constante (cf ligne dessus), n'a pas de sens !!!"
-  // TODO: Résoudre le problème des photos !!
 
   // ********************************* Vue SCAN
 
@@ -71,9 +62,7 @@ export default function App() {
       <CameraView
         ref={cameraRef}
         style={StyleSheet.absoluteFillObject}
-        onBarcodeScanned={
-          capturedImage || isCorrectionInUse ? undefined : handleBarcodeScanned
-        }
+        onBarcodeScanned={capturedImage ? undefined : handleBarcodeScanned}
         barcodeScannerSettings={{
           barcodeTypes: barcodeTypes,
         }}
@@ -88,24 +77,9 @@ export default function App() {
           />
         </View>
       </CameraView>
-      {scanned && scannedImage && scannedMaterialByBarcode && (
-        <ScanResultScreen
-          material={scannedMaterialByBarcode}
-          imageOfWaste={scannedImage}
-          detectionMethod={detectionMethod.Barcode}
-          onDismiss={resetScan}
-        />
-      )}
-      {wasteCorrectedByUser && (
-        <ScanResultScreen
-          material={wasteCorrectedByUser.toString()}
-          imageOfWaste={{ uri: imageOfWasteToCorrect.toString() }}
-          detectionMethod={detectionMethod.Advanced}
-          onDismiss={() => {
-            resetScan();
-            setIsCorrectionInUse(false);
-          }}
-        />
+      {((scanned && scannedImage && scannedMaterialByBarcode) ||
+        correctedByUser) && (
+        <ScanResultScreen imageOfWaste={scannedImage} onDismiss={resetScan} />
       )}
       <Toast />
     </View>
@@ -127,14 +101,14 @@ const styles = StyleSheet.create({
   scanArea: {
     width: 250,
     height: 250,
-    borderWidth: 2,
-    borderColor: "white",
-    justifyContent: "center",
-    alignItems: "center",
+    borderRadius: 30, // coins arrondis
+    borderWidth: 4, // bordure légère
+    borderColor: "white", // bordure blanche pour les coins
     position: "absolute",
     top: "50%",
     left: "50%",
     transform: [{ translateX: -125 }, { translateY: -125 }],
+    overflow: "hidden", // évite que la bordure dépasse
   },
   scanText: {
     color: "white",

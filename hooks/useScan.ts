@@ -1,49 +1,62 @@
 import { useState, useCallback } from "react";
-import {
-  CameraCapturedPicture,
-  CameraView,
-  BarcodeScanningResult,
-} from "expo-camera";
+import { CameraView, BarcodeScanningResult } from "expo-camera";
 import ScanManager from "@/services/managers/scanManager";
 import { showNotification } from "@/constants/notification";
+import { useScanContext } from "@/context/ScanContext"; // Importation du ScanContext
+import { detectionMethod } from "@/types/detectionMethods";
 
-export const useScan = (cameraRef: React.RefObject<CameraView>) => {
+export const useScan = (cameraRef?: React.RefObject<CameraView>) => {
+  const {
+    setScanData,
+    resetScanData,
+    imageOfWaste,
+    material,
+    methodUsed,
+    correctedByUser,
+  } = useScanContext(); // Accéder aux données du ScanContext
   const [dealingWithScannedImg, setDealingWithScannedImg] = useState(false);
   const [scanned, setScanned] = useState(false);
-  const [scannedImage, setScannedImage] = useState<
-    CameraCapturedPicture | null | undefined
-  >(null);
-  const [scannedMaterialByBarcode, setScannedMaterialByBarcode] = useState<
-    string | null
-  >(null);
 
   const resetScan = useCallback(() => {
     setScanned(false);
-    setScannedImage(null);
-    setScannedMaterialByBarcode(null);
     setDealingWithScannedImg(false);
-  }, []);
+    resetScanData();
+  }, [resetScanData]);
 
   const handleBarcodeScanned = useCallback(
     async (barcodeScanningResult: BarcodeScanningResult) => {
+      if (dealingWithScannedImg || scanned || imageOfWaste) return;
+
       try {
-        if (!dealingWithScannedImg) {
-          // Pas Déjà en cours de traitement avec une image ! (scanned ne suffit pas, car entre temps, il y a la prise de photo !!)
-          setDealingWithScannedImg(true);
-          const photo = await cameraRef.current?.takePictureAsync();
+        setDealingWithScannedImg(true);
 
-          setScanned(true);
-          const res = await ScanManager.GET_PRODUCT_PACKAGE_MATERIAL(
-            barcodeScanningResult.data,
-          ); // Récupérer les informations sur l'emballage
+        // Pas Déjà en cours de traitement avec une image ! (scanned ne suffit pas, car entre temps, il y a la prise de photo !!)
+        if (!cameraRef) return;
+        const photo = await cameraRef.current?.takePictureAsync();
+        setScanned(true);
 
-          if (res.status !== 200) {
-            throw new Error(res.data.message);
-          }
+        const res = await ScanManager.GET_PRODUCT_PACKAGE_MATERIAL(
+          barcodeScanningResult.data,
+        ); // Récupérer les informations sur l'emballage
 
-          setScannedMaterialByBarcode(res.data.productPackagingMaterial);
-          setScannedImage(photo);
+        if (res.status !== 200) {
+          throw new Error(res.data.message);
         }
+
+        if (res.data.warning) {
+          showNotification(
+            "error", // Ce n'est clairement pas une erreur, mais on souhaite mettre en avant l'importance de l'avertissement !
+            "🚨 Vous avez recu un avertissement pour activité suspecte",
+            `Vous avez scanné ce produit ${res.data.nbRequestsForBarcode} fois en 1 heure.`,
+          );
+        }
+
+        // Mettre à jour le contexte ScanContext avec les données scannées
+        setScanData({
+          material: res.data.productPackagingMaterial,
+          methodUsed: detectionMethod.Barcode,
+          imageOfWaste: photo,
+        });
       } catch (error) {
         showNotification(
           "error",
@@ -56,18 +69,21 @@ export const useScan = (cameraRef: React.RefObject<CameraView>) => {
     [
       cameraRef,
       dealingWithScannedImg,
-      setScanned,
-      setScannedMaterialByBarcode,
-      setScannedImage,
+      scanned,
+      imageOfWaste,
       resetScan,
+      setScanData,
     ],
   );
 
   return {
     scanned,
-    scannedImage,
-    scannedMaterialByBarcode,
     handleBarcodeScanned,
+    setScanData,
     resetScan,
+    imageOfWaste,
+    material,
+    methodUsed,
+    correctedByUser,
   };
 };

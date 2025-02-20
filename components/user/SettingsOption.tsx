@@ -23,7 +23,7 @@ const SettingsOption: React.FC<SettingsOptionProps> = ({
       thumbColor={value ? "#FFFFFF" : "#f4f3f4"}
     />
     <Text style={styles.optionText}>
-      {title}
+      <Text style={styles.optionBoldText}>{title}</Text>
       {"\n"}
       <Text style={styles.optionSubtext}>{description}</Text>
     </Text>
@@ -41,6 +41,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#333333",
     marginLeft: 10,
+  },
+  optionBoldText: {
+    fontWeight: "bold",
+    color: "black",
   },
   optionSubtext: {
     fontSize: 12,

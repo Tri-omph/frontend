@@ -15,7 +15,6 @@ import resources from "@/constants/Resources";
 
 const AboutUs = () => {
   const goBack = () => {
-    console.log("Inscription");
     router.replace("/(tabs)");
   };
   return (

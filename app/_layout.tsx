@@ -13,7 +13,9 @@ import "react-native-reanimated";
 
 import { useColorScheme } from "@/components/useColorScheme";
 import { SessionProvider } from "@/context/AuthContext";
+import { ScanProvider } from "@/context/ScanContext";
 import { BackgroundProvider } from "@/context/BackgroundContext";
+import { UserInformationProvider } from "@/context/UserInformationContext";
 
 // Import des "screens"
 
@@ -59,11 +61,15 @@ export default function RootLayout({
   /* GestureHandlerRootView, nous permet d'utiliser le bottom sheet (utile pour la partie scan) ! */
   return (
     <GestureHandlerRootView>
-      <SessionProvider>
-        <BackgroundProvider>
-          <RootLayoutNav />
-        </BackgroundProvider>
-      </SessionProvider>
+      <UserInformationProvider>
+        <SessionProvider>
+          <ScanProvider>
+            <BackgroundProvider>
+              <RootLayoutNav />
+            </BackgroundProvider>
+          </ScanProvider>
+        </SessionProvider>
+      </UserInformationProvider>
     </GestureHandlerRootView>
   );
 }
@@ -75,6 +81,43 @@ function RootLayoutNav() {
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        {/* On désactive l'ensembles des headers pour les screens*/}
+        <Stack.Screen
+          name="(screens)/(search)/advanced-research"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="(screens)/(user)/user-settings-menu"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="(screens)/(user)/user-sign-in"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="(screens)/(user)/user-politique-donnees"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="(screens)/(user)/user-sign-up"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="(screens)/(user)/user-modification-donnees"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="(screens)/(user)/user-image-fond"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="(screens)/(user)/user-tutoriel"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="(screens)/(user)/user-about-us"
+          options={{ headerShown: false }}
+        />
       </Stack>
     </ThemeProvider>
   );

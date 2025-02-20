@@ -15,6 +15,7 @@ export const useUserActions = () => {
     username: string;
     password: string;
     email: string;
+    saveImage: boolean;
     confirmPassword: string;
   }) => {
     if (body.password !== body.confirmPassword) {
