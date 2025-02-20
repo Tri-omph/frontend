@@ -1,13 +1,13 @@
-import { StyleSheet, View, Image, Text, Pressable } from "react-native";
+import { StyleSheet, View, Text, Pressable, ScrollView } from "react-native";
 import { Link } from "expo-router";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useForm } from "react-hook-form";
 
-import FormInput from "@/components/user/FormInput";
 import { routes } from "@/routes/routes";
 import Toast from "react-native-toast-message";
 import { useSession } from "@/hooks/useSession";
 import { signInFormAndRules } from "@/constants/formRules";
+import Header from "@/components/general/Header";
+import FormDisplayer from "@/components/general/FormDisplayer";
 
 export default function SignIn() {
   const { handleSignIn } = useSession();
@@ -27,36 +27,24 @@ export default function SignIn() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Image
-          source={require("@/assets/images/monstre_v1.png")}
-          style={styles.monster}
-        />
-      </View>
-      <View style={styles.content}>
-        <Text style={styles.title}>Bienvenue</Text>
-        <Text style={styles.subtitle}>Content de vous revoir !</Text>
+    <ScrollView style={styles.container}>
+      {/* En-tête avec l'image */}
+      <Header imageSource={require("@/assets/images/growing-plant.jpg")} />
 
-        {signInFormAndRules.map((rule) => (
-          <View key={rule.name} style={styles.inputContainer}>
-            <FontAwesome
-              name={rule.name === "login" ? "user" : "lock"}
-              size={20}
-              color="#888"
-              style={styles.icon}
-            />
-            <FormInput
-              name={rule.name}
-              control={control}
-              errors={errors}
-              placeholder={rule.placeholder}
-              keyboardType={rule.keyboardType}
-              secureTextEntry={rule.secureTextEntry}
-              rules={rule.rules}
-            />
-          </View>
-        ))}
+      <Text style={styles.title}>Bienvenue</Text>
+      <Text style={styles.subtitle}>Content de vous revoir !</Text>
+
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.contentContainer}
+        showsVerticalScrollIndicator={true}
+      >
+        {/* Affichage du formulaire */}
+        <FormDisplayer
+          formRules={signInFormAndRules}
+          control={control}
+          errors={errors}
+        />
 
         <Pressable style={styles.button} onPress={handleSubmit(onSubmit)}>
           <Text style={styles.buttonText}>Se connecter</Text>
@@ -68,78 +56,45 @@ export default function SignIn() {
             Créer un compte
           </Link>
         </View>
-      </View>
-      <Toast />
-    </View>
+
+        {/* Toast pour les notifications */}
+        <Toast />
+      </ScrollView>
+    </ScrollView>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
+    flex: 1, // Assure que la vue principale prend tout l'écran
+    backgroundColor: "white",
+  },
+  scrollView: {
     flex: 1,
+  },
+  contentContainer: {
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#F0F8F4",
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-    backgroundColor: "#E8F4E1",
-    width: "100%",
-    height: "25%",
-  },
-  monster: {
-    width: 100,
-    height: 100,
-    resizeMode: "contain",
-  },
-  content: {
-    flex: 1,
-    width: "80%",
-    justifyContent: "center",
     padding: 20,
   },
   title: {
-    fontSize: 28,
+    fontSize: 20,
     fontWeight: "bold",
-    color: "#28A745",
-    textAlign: "center",
+    color: "#67AA52",
+    marginTop: 20,
+    paddingLeft: 20,
   },
   subtitle: {
-    fontSize: 18,
-    color: "#000",
-    textAlign: "center",
-    marginVertical: 10,
-  },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 10,
-    borderWidth: 1,
-    borderColor: "#CCC",
-    borderRadius: 10,
-    backgroundColor: "#FFF",
-    paddingLeft: 10,
-  },
-  icon: {
-    marginRight: 10,
-  },
-  input: {
-    width: "85%",
-    padding: 15,
-    marginVertical: 10,
-    borderWidth: 1,
-    borderColor: "#CCC",
-    borderRadius: 10,
-    backgroundColor: "#FFF",
+    fontSize: 16,
+    color: "#555",
+    paddingLeft: 20,
   },
   button: {
-    backgroundColor: "#28A745",
-    paddingVertical: 15,
+    backgroundColor: "#67AA52",
+    padding: 15,
     borderRadius: 10,
     alignItems: "center",
     marginVertical: 20,
+    width: "100%",
   },
   buttonText: {
     color: "#FFF",
@@ -148,26 +103,14 @@ const styles = StyleSheet.create({
   },
   footer: {
     alignItems: "center",
+    marginTop: 10,
   },
   footerText: {
-    color: "#000",
     fontSize: 16,
   },
   linkText: {
-    color: "#28A745",
+    color: "#67AA52",
     fontSize: 16,
     textDecorationLine: "underline",
-  },
-  increaseFontButton: {
-    marginTop: 20,
-    backgroundColor: "#FF6347",
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-    borderRadius: 25,
-  },
-  increaseFontText: {
-    color: "#FFF",
-    fontWeight: "bold",
-    textAlign: "center",
   },
 });

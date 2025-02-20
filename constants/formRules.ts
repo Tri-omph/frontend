@@ -1,4 +1,4 @@
-interface FormRuleType {
+export interface FormRuleType {
   name: string;
   label?: string;
   placeholder: string;
