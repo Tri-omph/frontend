@@ -10,6 +10,8 @@ import HistoricCard from "@/components/search/HistoricCard";
 import { useHistory } from "@/hooks/useHistory";
 import { RefreshControl } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
+import BinInfo from "@/components/bins/BinInfo";
+import ScanInfo from "@/components/scan/ScanInfo";
 
 export default function TabHistoryScreen() {
   const { history, fetchUserHistory, loading } = useHistory();
@@ -23,6 +25,8 @@ export default function TabHistoryScreen() {
 
   return (
     <View style={styles.container}>
+      <BinInfo />
+      <ScanInfo />
       <Text style={styles.header}>Votre historique</Text>
 
       <ScrollView
