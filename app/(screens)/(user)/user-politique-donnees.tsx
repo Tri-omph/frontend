@@ -4,21 +4,20 @@ import {
   View,
   Text,
   StyleSheet,
-  Image,
   ScrollView,
   TouchableOpacity,
 } from "react-native";
 import Toast from "react-native-toast-message";
 
-import SettingsOption from "@/components/user/SettingsOption";
+import { useUserInformation } from "@/context/UserInformationContext";
 import { showNotification } from "@/constants/notification";
 import { routes } from "@/routes/routes";
 import { dataPolicy } from "@/constants/DataPolicy";
-import resources from "@/constants/Resources";
-import { useUserInformation } from "@/context/UserInformationContext";
+import Header from "@/components/general/Header";
+import SettingsOption from "@/components/user/SettingsOption";
 
 const Politique = () => {
-  const [isSavePhotosEnabled, setIsSavePhotosEnabled] = useState(false);
+  const [isSavePhotosEnabled, setIsSavePhotosEnabled] = useState(true);
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
 
   const { setUserData } = useUserInformation();
@@ -48,18 +47,21 @@ const Politique = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.header}>
-        <Image source={resources.monster_v1} style={styles.monster} />
-      </View>
+    <ScrollView style={styles.container}>
+      {/* En-tête avec l'image */}
+      <Header />
 
-      <View style={styles.content}>
-        <Text style={styles.title}>Politique de gestion des données</Text>
-        <Text style={styles.description}>
-          Voici les modalités d’utilisation, de stockage et de protection des
-          données personnelles par l’application
-        </Text>
+      <Text style={styles.title}>Politique de gestion des données</Text>
+      <Text style={styles.subtitle}>
+        Voici les modalités d’utilisation, de stockage et de protection des
+        données personnelles par l’application
+      </Text>
 
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.contentContainer}
+        showsVerticalScrollIndicator={true}
+      >
         {dataPolicy.map((item) => (
           <SettingsOption
             key={item.id}
@@ -94,7 +96,8 @@ const Politique = () => {
             <Text style={styles.createAccountText}>Créer votre compte</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </ScrollView>
+
       <Toast />
     </ScrollView>
   );
@@ -102,55 +105,53 @@ const Politique = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
-    backgroundColor: "#E8F4E1",
-    padding: 20,
+    flex: 1,
+    backgroundColor: "white",
   },
-  header: {
+  scrollView: {
+    flex: 1,
+  },
+  contentContainer: {
     alignItems: "center",
-    marginBottom: 20,
-  },
-  monster: {
-    width: 100,
-    height: 100,
-    resizeMode: "contain",
-  },
-  content: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 10,
     padding: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    alignItems: "center",
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "bold",
-    color: "#333333",
-    marginBottom: 10,
+    color: "#67AA52",
+    marginTop: 20,
+    paddingLeft: 20,
   },
-  description: {
-    fontSize: 14,
-    color: "#555555",
-    marginBottom: 20,
+  subtitle: {
+    fontSize: 13,
+    color: "#555",
+    paddingLeft: 20,
   },
   option: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
+    width: "100%",
   },
   optionText: {
     flex: 1,
     fontSize: 14,
-    color: "#333333",
+    color: "#333",
     marginLeft: 10,
   },
   optionSubtext: {
     fontSize: 12,
-    color: "#777777",
+    color: "#777",
+  },
+  optionButton: {
+    backgroundColor: "#67AA52",
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  optionButtonText: {
+    color: "#FFF",
+    fontWeight: "bold",
   },
   footer: {
     marginTop: 20,
@@ -172,21 +173,21 @@ const styles = StyleSheet.create({
   },
   checkboxText: {
     fontSize: 14,
-    color: "#555555",
+    color: "#555",
   },
   link: {
-    color: "#6AA84F",
+    color: "#67AA52",
     textDecorationLine: "underline",
   },
   createAccountButton: {
-    backgroundColor: "#6AA84F",
+    backgroundColor: "#67AA52",
     borderRadius: 5,
     paddingVertical: 10,
     paddingHorizontal: 40,
   },
   createAccountText: {
     fontSize: 16,
-    color: "#FFFFFF",
+    color: "#FFF",
     fontWeight: "bold",
   },
 });
