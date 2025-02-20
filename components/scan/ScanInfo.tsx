@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,16 +6,16 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from "react-native";
-import { useMetrics } from "@/hooks/useMetrics";
 import { AntDesign } from "@expo/vector-icons";
+import { ScanInfoResponse } from "@/services/managers/metricsManager";
 
-const ScanInfo: React.FC = () => {
-  const { loading, scanInfo, fetchCurrentUserScanInfo } = useMetrics();
+interface ScanInfoProps {
+  scanInfo: ScanInfoResponse | null;
+  loading: boolean;
+}
+
+const ScanInfo: React.FC<ScanInfoProps> = ({ scanInfo, loading }) => {
   const [expanded, setExpanded] = useState(false);
-
-  useEffect(() => {
-    fetchCurrentUserScanInfo();
-  }, [fetchCurrentUserScanInfo]);
 
   const getUsageRatio = (method: keyof typeof scanInfo) => {
     if (!scanInfo || !scanInfo[method]) return "N/A";

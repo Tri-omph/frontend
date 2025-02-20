@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,16 +6,16 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from "react-native";
-import { useMetrics } from "@/hooks/useMetrics";
 import { AntDesign } from "@expo/vector-icons";
+import { BinInfoResponse } from "@/services/managers/metricsManager";
 
-const BinInfo: React.FC = () => {
-  const { loading, bins, fetchCurrentUserBins } = useMetrics();
+interface BinInfoProps {
+  bins: BinInfoResponse | null;
+  loading: boolean;
+}
+
+const BinInfo: React.FC<BinInfoProps> = ({ bins, loading }) => {
   const [expanded, setExpanded] = useState(false);
-
-  useEffect(() => {
-    fetchCurrentUserBins();
-  }, [fetchCurrentUserBins]);
 
   const getTotalBins = () => {
     if (!bins) return 0;

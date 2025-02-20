@@ -12,23 +12,33 @@ import { RefreshControl } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
 import BinInfo from "@/components/bins/BinInfo";
 import ScanInfo from "@/components/scan/ScanInfo";
+import { useMetrics } from "@/hooks/useMetrics";
 
 export default function TabHistoryScreen() {
   const { history, fetchUserHistory, loading } = useHistory();
+  const {
+    bins,
+    scanInfo,
+    loading: binLoading,
+    fetchCurrentUserBins,
+    fetchCurrentUserScanInfo,
+  } = useMetrics();
   const [refreshing, setRefreshing] = useState(false);
 
   const handleRefresh = async () => {
     setRefreshing(true);
     await fetchUserHistory();
+    await fetchCurrentUserBins();
+    await fetchCurrentUserScanInfo();
     setRefreshing(false);
   };
 
   return (
     <View style={styles.container}>
-      <BinInfo />
-      <ScanInfo />
+      <BinInfo bins={bins} loading={binLoading} />
+      <ScanInfo scanInfo={scanInfo} loading={binLoading} />
+      {/* Passer les props à ScanInfo */}
       <Text style={styles.header}>Votre historique</Text>
-
       <ScrollView
         contentContainerStyle={styles.historyList}
         refreshControl={
@@ -52,7 +62,6 @@ export default function TabHistoryScreen() {
           <Text>Aucun historique disponible.</Text>
         )}
       </ScrollView>
-
       <View style={styles.advancedSearch}>
         <Text style={styles.advancedTitle}>Mode recherche avancée</Text>
         <Text style={styles.advancedDescription}>
