@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { showNotification } from "@/constants/notification";
 
-import AdminManager from "@/services/managers/adminManager";
+import AdminManager, {
+  ScanAbuseWarningType,
+} from "@/services/managers/adminManager";
 import UserManager, { UserSearchResult } from "@/services/managers/userManager";
 import filter from "lodash.filter";
 import { UserFilter, UserStatusEnum } from "@/types/userEnums";
@@ -18,6 +20,7 @@ export const useAdminUserActions = () => {
   const [users, setUsers] = useState<UserSearchResult[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterUsers, setFilterUsers] = useState<UserSearchResult[]>([]);
+  const [userWarnings, setUserWarnings] = useState<ScanAbuseWarningType[]>([]);
 
   // ******************* Appels à l'API
 
@@ -147,6 +150,28 @@ export const useAdminUserActions = () => {
     }
   };
 
+  const fetchUserWarnings = async (userId: number) => {
+    try {
+      setLoading(true);
+      const res = await AdminManager.GET_USER_WARNINGS(userId);
+
+      if (res.status !== 200 || "error" in res.data) {
+        throw new Error(res.data.message);
+      }
+
+      const allUserWarnings: ScanAbuseWarningType[] = res.data;
+      setUserWarnings(allUserWarnings);
+    } catch (error) {
+      showNotification(
+        "error",
+        "Erreur lors de la récupération des avertissements",
+        `Erreur: ${error.message}`,
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // ******************* Gestion des filtres
   // Barre de recherche
   const handleSearchQuery = (query: string) => {
@@ -227,6 +252,7 @@ export const useAdminUserActions = () => {
   return {
     users,
     filterUsers,
+    userWarnings,
     setUsers,
     setFilterUsers,
     fetchUsers,
@@ -234,6 +260,7 @@ export const useAdminUserActions = () => {
     demoteUser,
     restrictUser,
     freeUser,
+    fetchUserWarnings,
     loading,
     searchQuery,
     setSearchQuery,

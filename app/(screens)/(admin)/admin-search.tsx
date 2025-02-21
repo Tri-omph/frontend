@@ -69,6 +69,7 @@ const AdminScreenSearch = () => {
                 userPoints={item.points}
                 restricted={item.restricted}
                 admin={item.admin}
+                hasWarnings={item.hasWarnings}
               />
             )}
           />

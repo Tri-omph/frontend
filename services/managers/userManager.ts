@@ -23,6 +23,7 @@ export type UserSearchResult = {
   points: number;
   restricted: boolean;
   admin: boolean;
+  hasWarnings: boolean;
 };
 
 class UserManager {

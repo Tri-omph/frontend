@@ -1,0 +1,27 @@
+// DOIT ETRE STRICTEMENT IDENTIQUE A L'ENUM DU BACK !!!
+
+export enum TypeDisposable {
+  PLASTIC_PACKAGING = "PLASTIC PACKAGING",
+  CARDBOARD_PACKAGING = "CARDBOARD PACKAGING",
+  //PAPER = 'PAPER',
+  GLASS_PACKAGING = "GLASS PACKAGING",
+  METAL_PACKAGING = "METAL PACKAGING",
+  USED = "USED",
+  DAMAGED = "DAMAGED",
+  DISHES = "DISHES",
+  ORGANIC = "ORGANIC",
+  NOT_PACKAGING = "NOT PACKAGING",
+  MEDICINE = "MEDICINE",
+  TOXIC = "TOXIC",
+  DEVICE = "DEVICE",
+  //TEXTILE = 'TEXTILE',
+  BULKY_WASTE = "BULKY WASTE",
+  aluminium = "aluminium",
+  cardboard = "cardboard",
+  metal = "metal",
+  ordures = "ordures",
+  paper = "paper",
+  plastic = "plastic",
+  textile = "textile",
+  glass = "glass",
+}

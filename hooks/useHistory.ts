@@ -43,7 +43,7 @@ export const useHistory = () => {
         throw new Error(res.data.message);
       }
 
-      return res.data;
+      setHistory(res.data);
     } catch (error) {
       showNotification(
         "error",

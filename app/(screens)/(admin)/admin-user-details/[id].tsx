@@ -1,15 +1,18 @@
 import { View, StyleSheet } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import AdminUserCard from "@/components/admin/AdminUserCard";
+import AdminUserHistoryScreen from "@/components/admin/AdminUserHistoryScreen";
 
 export default function AdminUserDetails() {
-  const { id, username, points, restricted, admin } = useLocalSearchParams<{
-    id: string;
-    username: string;
-    points: string;
-    restricted: string;
-    admin: string;
-  }>();
+  const { id, username, points, restricted, admin, hasWarnings } =
+    useLocalSearchParams<{
+      id: string;
+      username: string;
+      points: string;
+      restricted: string;
+      admin: string;
+      hasWarnings: boolean;
+    }>();
 
   const isRestricted = restricted === "true";
   const isAdmin = admin === "true";
@@ -22,7 +25,10 @@ export default function AdminUserDetails() {
         userPoints={Number(points)}
         restricted={isRestricted}
         admin={isAdmin}
+        hasWarnings={hasWarnings}
       />
+
+      <AdminUserHistoryScreen id={Number(id)} hasWarnings={hasWarnings} />
     </View>
   );
 }

@@ -10,6 +10,7 @@ type UserCardProps = {
   restricted: boolean;
   admin: boolean;
   onPress?: () => void;
+  additionalContent?: React.ReactNode;
 };
 
 const UserCard: React.FC<UserCardProps> = ({
@@ -18,6 +19,7 @@ const UserCard: React.FC<UserCardProps> = ({
   restricted,
   admin,
   onPress,
+  additionalContent,
 }) => {
   return (
     <View style={[styles.playerDetails]}>
@@ -32,7 +34,10 @@ const UserCard: React.FC<UserCardProps> = ({
               {userPoints}
             </Text>
           </View>
-          <UserStatus restricted={restricted} admin={admin} />
+          <View style={styles.statusContainer}>
+            {additionalContent}
+            <UserStatus restricted={restricted} admin={admin} />
+          </View>
         </View>
       </TouchableOpacity>
     </View>
@@ -59,6 +64,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#333",
     marginBottom: 10,
+  },
+  statusContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10, // Ajout d'un espacement entre l'icône d'avertissement et le statut
   },
 });
 
