@@ -5,7 +5,6 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
   TouchableOpacity,
 } from "react-native";
 import { useSession } from "@/hooks/useSession";
@@ -15,7 +14,8 @@ import { FontAwesome } from "@expo/vector-icons";
 
 import MenuOption from "@/components/user/MenuOption";
 import userMenuOptions from "@/constants/UserMenuOptions";
-import resources from "@/constants/Resources";
+import Header from "@/components/general/Header";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function UserSettingsMenuScreen() {
   const { handleSignOut } = useSession();
@@ -25,9 +25,42 @@ export default function UserSettingsMenuScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Image source={resources.monster_v2} style={styles.monster} />
+    <ScrollView style={styles.container}>
+      {/* En-tête avec le titre et le sous-titre */}
+      <Header
+        title="Paramètres utilisateur"
+        subtitle="Gérer vos informations et paramètres"
+      />
+
+      <View style={styles.content}>
+        {/* Menu des options de l'utilisateur */}
+        <View style={styles.options}>
+          {userMenuOptions.map((menu, index) => (
+            <MenuOption
+              key={index}
+              icon={menu.icon}
+              title={menu.title}
+              subtitle={menu.subtitle}
+              onPress={() => router.push(menu.goToPage)}
+            />
+          ))}
+        </View>
+
+        {/* Bouton pour passer en mode admin */}
+        <TouchableOpacity
+          style={styles.adminButton}
+          onPress={handleAdminSignIn}
+        >
+          <Text style={styles.adminButtonText}>Mode admin</Text>
+          <FontAwesome
+            name="cube"
+            size={18}
+            color="#FFF"
+            style={styles.adminIcon}
+          />
+        </TouchableOpacity>
+
+        {/* Bouton Déconnexion */}
         <TouchableOpacity style={styles.logoutButton} onPress={handleSignOut}>
           <Text style={styles.logoutText}>Déconnexion</Text>
           <FontAwesome
@@ -37,33 +70,13 @@ export default function UserSettingsMenuScreen() {
             style={styles.logoutIcon}
           />
         </TouchableOpacity>
-      </View>
 
-      <View style={styles.options}>
-        {userMenuOptions.map((menu, index) => (
-          <MenuOption
-            key={index}
-            icon={menu.icon}
-            title={menu.title}
-            subtitle={menu.subtitle}
-            onPress={() => router.push(menu.goToPage)}
-          />
-        ))}
+        {/* Toast pour notifications */}
+        <Toast />
       </View>
-
-      <TouchableOpacity style={styles.adminButton} onPress={handleAdminSignIn}>
-        <Text style={styles.adminButtonText}>Mode admin</Text>
-        <FontAwesome
-          name="cube"
-          size={18}
-          color="#FFF"
-          style={styles.adminIcon}
-        />
-      </TouchableOpacity>
 
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
-      <Toast />
-    </View>
+    </ScrollView>
   );
 }
 
@@ -72,33 +85,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F5F5F5",
   },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+  content: {
+    flex: 1,
     padding: 20,
-    backgroundColor: "#E8F4E1",
-  },
-  monster: {
-    width: 80,
-    height: 80,
-    resizeMode: "contain",
-  },
-  logoutButton: {
-    backgroundColor: "#000",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-    left: "-4%",
-    alignItems: "center",
-  },
-  logoutText: {
-    color: "#FFF",
-    fontWeight: "bold",
   },
   options: {
     marginTop: 20,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
   },
   adminButton: {
     flexDirection: "row",
@@ -118,7 +111,21 @@ const styles = StyleSheet.create({
     color: "#FFF",
     fontWeight: "bold",
   },
+  logoutButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "black",
+    borderRadius: 10,
+    padding: 15,
+    marginTop: 20,
+  },
   logoutIcon: {
     marginLeft: 10,
+  },
+  logoutText: {
+    fontSize: 16,
+    color: "#FFF",
+    fontWeight: "bold",
   },
 });

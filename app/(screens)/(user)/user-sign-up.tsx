@@ -7,7 +7,7 @@ import { signUpFormAndRules } from "@/constants/formRules";
 import { useUserActions } from "@/hooks/useUserActions";
 import { useUserInformation } from "@/context/UserInformationContext";
 import FormDisplayer from "@/components/general/FormDisplayer";
-import Header from "@/components/general/Header"; // Si le Header est utilisé dans SignIn, il peut aussi être réutilisé ici
+import Header from "@/components/general/Header";
 
 export default function UserSignUpScreen() {
   const { control, handleSubmit, errors } = useUserActions();
@@ -60,7 +60,7 @@ export default function UserSignUpScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white", // J'ai changé le fond de la page en blanc, comme pour la page de connexion
+    backgroundColor: "white",
   },
   scrollView: {
     flex: 1,

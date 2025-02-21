@@ -69,30 +69,32 @@ export default function IndexPage({
 
   return (
     <ImageBackground source={selectedBackground} style={styles.container}>
-      <View style={styles.header}>
-        <Image
-          source={require("@/assets/images/logo_viveris.png")}
-          style={styles.logo}
-        />
-        <Image
-          source={require("@/assets/images/logo_triomph.png")}
-          style={[styles.logo, { left: -50 }]}
-        />
-      </View>
-
-      <View style={styles.iconContainer}>
-        <Link href={routes.USER.SETTINGS.getHref()} asChild>
-          <Pressable>
-            {({ pressed }) => (
-              <FontAwesome
-                name="user-o"
-                size={25}
-                color="#FFF"
-                style={{ opacity: pressed ? 0.5 : 1 }}
-              />
-            )}
-          </Pressable>
-        </Link>
+      {/* Background with rounded corners for header */}
+      <View style={styles.headerBackground}>
+        <View style={styles.headerContent}>
+          <Image
+            source={require("@/assets/images/logo_viveris.png")}
+            style={styles.logo}
+          />
+          <Image
+            source={require("@/assets/images/logo_triomph.png")}
+            style={[styles.logo, { left: -50 }]}
+          />
+          <View style={styles.iconContainer}>
+            <Link href={routes.USER.SETTINGS.getHref()} asChild>
+              <Pressable>
+                {({ pressed }) => (
+                  <FontAwesome
+                    name="user-o"
+                    size={25}
+                    color="#FFF"
+                    style={styles.iconStyle}
+                  />
+                )}
+              </Pressable>
+            </Link>
+          </View>
+        </View>
       </View>
 
       <View style={styles.monsterContainer}>
@@ -130,15 +132,22 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 10,
+  headerBackground: {
+    width: "100%",
+    paddingVertical: 10,
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
     position: "absolute",
     top: 0,
-    width: "100%",
-    height: "10%",
+    zIndex: 1,
+    alignItems: "center",
+  },
+  headerContent: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "80%",
+    marginBottom: 10,
   },
   logo: {
     width: 100,
@@ -147,8 +156,12 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     position: "absolute",
-    top: 20,
-    right: 20,
+    top: 40,
+    right: 0,
+  },
+  iconStyle: {
+    opacity: 1,
+    color: "#000",
   },
   monsterContainer: {
     position: "absolute",
@@ -164,8 +177,8 @@ const styles = StyleSheet.create({
   button: {
     position: "absolute",
     bottom: "5%",
-    left: "28%",
-    backgroundColor: "#1E90FF",
+    left: "31%",
+    backgroundColor: "#67AA52",
     paddingVertical: 15,
     paddingHorizontal: 30,
     borderRadius: 25,
@@ -176,18 +189,6 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   buttonText: {
-    color: "#FFF",
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  increaseFontButton: {
-    marginTop: 10,
-    backgroundColor: "#FF6347",
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-    borderRadius: 25,
-  },
-  increaseFontText: {
     color: "#FFF",
     fontWeight: "bold",
     textAlign: "center",

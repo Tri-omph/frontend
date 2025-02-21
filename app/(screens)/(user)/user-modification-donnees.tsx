@@ -1,9 +1,12 @@
-import { StyleSheet, View, Image, Text, Pressable } from "react-native";
+import { StyleSheet, Text, Pressable } from "react-native";
 import { signUpFormAndRules } from "@/constants/formRules";
-import FormInput from "@/components/user/FormInput";
 import Toast from "react-native-toast-message";
 import { useUserActions } from "@/hooks/useUserActions";
 import { useUserInformation } from "@/context/UserInformationContext";
+import React from "react";
+import FormDisplayer from "@/components/general/FormDisplayer";
+import Header from "@/components/general/Header";
+import { ScrollView } from "react-native-gesture-handler";
 import SettingsOption from "@/components/user/SettingsOption";
 import { dataPolicy } from "@/constants/DataPolicy";
 
@@ -15,14 +18,7 @@ export default function UserUpdateScreen() {
     loading,
     handleUpdateUserInformation,
   } = useUserActions();
-
   const { username, email, saveImage, setUserData } = useUserInformation();
-
-  // Dictionnaire associant les valeurs du contexte aux champs du formulaire
-  const defaultValues: { [key: string]: string } = {
-    username,
-    email,
-  };
 
   const toggleSavePhotos = () => {
     setUserData({ saveImage: !saveImage });
@@ -34,39 +30,35 @@ export default function UserUpdateScreen() {
     email: string;
     confirmPassword: string;
   }) => {
-    // On rajoute au formulaire le boolean saveImage depuis le context UserInformation
+    // Ajouter les données du contexte (comme saveImage)
     const updatedData = { ...data, saveImage };
     handleUpdateUserInformation(updatedData);
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Image
-          source={require("@/assets/images/monstre_v1.png")}
-          style={styles.monster}
+    <ScrollView style={styles.container}>
+      {/* En-tête avec l'image */}
+      <Header
+        title={`Bonjour ${username}`}
+        subtitle={`Voici votre email actuel : ${email}`}
+      />
+
+      <Text style={styles.title}>Données utilisateur</Text>
+      <Text style={styles.subtitle}>Modifier vos informations</Text>
+
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.contentContainer}
+        showsVerticalScrollIndicator={true}
+      >
+        {/* Affichage du formulaire */}
+        <FormDisplayer
+          formRules={signUpFormAndRules}
+          control={control}
+          errors={errors}
         />
-      </View>
 
-      <View style={styles.content}>
-        <Text style={styles.title}>Données utilisateur</Text>
-        <Text style={styles.subtitle}>Modifier vos données </Text>
-
-        {signUpFormAndRules.map((rule) => (
-          <FormInput
-            key={rule.name}
-            name={rule.name}
-            control={control}
-            errors={errors}
-            label={rule.label}
-            placeholder={rule.placeholder}
-            keyboardType={rule.keyboardType}
-            secureTextEntry={rule.secureTextEntry}
-            rules={rule.rules}
-            defaultValue={defaultValues[rule.name] ?? ""}
-          />
-        ))}
-
+        {/* Option pour sauvegarder les photos */}
         <SettingsOption
           value={saveImage}
           onValueChange={toggleSavePhotos}
@@ -80,78 +72,48 @@ export default function UserUpdateScreen() {
           disabled={loading}
         >
           <Text style={styles.buttonText}>
-            {" "}
             {loading ? "Modification en cours..." : "Modifier"}
           </Text>
         </Pressable>
-      </View>
 
-      <Toast />
-    </View>
+        {/* Toast pour notifications */}
+        <Toast />
+      </ScrollView>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#F0F8F4",
+    backgroundColor: "white",
   },
-  header: {
-    flexDirection: "row",
-    justifyContent: "center",
+  scrollView: {
+    flex: 1,
+  },
+  contentContainer: {
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#E8F4E1",
-    width: "100%",
-    height: "15%",
-  },
-  monster: {
-    width: 100,
-    height: 100,
-    resizeMode: "contain",
-  },
-  content: {
-    flex: 1,
-    width: "85%",
-    justifyContent: "center",
-    padding: 15,
   },
   title: {
-    fontSize: 28,
+    fontSize: 20,
     fontWeight: "bold",
-    color: "#28A745",
-    textAlign: "center",
+    color: "#67AA52",
+    marginTop: 20,
+    paddingLeft: 20,
   },
   subtitle: {
-    fontSize: 12,
-    color: "#000",
-    textAlign: "center",
-    marginVertical: 5,
-  },
-  inputContainer: {
-    marginVertical: 10,
-  },
-  label: {
     fontSize: 16,
-    color: "#000",
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#CCC",
-    borderRadius: 10,
-    backgroundColor: "#FFF",
-    padding: 15,
-    marginVertical: 5,
-    color: "#6D6D6D",
+    color: "#555",
+    paddingLeft: 20,
   },
   button: {
-    backgroundColor: "#28A745",
-    paddingVertical: 15,
+    backgroundColor: "#67AA52",
+    padding: 15,
     borderRadius: 10,
     alignItems: "center",
     marginVertical: 20,
+    width: "100%",
   },
   buttonText: {
     color: "#FFF",
