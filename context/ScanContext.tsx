@@ -1,13 +1,13 @@
 import { detectionMethod } from "@/types/detectionMethods";
 import React, { createContext, useContext, useState } from "react";
-import { ImageSourcePropType } from "react-native";
+import { CameraCapturedPicture } from "expo-camera";
 
 // ********* TYPES
 
 type ScanContextType = {
   material: string;
   methodUsed: detectionMethod;
-  imageOfWaste: ImageSourcePropType | null;
+  imageOfWaste: CameraCapturedPicture | null;
   correctedByUser: boolean;
   setScanData: (data: UpdatableScanData) => void;
   resetScanData: () => void;

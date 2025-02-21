@@ -50,7 +50,7 @@ const UserHistoryScreen = () => {
           history.map((item, index) => (
             <HistoricCard
               key={index}
-              wasteImage={{ uri: item.image }}
+              wasteImage={item.image ? item.image : null}
               wasteType={item.type}
               date={item.date}
               wasteIdentificationMethod={item.method}

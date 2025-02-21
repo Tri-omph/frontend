@@ -2,8 +2,12 @@ import React from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import Toast from "react-native-toast-message";
 import UserHistoryScreen from "@/components/user/UserHistoryScreen";
+import { router } from "expo-router";
 
 export default function TabHistoryScreen() {
+  const onGoToAdvancedResearched = () => {
+    router.replace("/advanced-research");
+  };
   return (
     <View style={styles.container}>
       <UserHistoryScreen />
@@ -16,7 +20,10 @@ export default function TabHistoryScreen() {
           mode de “Recherche avancée” vous permet de décrire le déchet que vous
           souhaitez trier !
         </Text>
-        <TouchableOpacity style={styles.advancedButton}>
+        <TouchableOpacity
+          style={styles.advancedButton}
+          onPress={onGoToAdvancedResearched}
+        >
           <Text style={styles.advancedButtonText}>
             Utiliser la recherche avancée
           </Text>

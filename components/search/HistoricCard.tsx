@@ -1,14 +1,8 @@
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  ImageSourcePropType,
-} from "react-native";
+import { View, Text, StyleSheet, Image } from "react-native";
 
 type HistoricCardProps = {
-  wasteImage: ImageSourcePropType;
+  wasteImage?: string | null; // Changer le type de wasteImage pour accepter une chaîne ou null
   wasteType: string;
   wasteIdentificationMethod: string;
   targertedBin: string; // donne moi un nom de variable
@@ -24,7 +18,13 @@ const HistoricCard: React.FC<HistoricCardProps> = ({
 }) => (
   <View style={styles.historyItem}>
     <View style={styles.imagePlaceholder}>
-      <Image source={wasteImage} style={styles.image} />
+      {/* Si wasteImage est disponible, on l'affiche. Sinon, on peut afficher une image par défaut */}
+      {wasteImage && (
+        <Image
+          source={{ uri: `data:image/jpeg;base64,${wasteImage}` }} // Pour afficher l'image en base64
+          style={styles.image}
+        />
+      )}
     </View>
     <View style={styles.historyDetails}>
       <Text style={styles.itemType}>{wasteType}</Text>

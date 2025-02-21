@@ -1,9 +1,10 @@
 import React from "react";
-import { View, Text, StyleSheet, ImageSourcePropType } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import ContentWithImage from "@/components/scan/ContentWithImage";
+import { CameraCapturedPicture } from "expo-camera";
 
 type ImageWasteDetectedProps = {
-  image: ImageSourcePropType | null;
+  image: CameraCapturedPicture | null;
 };
 
 const ImageWasteDetected: React.FC<ImageWasteDetectedProps> = ({ image }) => {

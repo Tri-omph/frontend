@@ -7,6 +7,7 @@ import BottomSheet from "@gorhom/bottom-sheet";
 import { useHistory } from "@/hooks/useHistory";
 import { detectionMethod } from "@/types/detectionMethods";
 import getBinToThrowIn from "@/utils/bin/BinToThrowIn";
+import { useScan } from "@/hooks/useScan";
 
 type SortingTrashCanProps = {
   material: string;
@@ -21,6 +22,7 @@ const SortingTrashCan: React.FC<SortingTrashCanProps> = ({
 }) => {
   const swipeableRef = useRef<Swipeable>(null);
   const { addIntoHistory } = useHistory();
+  const { imageOfWaste } = useScan();
 
   // Récupérer la poubelle et son image en utilisant la fonction getBinToThrowIn
   const { nameOfBin, imageOfBin } = getBinToThrowIn(material);
@@ -31,6 +33,7 @@ const SortingTrashCan: React.FC<SortingTrashCanProps> = ({
       isValid: true,
       poubelle: nameOfBin,
       type: material,
+      image: imageOfWaste,
     });
 
     bottomSheetRef.current?.close(); // ✅ Ferme le BottomSheet
