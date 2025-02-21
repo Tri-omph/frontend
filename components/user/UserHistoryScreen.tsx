@@ -35,8 +35,14 @@ const UserHistoryScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Profil de l'utilisateur</Text>
-      <BinInfo bins={bins} loading={binLoading} />
-      <ScanInfo scanInfo={scanInfo} loading={binLoading} />
+
+      <View style={styles.infocontainer}>
+        <BinInfo bins={bins} loading={binLoading} />
+        <View style={styles.scanInfoStyle}>
+          <ScanInfo scanInfo={scanInfo} loading={binLoading} />
+        </View>
+      </View>
+
       <Text style={styles.header}>Historique</Text>
       <ScrollView
         contentContainerStyle={styles.historyList}
@@ -70,7 +76,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F5F5F5",
-    padding: 20,
+    padding: 5,
+  },
+  infocontainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginHorizontal: 5,
   },
   header: {
     fontSize: 20,
@@ -79,8 +90,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: "center",
   },
-  historyList: {
-    marginBottom: 20,
+  scanInfoStyle: {
+    alignSelf: "flex-start", // S'assurer que ScanInfo est bien aligné en haut
+    marginTop: -17, // Ajuster la position verticale si nécessaire
   },
 });
 

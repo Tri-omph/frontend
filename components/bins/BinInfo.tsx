@@ -5,6 +5,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   TouchableOpacity,
+  Animated,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { BinInfoResponse } from "@/services/managers/metricsManager";
@@ -16,67 +17,71 @@ interface BinInfoProps {
 
 const BinInfo: React.FC<BinInfoProps> = ({ bins, loading }) => {
   const [expanded, setExpanded] = useState(false);
+  const [height] = useState(new Animated.Value(100)); // Initial height
 
   const getTotalBins = () => {
     if (!bins) return 0;
     return Object.values(bins).reduce((total, num) => total + num, 0);
   };
 
+  const toggleExpand = () => {
+    setExpanded(!expanded);
+    Animated.timing(height, {
+      toValue: expanded ? 100 : 250, // Expand/contract the height
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  };
+
   if (loading) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color="#007BFF" />
-      </View>
-    );
+    return <ActivityIndicator size="large" color="#007BFF" />;
   }
 
   return (
-    <View style={styles.card}>
-      <TouchableOpacity
-        style={styles.header}
-        onPress={() => setExpanded(!expanded)}
-      >
-        <Text style={styles.totalLabel}>Nombre total de déchets triés</Text>
-        <Text style={styles.totalNumber}>{getTotalBins()}</Text>
-        <AntDesign name={expanded ? "up" : "down"} size={20} color="#007BFF" />
+    <Animated.View style={[styles.binBox, { height }]}>
+      <TouchableOpacity onPress={toggleExpand} style={styles.toggleButton}>
+        <View style={styles.totalContainer}>
+          <Text style={styles.totalNumber}>{getTotalBins()}</Text>
+          <Text style={styles.totalLabel}>déchets triés</Text>
+        </View>
+
+        <AntDesign
+          name={expanded ? "upcircleo" : "downcircleo"}
+          size={24}
+          color="#333"
+        />
       </TouchableOpacity>
 
-      {expanded && (
-        <View style={styles.binsContainer}>
-          {bins &&
-            Object.entries(bins).map(([binType, count]) => (
-              <View key={binType} style={styles.binItem}>
-                <Text style={styles.binType}>{binType}</Text>
-                <Text style={styles.binCount}>{count}</Text>
-              </View>
-            ))}
-        </View>
-      )}
-    </View>
+      {/* Affichage conditionnel du contenu */}
+      {expanded && bins && Object.entries(bins).length > 0 ? (
+        <Text style={styles.binsContainer}>
+          {Object.entries(bins)
+            .map(([binType, count]) => `${binType}: ${count}`)
+            .join("\n")}
+        </Text>
+      ) : null}
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  card: {
-    backgroundColor: "#E9F4FF",
-    padding: 20,
-    borderRadius: 10,
+  binBox: {
+    width: "50%",
+    backgroundColor: "#D1E7FF", // Fond blanc pour la boîte de contenu
+    borderRadius: 15,
+    padding: 15,
     shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
-    shadowRadius: 10,
+    shadowRadius: 6,
+    elevation: 5,
     alignItems: "center",
-    margin: 20,
+    position: "relative", // Pour positionner la flèche dans cette boîte
   },
-  header: {
+  totalContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    width: "100%",
+    marginBottom: 10,
   },
   totalLabel: {
     fontSize: 16,
@@ -86,31 +91,21 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     color: "#000",
-    marginHorizontal: 10,
+    marginRight: 10,
   },
   binsContainer: {
-    marginTop: 15,
+    marginTop: 73,
     width: "100%",
   },
-  binItem: {
-    backgroundColor: "#fff",
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 10,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 5,
-  },
-  binType: {
-    fontSize: 16,
-    color: "#007BFF",
-  },
-  binCount: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
+  toggleButton: {
+    position: "absolute", // Fixe la flèche en haut à droite de binBox
+    top: 10,
+    right: 10,
+    padding: 5,
+    borderRadius: 50,
+    color: "#D1E7FF",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

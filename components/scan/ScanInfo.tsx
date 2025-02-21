@@ -5,6 +5,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   TouchableOpacity,
+  Animated,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { ScanInfoResponse } from "@/services/managers/metricsManager";
@@ -16,6 +17,7 @@ interface ScanInfoProps {
 
 const ScanInfo: React.FC<ScanInfoProps> = ({ scanInfo, loading }) => {
   const [expanded, setExpanded] = useState(false);
+  const [height] = useState(new Animated.Value(100)); // Initial height for the expandable section
 
   const getUsageRatio = (method: keyof typeof scanInfo) => {
     if (!scanInfo || !scanInfo[method]) return "N/A";
@@ -32,6 +34,15 @@ const ScanInfo: React.FC<ScanInfoProps> = ({ scanInfo, loading }) => {
     }, "ai");
   };
 
+  const toggleExpand = () => {
+    setExpanded(!expanded);
+    Animated.timing(height, {
+      toValue: expanded ? 100 : 250, // Expand/contract the height
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  };
+
   if (loading) {
     return (
       <View style={styles.container}>
@@ -41,16 +52,17 @@ const ScanInfo: React.FC<ScanInfoProps> = ({ scanInfo, loading }) => {
   }
 
   return (
-    <View style={styles.card}>
-      <TouchableOpacity
-        style={styles.header}
-        onPress={() => setExpanded(!expanded)}
-      >
-        <Text style={styles.totalLabel}>Méthode la plus utilisée:</Text>
+    <Animated.View style={[styles.card, { height }]}>
+      <TouchableOpacity style={styles.header} onPress={toggleExpand}>
+        <Text style={styles.totalLabel}>Méthode préférée:</Text>
         <Text style={styles.totalNumber}>
           {getMostUsedMethod().toUpperCase()}
         </Text>
-        <AntDesign name={expanded ? "up" : "down"} size={20} color="#4CAF50" />
+        <AntDesign
+          name={expanded ? "upcircleo" : "downcircleo"}
+          size={24}
+          color="#388E3C"
+        />
       </TouchableOpacity>
 
       {expanded && scanInfo && (
@@ -66,7 +78,7 @@ const ScanInfo: React.FC<ScanInfoProps> = ({ scanInfo, loading }) => {
           </View>
         </View>
       )}
-    </View>
+    </Animated.View>
   );
 };
 
@@ -77,14 +89,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   card: {
-    backgroundColor: "#E0F7E9", // Couleur de fond plus douce en vert
+    backgroundColor: "#A8D08D", // Consistent light background color
     padding: 20,
-    borderRadius: 10,
+    borderRadius: 15,
     shadowColor: "#000",
     shadowOpacity: 0.1,
-    shadowRadius: 10,
+    shadowRadius: 6,
+    elevation: 5,
     alignItems: "center",
     margin: 20,
+    width: "58%",
   },
   header: {
     flexDirection: "row",
@@ -94,12 +108,12 @@ const styles = StyleSheet.create({
   },
   totalLabel: {
     fontSize: 16,
-    color: "#4CAF50", // Couleur du texte pour "Méthode la plus utilisée" en vert
+    color: "#388E3C", // Green color for label
   },
   totalNumber: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#388E3C", // Couleur du nombre en vert plus foncé
+    color: "#388E3C", // Dark green color for the most used method
     marginHorizontal: 10,
   },
   detailsContainer: {
@@ -108,7 +122,7 @@ const styles = StyleSheet.create({
   },
   mostUsedLabel: {
     fontSize: 16,
-    color: "#4CAF50", // Couleur du texte "Ratio de bonne utilisation" en vert
+    color: "#388E3C", // Green color for "Usage Ratio" label
   },
   usageContainer: {
     marginTop: 10,
@@ -119,12 +133,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: 5,
     borderBottomWidth: 1,
-    borderBottomColor: "#B2DFDB", // Une bordure subtile vert clair
+    borderBottomColor: "#B2DFDB", // Light green border for usage items
   },
   methodName: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#388E3C", // Vert foncé pour les noms de méthode
+    color: "#388E3C", // Dark green for method names
   },
   usageRatio: {
     fontSize: 16,
